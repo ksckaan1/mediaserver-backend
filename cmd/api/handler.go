@@ -19,12 +19,7 @@ func H[I, O any](gh func(context.Context, *generichandler.Request[I]) (*generich
 			}
 		}
 
-		req := &generichandler.Request[I]{
-			Params:  c.AllParams(),
-			Headers: c.GetReqHeaders(),
-			Queries: c.Queries(),
-			Body:    *icBody,
-		}
+		req := generichandler.NewRequestContainer(*icBody, c.AllParams(), c.Queries(), c.GetReqHeaders())
 
 		out, err := gh(c.UserContext(), req)
 		if err != nil {
