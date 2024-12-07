@@ -14,6 +14,7 @@ import (
 type MovieService interface {
 	CreateMovie(ctx context.Context, movie *model.Movie) (string, error)
 	GetMovieByID(ctx context.Context, id string) (*model.Movie, error)
+	ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error)
 }
 
 type Movie struct {
@@ -64,6 +65,7 @@ type GetMovieByIDResponse struct {
 
 func (m *Movie) GetMovieByID(ctx context.Context, req *generichandler.Request[any]) (*generichandler.Response[*GetMovieByIDResponse], error) {
 	id := req.Params["id"]
+
 	movie, err := m.movieService.GetMovieByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, customerrors.ErrRecordNotFound) {
@@ -71,9 +73,9 @@ func (m *Movie) GetMovieByID(ctx context.Context, req *generichandler.Request[an
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrRecordNotFound
 		}
-
 		return &generichandler.Response[*GetMovieByIDResponse]{}, fmt.Errorf("movieService.GetMovieByID: %w", err)
 	}
+
 	return &generichandler.Response[*GetMovieByIDResponse]{
 		Body: &GetMovieByIDResponse{
 			ID:          id,
@@ -82,6 +84,32 @@ func (m *Movie) GetMovieByID(ctx context.Context, req *generichandler.Request[an
 			Description: movie.Description,
 			TMDBID:      movie.TMDBID,
 		},
+		StatusCode: http.StatusOK,
+	}, nil
+}
+
+func (m *Movie) ListMovies(ctx context.Context, req *generichandler.Request[any]) (*generichandler.Response[*model.MovieList], error) {
+	limit, err := req.GetQueryInt64("limit", -1)
+	if err != nil {
+		return &generichandler.Response[*model.MovieList]{
+			StatusCode: http.StatusBadRequest,
+		}, fmt.Errorf("req.GetQueryInt64 (limit): %w", err)
+	}
+
+	offset, err := req.GetQueryInt64("offset", 0)
+	if err != nil {
+		return &generichandler.Response[*model.MovieList]{
+			StatusCode: http.StatusBadRequest,
+		}, fmt.Errorf("req.GetQueryInt64 (offset): %w", err)
+	}
+
+	movies, err := m.movieService.ListMovies(ctx, limit, offset)
+	if err != nil {
+		return &generichandler.Response[*model.MovieList]{}, fmt.Errorf("movieService.ListMovies: %w", err)
+	}
+
+	return &generichandler.Response[*model.MovieList]{
+		Body:       movies,
 		StatusCode: http.StatusOK,
 	}, nil
 }

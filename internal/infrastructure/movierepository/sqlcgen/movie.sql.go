@@ -85,19 +85,16 @@ func (q *Queries) GetMovieByID(ctx context.Context, id string) (Movie, error) {
 const listMovies = `-- name: ListMovies :many
 SELECT id, created_at, title, tmdb_id, description
 FROM movies
-LIMIT CASE
-  WHEN CAST(?2 as INTEGER) < 1 THEN NULL 
-  ELSE ?2 END
-OFFSET CAST(?1 as INTEGER)
+LIMIT ? OFFSET ?
 `
 
 type ListMoviesParams struct {
-	Offset int64
 	Limit  int64
+	Offset int64
 }
 
 func (q *Queries) ListMovies(ctx context.Context, arg ListMoviesParams) ([]Movie, error) {
-	rows, err := q.db.QueryContext(ctx, listMovies, arg.Offset, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, listMovies, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

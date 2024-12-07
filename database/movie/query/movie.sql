@@ -12,10 +12,7 @@ INSERT INTO movies (
 -- name: ListMovies :many
 SELECT *
 FROM movies
-LIMIT CASE
-  WHEN CAST(@limit as INTEGER) < 1 THEN NULL 
-  ELSE @limit END
-OFFSET CAST(@offset as INTEGER);
+LIMIT ? OFFSET ?;
 
 -- name: CountMovies :one
 SELECT COUNT(*)

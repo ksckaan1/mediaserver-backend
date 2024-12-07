@@ -8,6 +8,8 @@ import (
 	"mediaserver/internal/customerrors"
 	"mediaserver/internal/domain/core/model"
 	"mediaserver/internal/infrastructure/movierepository/sqlcgen"
+
+	"github.com/samber/lo"
 )
 
 type MovieRepository struct {
@@ -48,5 +50,44 @@ func (m *MovieRepository) GetMovieByID(ctx context.Context, id string) (*model.M
 		Title:       movie.Title,
 		TMDBID:      movie.TmdbID,
 		Description: movie.Description,
+	}, nil
+}
+
+func (m *MovieRepository) ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error) {
+	count, err := m.queries.CountMovies(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("queries.CountMovies: %w", err)
+	}
+
+	if count == 0 {
+		return &model.MovieList{
+			Movies: make([]*model.Movie, 0),
+			Count:  count,
+			Limit:  limit,
+			Offset: offset,
+		}, nil
+	}
+
+	movies, err := m.queries.ListMovies(ctx, sqlcgen.ListMoviesParams{
+		Limit:  limit,
+		Offset: offset,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("queries.ListMovies: %w", err)
+	}
+
+	return &model.MovieList{
+		Movies: lo.Map(movies, func(m sqlcgen.Movie, _ int) *model.Movie {
+			return &model.Movie{
+				ID:          m.ID,
+				CreatedAt:   m.CreatedAt,
+				Title:       m.Title,
+				TMDBID:      m.TmdbID,
+				Description: m.Description,
+			}
+		}),
+		Count:  count,
+		Limit:  limit,
+		Offset: offset,
 	}, nil
 }

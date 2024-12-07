@@ -12,6 +12,7 @@ import (
 type MovieRepository interface {
 	CreateMovie(ctx context.Context, movie *model.Movie) error
 	GetMovieByID(ctx context.Context, id string) (*model.Movie, error)
+	ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error)
 }
 
 type Movie struct {
@@ -69,4 +70,21 @@ func (m *Movie) GetMovieByID(ctx context.Context, id string) (*model.Movie, erro
 		"title", movie.Title,
 	)
 	return movie, nil
+}
+
+func (m *Movie) ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error) {
+	movies, err := m.movieRepository.ListMovies(ctx, limit, offset)
+	if err != nil {
+		err = fmt.Errorf("movieRepository.ListMovies: %w", err)
+		m.logger.Error(ctx, "error when listing movies",
+			"error", err,
+		)
+		return nil, err
+	}
+	m.logger.Info(ctx, "movies listed",
+		"count", movies.Count,
+		"limit", movies.Limit,
+		"offset", movies.Offset,
+	)
+	return movies, nil
 }
