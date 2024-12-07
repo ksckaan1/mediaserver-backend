@@ -40,7 +40,7 @@ INSERT INTO movies (
 type CreateMovieParams struct {
 	ID          string
 	Title       string
-	TmdbID      string
+	TmdbID      int64
 	Description string
 }
 
@@ -139,7 +139,7 @@ RETURNING id
 
 type UpdateMovieByIDParams struct {
 	Title       string
-	TmdbID      string
+	TmdbID      int64
 	Description string
 	ID          string
 }

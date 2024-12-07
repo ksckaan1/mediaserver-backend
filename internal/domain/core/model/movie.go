@@ -8,7 +8,7 @@ type Movie struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
-	TMDBID      string    `json:"tmdb_id"`
+	TMDBID      int64     `json:"tmdb_id"`
 }
 
 type MovieList struct {

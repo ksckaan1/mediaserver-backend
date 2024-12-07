@@ -32,7 +32,7 @@ func New(movieService MovieService) (*Movie, error) {
 type CreateMovieRequest struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	TMDBID      string `json:"tmdb_id"`
+	TMDBID      int64  `json:"tmdb_id"`
 }
 
 type CreateMovieResponse struct {
@@ -63,7 +63,7 @@ type GetMovieByIDResponse struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
-	TMDBID      string    `json:"tmdb_id"`
+	TMDBID      int64     `json:"tmdb_id"`
 }
 
 func (m *Movie) GetMovieByID(ctx context.Context, req *generichandler.Request[any]) (*generichandler.Response[*GetMovieByIDResponse], error) {
@@ -121,7 +121,7 @@ func (m *Movie) ListMovies(ctx context.Context, req *generichandler.Request[any]
 type UpdateMovieByIDRequest struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	TMDBID      string `json:"tmdb_id"`
+	TMDBID      int64  `json:"tmdb_id"`
 }
 
 func (m *Movie) UpdateMovieByID(ctx context.Context, req *generichandler.Request[*UpdateMovieByIDRequest]) (*generichandler.Response[any], error) {

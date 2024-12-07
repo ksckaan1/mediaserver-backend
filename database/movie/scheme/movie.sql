@@ -3,6 +3,6 @@ CREATE TABLE movies (
     created_at DATETIME NOT NULL,
     updated_at DATETIME,
     title TEXT NOT NULL,
-    tmdb_id TEXT NOT NULL,
+    tmdb_id INTEGER NOT NULL,
     description TEXT NOT NULL
 );

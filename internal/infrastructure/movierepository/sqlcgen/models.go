@@ -14,6 +14,6 @@ type Movie struct {
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime
 	Title       string
-	TmdbID      string
+	TmdbID      int64
 	Description string
 }
