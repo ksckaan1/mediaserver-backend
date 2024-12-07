@@ -8,7 +8,7 @@ import (
 	"mediaserver/internal/port"
 )
 
-type MovieRepository interface {
+type Repository interface {
 	CreateMovie(ctx context.Context, movie *model.Movie) error
 	GetMovieByID(ctx context.Context, id string) (*model.Movie, error)
 	ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error)
@@ -17,16 +17,16 @@ type MovieRepository interface {
 }
 
 type Movie struct {
-	movieRepository MovieRepository
-	idgen           port.IDGenerator
-	logger          port.Logger
+	repo   Repository
+	idgen  port.IDGenerator
+	logger port.Logger
 }
 
-func New(movieRepository MovieRepository, idgen port.IDGenerator, lg port.Logger) (*Movie, error) {
+func New(repo Repository, idgen port.IDGenerator, lg port.Logger) (*Movie, error) {
 	return &Movie{
-		movieRepository: movieRepository,
-		idgen:           idgen,
-		logger:          lg,
+		repo:   repo,
+		idgen:  idgen,
+		logger: lg,
 	}, nil
 }
 
@@ -41,9 +41,9 @@ func (m *Movie) CreateMovie(ctx context.Context, movie *model.Movie) (string, er
 
 	movie.ID = m.idgen.NewID()
 
-	err := m.movieRepository.CreateMovie(ctx, movie)
+	err := m.repo.CreateMovie(ctx, movie)
 	if err != nil {
-		err = fmt.Errorf("movieRepository.CreateMovie: %w", err)
+		err = fmt.Errorf("repo.CreateMovie: %w", err)
 		m.logger.Error(ctx, "error when creating movie",
 			"error", err,
 		)
@@ -56,9 +56,9 @@ func (m *Movie) CreateMovie(ctx context.Context, movie *model.Movie) (string, er
 }
 
 func (m *Movie) GetMovieByID(ctx context.Context, id string) (*model.Movie, error) {
-	movie, err := m.movieRepository.GetMovieByID(ctx, id)
+	movie, err := m.repo.GetMovieByID(ctx, id)
 	if err != nil {
-		err = fmt.Errorf("movieRepository.GetMovieByID: %w", err)
+		err = fmt.Errorf("repo.GetMovieByID: %w", err)
 		m.logger.Error(ctx, "error when getting movie",
 			"error", err,
 			"id", id,
@@ -73,9 +73,9 @@ func (m *Movie) GetMovieByID(ctx context.Context, id string) (*model.Movie, erro
 }
 
 func (m *Movie) ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error) {
-	movies, err := m.movieRepository.ListMovies(ctx, limit, offset)
+	movies, err := m.repo.ListMovies(ctx, limit, offset)
 	if err != nil {
-		err = fmt.Errorf("movieRepository.ListMovies: %w", err)
+		err = fmt.Errorf("repo.ListMovies: %w", err)
 		m.logger.Error(ctx, "error when listing movies",
 			"error", err,
 		)
@@ -90,9 +90,9 @@ func (m *Movie) ListMovies(ctx context.Context, limit, offset int64) (*model.Mov
 }
 
 func (m *Movie) UpdateMovieByID(ctx context.Context, movie *model.Movie) error {
-	err := m.movieRepository.UpdateMovieByID(ctx, movie)
+	err := m.repo.UpdateMovieByID(ctx, movie)
 	if err != nil {
-		err = fmt.Errorf("movieRepository.UpdateMovieByID: %w", err)
+		err = fmt.Errorf("repo.UpdateMovieByID: %w", err)
 		m.logger.Error(ctx, "error when updating movie",
 			"error", err,
 			"id", movie.ID,
@@ -107,9 +107,9 @@ func (m *Movie) UpdateMovieByID(ctx context.Context, movie *model.Movie) error {
 }
 
 func (m *Movie) DeleteMovieByID(ctx context.Context, id string) error {
-	err := m.movieRepository.DeleteMovieByID(ctx, id)
+	err := m.repo.DeleteMovieByID(ctx, id)
 	if err != nil {
-		err = fmt.Errorf("movieRepository.DeleteMovieByID: %w", err)
+		err = fmt.Errorf("repo.DeleteMovieByID: %w", err)
 		m.logger.Error(ctx, "error when deleting movie",
 			"error", err,
 			"id", id,

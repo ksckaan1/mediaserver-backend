@@ -7,7 +7,7 @@ import (
 	"mediaserver/config"
 	movieapp "mediaserver/internal/domain/core/application/movie"
 	movieservice "mediaserver/internal/domain/core/service/movie"
-	"mediaserver/internal/infrastructure/movierepository"
+	"mediaserver/internal/infrastructure/repository"
 	"mediaserver/internal/pkg/idgen"
 	"mediaserver/internal/port"
 
@@ -53,12 +53,12 @@ func (s *Server) Init(ctx context.Context) error {
 		}
 	}
 
-	movieRepository, err := movierepository.New(db)
+	repo, err := repository.New(db)
 	if err != nil {
 		return fmt.Errorf("movierepository.New: %w", err)
 	}
 
-	movieService, err := movieservice.New(movieRepository, idGen, s.logger)
+	movieService, err := movieservice.New(repo, idGen, s.logger)
 	if err != nil {
 		return fmt.Errorf("movieservice.New: %w", err)
 	}

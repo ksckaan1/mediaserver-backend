@@ -1,9 +1,9 @@
 version: "2"
 sql:
   - engine: "sqlite"
-    queries: "database/movie/query/"
-    schema: "database/movie/scheme/"
+    queries: "database/queries/"
+    schema: "database/schemes/"
     gen:
       go:
         package: "sqlcgen"
-        out: "internal/infrastructure/movierepository/sqlcgen"
+        out: "internal/infrastructure/repository/sqlcgen"

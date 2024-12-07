@@ -1,4 +1,4 @@
-package movierepository
+package repository
 
 import (
 	"cmp"
@@ -8,22 +8,12 @@ import (
 	"fmt"
 	"mediaserver/internal/customerrors"
 	"mediaserver/internal/domain/core/model"
-	"mediaserver/internal/infrastructure/movierepository/sqlcgen"
+	"mediaserver/internal/infrastructure/repository/sqlcgen"
 
 	"github.com/samber/lo"
 )
 
-type MovieRepository struct {
-	queries *sqlcgen.Queries
-}
-
-func New(db sqlcgen.DBTX) (*MovieRepository, error) {
-	return &MovieRepository{
-		queries: sqlcgen.New(db),
-	}, nil
-}
-
-func (m *MovieRepository) CreateMovie(ctx context.Context, movie *model.Movie) error {
+func (m *Repository) CreateMovie(ctx context.Context, movie *model.Movie) error {
 	err := m.queries.CreateMovie(ctx, sqlcgen.CreateMovieParams{
 		ID:          movie.ID,
 		Title:       movie.Title,
@@ -36,7 +26,7 @@ func (m *MovieRepository) CreateMovie(ctx context.Context, movie *model.Movie) e
 	return nil
 }
 
-func (m *MovieRepository) GetMovieByID(ctx context.Context, id string) (*model.Movie, error) {
+func (m *Repository) GetMovieByID(ctx context.Context, id string) (*model.Movie, error) {
 	movie, err := m.queries.GetMovieByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -54,7 +44,7 @@ func (m *MovieRepository) GetMovieByID(ctx context.Context, id string) (*model.M
 	}, nil
 }
 
-func (m *MovieRepository) ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error) {
+func (m *Repository) ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error) {
 	count, err := m.queries.CountMovies(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("queries.CountMovies: %w", err)
@@ -94,7 +84,7 @@ func (m *MovieRepository) ListMovies(ctx context.Context, limit, offset int64) (
 	}, nil
 }
 
-func (m *MovieRepository) UpdateMovieByID(ctx context.Context, movie *model.Movie) error {
+func (m *Repository) UpdateMovieByID(ctx context.Context, movie *model.Movie) error {
 	_, err := m.queries.UpdateMovieByID(ctx, sqlcgen.UpdateMovieByIDParams{
 		ID:          movie.ID,
 		Title:       movie.Title,
@@ -110,7 +100,7 @@ func (m *MovieRepository) UpdateMovieByID(ctx context.Context, movie *model.Movi
 	return nil
 }
 
-func (m *MovieRepository) DeleteMovieByID(ctx context.Context, id string) error {
+func (m *Repository) DeleteMovieByID(ctx context.Context, id string) error {
 	_, err := m.queries.DeleteMovieByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
