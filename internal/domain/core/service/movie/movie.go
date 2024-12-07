@@ -6,13 +6,13 @@ import (
 	"mediaserver/internal/customerrors"
 	"mediaserver/internal/domain/core/model"
 	"mediaserver/internal/port"
-	"time"
 )
 
 type MovieRepository interface {
 	CreateMovie(ctx context.Context, movie *model.Movie) error
 	GetMovieByID(ctx context.Context, id string) (*model.Movie, error)
 	ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error)
+	UpdateMovieByID(ctx context.Context, movie *model.Movie) error
 }
 
 type Movie struct {
@@ -39,7 +39,6 @@ func (m *Movie) CreateMovie(ctx context.Context, movie *model.Movie) (string, er
 	}
 
 	movie.ID = m.idgen.NewID()
-	movie.CreatedAt = time.Now()
 
 	err := m.movieRepository.CreateMovie(ctx, movie)
 	if err != nil {
@@ -87,4 +86,21 @@ func (m *Movie) ListMovies(ctx context.Context, limit, offset int64) (*model.Mov
 		"offset", movies.Offset,
 	)
 	return movies, nil
+}
+
+func (m *Movie) UpdateMovieByID(ctx context.Context, movie *model.Movie) error {
+	err := m.movieRepository.UpdateMovieByID(ctx, movie)
+	if err != nil {
+		err = fmt.Errorf("movieRepository.UpdateMovieByID: %w", err)
+		m.logger.Error(ctx, "error when updating movie",
+			"error", err,
+			"id", movie.ID,
+		)
+		return err
+	}
+	m.logger.Info(ctx, "movie updated",
+		"id", movie.ID,
+		"title", movie.Title,
+	)
+	return nil
 }

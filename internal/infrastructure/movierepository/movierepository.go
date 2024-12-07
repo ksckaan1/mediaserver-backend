@@ -1,6 +1,7 @@
 package movierepository
 
 import (
+	"cmp"
 	"context"
 	"database/sql"
 	"errors"
@@ -25,7 +26,6 @@ func New(db sqlcgen.DBTX) (*MovieRepository, error) {
 func (m *MovieRepository) CreateMovie(ctx context.Context, movie *model.Movie) error {
 	err := m.queries.CreateMovie(ctx, sqlcgen.CreateMovieParams{
 		ID:          movie.ID,
-		CreatedAt:   movie.CreatedAt,
 		Title:       movie.Title,
 		TmdbID:      movie.TMDBID,
 		Description: movie.Description,
@@ -47,6 +47,7 @@ func (m *MovieRepository) GetMovieByID(ctx context.Context, id string) (*model.M
 	return &model.Movie{
 		ID:          movie.ID,
 		CreatedAt:   movie.CreatedAt,
+		UpdatedAt:   cmp.Or(movie.UpdatedAt.Time, movie.CreatedAt),
 		Title:       movie.Title,
 		TMDBID:      movie.TmdbID,
 		Description: movie.Description,
@@ -81,6 +82,7 @@ func (m *MovieRepository) ListMovies(ctx context.Context, limit, offset int64) (
 			return &model.Movie{
 				ID:          m.ID,
 				CreatedAt:   m.CreatedAt,
+				UpdatedAt:   cmp.Or(m.UpdatedAt.Time, m.CreatedAt),
 				Title:       m.Title,
 				TMDBID:      m.TmdbID,
 				Description: m.Description,
@@ -90,4 +92,17 @@ func (m *MovieRepository) ListMovies(ctx context.Context, limit, offset int64) (
 		Limit:  limit,
 		Offset: offset,
 	}, nil
+}
+
+func (m *MovieRepository) UpdateMovieByID(ctx context.Context, movie *model.Movie) error {
+	err := m.queries.UpdateMovieByID(ctx, sqlcgen.UpdateMovieByIDParams{
+		ID:          movie.ID,
+		Title:       movie.Title,
+		TmdbID:      movie.TMDBID,
+		Description: movie.Description,
+	})
+	if err != nil {
+		return fmt.Errorf("queries.UpdateMovie: %w", err)
+	}
+	return nil
 }

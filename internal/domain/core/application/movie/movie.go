@@ -15,6 +15,7 @@ type MovieService interface {
 	CreateMovie(ctx context.Context, movie *model.Movie) (string, error)
 	GetMovieByID(ctx context.Context, id string) (*model.Movie, error)
 	ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error)
+	UpdateMovieByID(ctx context.Context, movie *model.Movie) error
 }
 
 type Movie struct {
@@ -58,6 +59,7 @@ func (m *Movie) CreateMovie(ctx context.Context, req *generichandler.Request[*Cr
 type GetMovieByIDResponse struct {
 	ID          string    `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	TMDBID      string    `json:"tmdb_id"`
@@ -80,6 +82,7 @@ func (m *Movie) GetMovieByID(ctx context.Context, req *generichandler.Request[an
 		Body: &GetMovieByIDResponse{
 			ID:          id,
 			CreatedAt:   movie.CreatedAt,
+			UpdatedAt:   movie.UpdatedAt,
 			Title:       movie.Title,
 			Description: movie.Description,
 			TMDBID:      movie.TMDBID,
@@ -111,5 +114,29 @@ func (m *Movie) ListMovies(ctx context.Context, req *generichandler.Request[any]
 	return &generichandler.Response[*model.MovieList]{
 		Body:       movies,
 		StatusCode: http.StatusOK,
+	}, nil
+}
+
+type UpdateMovieByIDRequest struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	TMDBID      string `json:"tmdb_id"`
+}
+
+func (m *Movie) UpdateMovieByID(ctx context.Context, req *generichandler.Request[*UpdateMovieByIDRequest]) (*generichandler.Response[any], error) {
+	movieID := req.Params["id"]
+
+	err := m.movieService.UpdateMovieByID(ctx, &model.Movie{
+		ID:          movieID,
+		Title:       req.Body.Title,
+		Description: req.Body.Description,
+		TMDBID:      req.Body.TMDBID,
+	})
+	if err != nil {
+		return &generichandler.Response[any]{}, fmt.Errorf("movieService.UpdateMovieByID: %w", err)
+	}
+
+	return &generichandler.Response[any]{
+		StatusCode: http.StatusNoContent,
 	}, nil
 }

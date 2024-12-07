@@ -7,7 +7,6 @@ package sqlcgen
 
 import (
 	"context"
-	"time"
 )
 
 const countMovies = `-- name: CountMovies :one
@@ -26,17 +25,20 @@ const createMovie = `-- name: CreateMovie :exec
 INSERT INTO movies (
   id,
   created_at,
+  updated_at,
   title,
   tmdb_id,
   description
 ) VALUES (
-  ?, ?, ?, ?, ?
+  ?,
+  (datetime(CURRENT_TIMESTAMP, 'localtime')),
+  (datetime(CURRENT_TIMESTAMP, 'localtime')),
+  ?, ?, ?
 )
 `
 
 type CreateMovieParams struct {
 	ID          string
-	CreatedAt   time.Time
 	Title       string
 	TmdbID      string
 	Description string
@@ -45,7 +47,6 @@ type CreateMovieParams struct {
 func (q *Queries) CreateMovie(ctx context.Context, arg CreateMovieParams) error {
 	_, err := q.db.ExecContext(ctx, createMovie,
 		arg.ID,
-		arg.CreatedAt,
 		arg.Title,
 		arg.TmdbID,
 		arg.Description,
@@ -64,7 +65,7 @@ func (q *Queries) DeleteMovieByID(ctx context.Context, id string) error {
 }
 
 const getMovieByID = `-- name: GetMovieByID :one
-SELECT id, created_at, title, tmdb_id, description
+SELECT id, created_at, updated_at, title, tmdb_id, description
 FROM movies
 WHERE id = ?
 `
@@ -75,6 +76,7 @@ func (q *Queries) GetMovieByID(ctx context.Context, id string) (Movie, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
+		&i.UpdatedAt,
 		&i.Title,
 		&i.TmdbID,
 		&i.Description,
@@ -83,7 +85,7 @@ func (q *Queries) GetMovieByID(ctx context.Context, id string) (Movie, error) {
 }
 
 const listMovies = `-- name: ListMovies :many
-SELECT id, created_at, title, tmdb_id, description
+SELECT id, created_at, updated_at, title, tmdb_id, description
 FROM movies
 LIMIT ? OFFSET ?
 `
@@ -105,6 +107,7 @@ func (q *Queries) ListMovies(ctx context.Context, arg ListMoviesParams) ([]Movie
 		if err := rows.Scan(
 			&i.ID,
 			&i.CreatedAt,
+			&i.UpdatedAt,
 			&i.Title,
 			&i.TmdbID,
 			&i.Description,
@@ -124,7 +127,8 @@ func (q *Queries) ListMovies(ctx context.Context, arg ListMoviesParams) ([]Movie
 
 const updateMovieByID = `-- name: UpdateMovieByID :exec
 UPDATE movies
-SET title = ?,
+SET updated_at = (datetime(CURRENT_TIMESTAMP, 'localtime')),
+    title = ?,
     tmdb_id = ?,
     description = ?
 WHERE id = ?

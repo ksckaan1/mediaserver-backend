@@ -2,11 +2,15 @@
 INSERT INTO movies (
   id,
   created_at,
+  updated_at,
   title,
   tmdb_id,
   description
 ) VALUES (
-  ?, ?, ?, ?, ?
+  ?,
+  (datetime(CURRENT_TIMESTAMP, 'localtime')),
+  (datetime(CURRENT_TIMESTAMP, 'localtime')),
+  ?, ?, ?
 );
 
 -- name: ListMovies :many
@@ -25,7 +29,8 @@ WHERE id = ?;
 
 -- name: UpdateMovieByID :exec
 UPDATE movies
-SET title = ?,
+SET updated_at = (datetime(CURRENT_TIMESTAMP, 'localtime')),
+    title = ?,
     tmdb_id = ?,
     description = ?
 WHERE id = ?;
