@@ -95,14 +95,28 @@ func (m *MovieRepository) ListMovies(ctx context.Context, limit, offset int64) (
 }
 
 func (m *MovieRepository) UpdateMovieByID(ctx context.Context, movie *model.Movie) error {
-	err := m.queries.UpdateMovieByID(ctx, sqlcgen.UpdateMovieByIDParams{
+	_, err := m.queries.UpdateMovieByID(ctx, sqlcgen.UpdateMovieByIDParams{
 		ID:          movie.ID,
 		Title:       movie.Title,
 		TmdbID:      movie.TMDBID,
 		Description: movie.Description,
 	})
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("queries.UpdateMovieByID: %w", customerrors.ErrRecordNotFound)
+		}
 		return fmt.Errorf("queries.UpdateMovie: %w", err)
+	}
+	return nil
+}
+
+func (m *MovieRepository) DeleteMovieByID(ctx context.Context, id string) error {
+	_, err := m.queries.DeleteMovieByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("queries.DeleteMovieByID: %w", customerrors.ErrRecordNotFound)
+		}
+		return fmt.Errorf("queries.DeleteMovieByID: %w", err)
 	}
 	return nil
 }

@@ -16,6 +16,7 @@ type MovieService interface {
 	GetMovieByID(ctx context.Context, id string) (*model.Movie, error)
 	ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error)
 	UpdateMovieByID(ctx context.Context, movie *model.Movie) error
+	DeleteMovieByID(ctx context.Context, id string) error
 }
 
 type Movie struct {
@@ -133,7 +134,30 @@ func (m *Movie) UpdateMovieByID(ctx context.Context, req *generichandler.Request
 		TMDBID:      req.Body.TMDBID,
 	})
 	if err != nil {
+		if errors.Is(err, customerrors.ErrRecordNotFound) {
+			return &generichandler.Response[any]{
+				StatusCode: http.StatusNotFound,
+			}, customerrors.ErrRecordNotFound
+		}
 		return &generichandler.Response[any]{}, fmt.Errorf("movieService.UpdateMovieByID: %w", err)
+	}
+
+	return &generichandler.Response[any]{
+		StatusCode: http.StatusNoContent,
+	}, nil
+}
+
+func (m *Movie) DeleteMovieByID(ctx context.Context, req *generichandler.Request[any]) (*generichandler.Response[any], error) {
+	movieID := req.Params["id"]
+
+	err := m.movieService.DeleteMovieByID(ctx, movieID)
+	if err != nil {
+		if errors.Is(err, customerrors.ErrRecordNotFound) {
+			return &generichandler.Response[any]{
+				StatusCode: http.StatusNotFound,
+			}, customerrors.ErrRecordNotFound
+		}
+		return &generichandler.Response[any]{}, fmt.Errorf("movieService.DeleteMovieByID: %w", err)
 	}
 
 	return &generichandler.Response[any]{

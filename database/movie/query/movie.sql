@@ -27,14 +27,16 @@ SELECT *
 FROM movies
 WHERE id = ?;
 
--- name: UpdateMovieByID :exec
+-- name: UpdateMovieByID :one
 UPDATE movies
 SET updated_at = (datetime(CURRENT_TIMESTAMP, 'localtime')),
     title = ?,
     tmdb_id = ?,
     description = ?
-WHERE id = ?;
+WHERE id = ?
+RETURNING id;
 
--- name: DeleteMovieByID :exec
+-- name: DeleteMovieByID :one
 DELETE FROM movies
-WHERE id = ?;
+WHERE id = ?
+RETURNING id;

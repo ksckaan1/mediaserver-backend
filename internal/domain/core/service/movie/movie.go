@@ -13,6 +13,7 @@ type MovieRepository interface {
 	GetMovieByID(ctx context.Context, id string) (*model.Movie, error)
 	ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error)
 	UpdateMovieByID(ctx context.Context, movie *model.Movie) error
+	DeleteMovieByID(ctx context.Context, id string) error
 }
 
 type Movie struct {
@@ -101,6 +102,22 @@ func (m *Movie) UpdateMovieByID(ctx context.Context, movie *model.Movie) error {
 	m.logger.Info(ctx, "movie updated",
 		"id", movie.ID,
 		"title", movie.Title,
+	)
+	return nil
+}
+
+func (m *Movie) DeleteMovieByID(ctx context.Context, id string) error {
+	err := m.movieRepository.DeleteMovieByID(ctx, id)
+	if err != nil {
+		err = fmt.Errorf("movieRepository.DeleteMovieByID: %w", err)
+		m.logger.Error(ctx, "error when deleting movie",
+			"error", err,
+			"id", id,
+		)
+		return err
+	}
+	m.logger.Info(ctx, "movie deleted",
+		"id", id,
 	)
 	return nil
 }
