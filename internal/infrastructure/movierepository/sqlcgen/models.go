@@ -5,12 +5,14 @@
 package sqlcgen
 
 import (
+	"database/sql"
 	"time"
 )
 
 type Movie struct {
 	ID          string
 	CreatedAt   time.Time
+	UpdatedAt   sql.NullTime
 	Title       string
 	TmdbID      string
 	Description string

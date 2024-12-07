@@ -1,0 +1,1 @@
+ALTER TABLE movies DROP COLUMN updated_at;
