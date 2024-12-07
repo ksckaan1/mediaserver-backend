@@ -1,0 +1,19 @@
+meta {
+  name: Create Movie
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{HOST}}/api/v1/movie
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "John Wick 5",
+    "description": "Ex-hitman John Wick comes out of retirement to track down the gangsters that took everything from him.",
+    "tmdb_id": "245891-john-wick"
+  }
+}

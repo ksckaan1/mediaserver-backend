@@ -1,0 +1,23 @@
+meta {
+  name: Get Movie By ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HOST}}/api/v1/movie/:movie_id
+  body: none
+  auth: none
+}
+
+params:path {
+  movie_id: 1865382161582919680
+}
+
+body:json {
+  {
+    "title": "Example Movie",
+    "description": "Example Description",
+    "tmdb_id": "123123"
+  }
+}
