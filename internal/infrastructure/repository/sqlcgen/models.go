@@ -17,3 +17,14 @@ type Movie struct {
 	TmdbID      int64
 	Description string
 }
+
+type TmdbInfo struct {
+	ID            int64
+	OriginalTitle string
+	PosterPath    string
+	BackdropPath  string
+	VoteAverage   float64
+	VoteCount     int64
+	Popularity    float64
+	ReleaseDate   string
+}
