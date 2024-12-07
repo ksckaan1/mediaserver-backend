@@ -1,19 +1,14 @@
-templates: # std | do | <custom>
+templates:
   service: std
   application: std
   infrastructure: std
   package: std
 
 runners:
-  # api: # it runs "go run ./cmd/api", if exists
-  #   env:
-  #     - DB=POSTGRESQL
-  #     - LOG_LEVEL=debug
-  #   log:
-  #     seperate_files: true # create log files seperately as api.stderr.log and api.stdout.log
-  #     overwrite: true # create new log file when runner called
-
-  # mycommand:
-  #   cmd: "go version" # overwrite default "go run ./cmd/mycommand/" command
-  #   log:
-  #     disabled: true # do not print log file
+  api:
+    env:
+      - PORT=8080
+      - DB_PATH=./tmp/db.sqlite
+      - DB_AUTO_MIGRATE=true
+    log:
+      overwrite: true
