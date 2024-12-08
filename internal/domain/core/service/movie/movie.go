@@ -9,30 +9,43 @@ import (
 )
 
 type Repository interface {
+	// Movie
 	CreateMovie(ctx context.Context, movie *model.Movie) error
 	GetMovieByID(ctx context.Context, id string) (*model.Movie, error)
 	ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error)
 	UpdateMovieByID(ctx context.Context, movie *model.Movie) error
 	DeleteMovieByID(ctx context.Context, id string) error
+
+	// TMDBInfo
+	SetTMDBInfo(ctx context.Context, info *model.TMDBInfo) error
+	GetTMDBInfoByID(ctx context.Context, id int64) (*model.TMDBInfo, error)
+}
+
+type TMDBClient interface {
+	GetMovieDetail(ctx context.Context, id int64) (*model.TMDBInfo, error)
 }
 
 type Movie struct {
-	repo   Repository
-	idgen  port.IDGenerator
-	logger port.Logger
+	repo       Repository
+	tmdbClient TMDBClient
+	idgen      port.IDGenerator
+	logger     port.Logger
 }
 
-func New(repo Repository, idgen port.IDGenerator, lg port.Logger) (*Movie, error) {
+func New(repo Repository, tmdbClient TMDBClient, idgen port.IDGenerator, lg port.Logger) (*Movie, error) {
 	return &Movie{
-		repo:   repo,
-		idgen:  idgen,
-		logger: lg,
+		repo:       repo,
+		tmdbClient: tmdbClient,
+		idgen:      idgen,
+		logger:     lg,
 	}, nil
 }
 
 func (m *Movie) CreateMovie(ctx context.Context, movie *model.Movie) (string, error) {
+	var err error
+
 	if movie.Title == "" {
-		err := customerrors.ErrInvalidTitle
+		err = customerrors.ErrInvalidTitle
 		m.logger.Error(ctx, "error when creating movie",
 			"error", err,
 		)
@@ -41,7 +54,20 @@ func (m *Movie) CreateMovie(ctx context.Context, movie *model.Movie) (string, er
 
 	movie.ID = m.idgen.NewID()
 
-	err := m.repo.CreateMovie(ctx, movie)
+	var tmdbInfo *model.TMDBInfo
+
+	if movie.TMDBID != 0 {
+		tmdbInfo, err = m.tmdbClient.GetMovieDetail(ctx, movie.TMDBID)
+		if err != nil {
+			err = fmt.Errorf("tmdbClient.GetMovieDetail: %w", err)
+			m.logger.Error(ctx, "error when getting movie detail from tmdb",
+				"error", err,
+			)
+			return "", err
+		}
+	}
+
+	err = m.repo.CreateMovie(ctx, movie)
 	if err != nil {
 		err = fmt.Errorf("repo.CreateMovie: %w", err)
 		m.logger.Error(ctx, "error when creating movie",
@@ -49,13 +75,31 @@ func (m *Movie) CreateMovie(ctx context.Context, movie *model.Movie) (string, er
 		)
 		return "", err
 	}
+
 	m.logger.Info(ctx, "movie created",
 		"id", movie.ID, "title", movie.Title,
 	)
+
+	if tmdbInfo != nil {
+		err = m.repo.SetTMDBInfo(ctx, tmdbInfo)
+		if err != nil {
+			err = fmt.Errorf("repo.SetTMDBInfo: %w", err)
+			m.logger.Error(ctx, "error when setting tmdb info",
+				"error", err,
+			)
+			return "", fmt.Errorf("repo.SetTMDBInfo: %w", err)
+		}
+
+		m.logger.Info(ctx, "tmdb info set",
+			"id", tmdbInfo.ID,
+			"title", tmdbInfo.OriginalTitle,
+		)
+	}
+
 	return movie.ID, nil
 }
 
-func (m *Movie) GetMovieByID(ctx context.Context, id string) (*model.Movie, error) {
+func (m *Movie) GetMovieByID(ctx context.Context, id string) (*model.GetMovieByIDResponse, error) {
 	movie, err := m.repo.GetMovieByID(ctx, id)
 	if err != nil {
 		err = fmt.Errorf("repo.GetMovieByID: %w", err)
@@ -65,11 +109,35 @@ func (m *Movie) GetMovieByID(ctx context.Context, id string) (*model.Movie, erro
 		)
 		return nil, err
 	}
+
 	m.logger.Info(ctx, "movie retrieved",
 		"id", movie.ID,
 		"title", movie.Title,
 	)
-	return movie, nil
+
+	var ti *model.TMDBInfo
+
+	if movie.TMDBID != 0 {
+		tmdbInfo, err := m.repo.GetTMDBInfoByID(ctx, movie.TMDBID)
+		if err != nil {
+			err = fmt.Errorf("repo.GetTMDBInfoByID: %w", err)
+			m.logger.Error(ctx, "error when getting tmdb info",
+				"error", err,
+				"movie_id", movie.ID,
+				"tmdb_id", movie.TMDBID,
+			)
+		}
+		ti = tmdbInfo
+	}
+
+	return &model.GetMovieByIDResponse{
+		ID:          id,
+		CreatedAt:   movie.CreatedAt,
+		UpdatedAt:   movie.UpdatedAt,
+		Title:       movie.Title,
+		Description: movie.Description,
+		TMDBInfo:    ti,
+	}, nil
 }
 
 func (m *Movie) ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error) {

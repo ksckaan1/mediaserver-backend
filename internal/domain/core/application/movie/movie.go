@@ -13,7 +13,7 @@ import (
 
 type MovieService interface {
 	CreateMovie(ctx context.Context, movie *model.Movie) (string, error)
-	GetMovieByID(ctx context.Context, id string) (*model.Movie, error)
+	GetMovieByID(ctx context.Context, id string) (*model.GetMovieByIDResponse, error)
 	ListMovies(ctx context.Context, limit, offset int64) (*model.MovieList, error)
 	UpdateMovieByID(ctx context.Context, movie *model.Movie) error
 	DeleteMovieByID(ctx context.Context, id string) error
@@ -58,12 +58,12 @@ func (m *Movie) CreateMovie(ctx context.Context, req *generichandler.Request[*Cr
 }
 
 type GetMovieByIDResponse struct {
-	ID          string    `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	TMDBID      int64     `json:"tmdb_id"`
+	ID          string          `json:"id"`
+	CreatedAt   time.Time       `json:"created_at"`
+	UpdatedAt   time.Time       `json:"updated_at"`
+	Title       string          `json:"title"`
+	Description string          `json:"description"`
+	TMDBInfo    *model.TMDBInfo `json:"tmdb_info"`
 }
 
 func (m *Movie) GetMovieByID(ctx context.Context, req *generichandler.Request[any]) (*generichandler.Response[*GetMovieByIDResponse], error) {
@@ -86,7 +86,7 @@ func (m *Movie) GetMovieByID(ctx context.Context, req *generichandler.Request[an
 			UpdatedAt:   movie.UpdatedAt,
 			Title:       movie.Title,
 			Description: movie.Description,
-			TMDBID:      movie.TMDBID,
+			TMDBInfo:    movie.TMDBInfo,
 		},
 		StatusCode: http.StatusOK,
 	}, nil

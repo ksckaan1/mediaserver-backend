@@ -8,6 +8,7 @@ import (
 	movieapp "mediaserver/internal/domain/core/application/movie"
 	movieservice "mediaserver/internal/domain/core/service/movie"
 	"mediaserver/internal/infrastructure/repository"
+	"mediaserver/internal/infrastructure/tmdbclient"
 	"mediaserver/internal/pkg/idgen"
 	"mediaserver/internal/port"
 
@@ -58,7 +59,12 @@ func (s *Server) Init(ctx context.Context) error {
 		return fmt.Errorf("movierepository.New: %w", err)
 	}
 
-	movieService, err := movieservice.New(repo, idGen, s.logger)
+	tmdbClient, err := tmdbclient.New(s.cfg.TMDBAPIKey)
+	if err != nil {
+		return fmt.Errorf("tmdbclient.New: %w", err)
+	}
+
+	movieService, err := movieservice.New(repo, tmdbClient, idGen, s.logger)
 	if err != nil {
 		return fmt.Errorf("movieservice.New: %w", err)
 	}
