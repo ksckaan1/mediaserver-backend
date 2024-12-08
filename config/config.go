@@ -7,9 +7,13 @@ import (
 )
 
 type Config struct {
-	Port          int    `env:"PORT" envDefault:"8080"`
+	// API
+	Port int `env:"PORT" envDefault:"8080"`
+	// DB
 	DBPath        string `env:"DB_PATH" envDefault:"./db.sqlite"`
 	DBAutoMigrate bool   `env:"DB_AUTO_MIGRATE" envDefault:"false"`
+	// TMDB
+	TMDBAPIKey string `env:"TMDB_API_KEY" envDefault:""`
 }
 
 func New() *Config {
