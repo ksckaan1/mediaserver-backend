@@ -2,6 +2,7 @@ package model
 
 type TMDBInfo struct {
 	ID            int64   `json:"id"`
+	Title         string  `json:"title"`
 	OriginalTitle string  `json:"original_title"`
 	PosterPath    string  `json:"poster_path"`
 	BackdropPath  string  `json:"backdrop_path"`

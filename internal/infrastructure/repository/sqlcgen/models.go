@@ -20,6 +20,7 @@ type Movie struct {
 
 type TmdbInfo struct {
 	ID            int64
+	Title         string
 	OriginalTitle string
 	PosterPath    string
 	BackdropPath  string

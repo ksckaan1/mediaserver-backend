@@ -1,5 +1,6 @@
 CREATE TABLE tmdb_infos (
     id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
     original_title TEXT NOT NULL,
     poster_path TEXT NOT NULL,
     backdrop_path TEXT NOT NULL,

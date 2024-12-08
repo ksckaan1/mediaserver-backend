@@ -10,7 +10,7 @@ import (
 	"mediaserver/internal/infrastructure/repository/sqlcgen"
 )
 
-func (m *Repository) GetTMDBInfo(ctx context.Context, id int64) (*model.TMDBInfo, error) {
+func (m *Repository) GetTMDBInfoByID(ctx context.Context, id int64) (*model.TMDBInfo, error) {
 	info, err := m.queries.GetTMDBInfo(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -20,6 +20,7 @@ func (m *Repository) GetTMDBInfo(ctx context.Context, id int64) (*model.TMDBInfo
 	}
 	return &model.TMDBInfo{
 		ID:            id,
+		Title:         info.Title,
 		OriginalTitle: info.OriginalTitle,
 		PosterPath:    info.PosterPath,
 		BackdropPath:  info.BackdropPath,
@@ -33,6 +34,7 @@ func (m *Repository) GetTMDBInfo(ctx context.Context, id int64) (*model.TMDBInfo
 func (m *Repository) SetTMDBInfo(ctx context.Context, info *model.TMDBInfo) error {
 	err := m.queries.SetTMDBInfo(ctx, sqlcgen.SetTMDBInfoParams{
 		ID:            info.ID,
+		Title:         info.Title,
 		OriginalTitle: info.OriginalTitle,
 		PosterPath:    info.PosterPath,
 		BackdropPath:  info.BackdropPath,
