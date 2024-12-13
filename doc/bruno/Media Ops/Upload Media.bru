@@ -1,0 +1,23 @@
+meta {
+  name: Upload Media
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{HOST}}/api/v1/media
+  body: multipartForm
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Example Movie",
+    "description": "Example Description",
+    "tmdb_id": "123123"
+  }
+}
+
+body:multipart-form {
+  file: @file(/Users/ksckaan1/Movies/big-buck-bunny.mp4)
+}
