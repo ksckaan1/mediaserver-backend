@@ -1,4 +1,4 @@
-package generichandler
+package gh
 
 import (
 	"fmt"
