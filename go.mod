@@ -1,13 +1,15 @@
 module mediaserver
 
-go 1.23.3
+go 1.23.4
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/golang-migrate/migrate/v4 v4.18.1
-	github.com/mattn/go-sqlite3 v1.14.24
+	github.com/h2non/filetype v1.1.3
+	github.com/ksckaan1/m2s v0.0.2
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/rs/zerolog v1.33.0
 	github.com/samber/lo v1.47.0
 	github.com/stretchr/testify v1.10.0
