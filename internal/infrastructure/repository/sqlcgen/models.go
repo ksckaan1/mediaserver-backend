@@ -9,6 +9,15 @@ import (
 	"time"
 )
 
+type Media struct {
+	ID          string
+	CreatedAt   time.Time
+	Path        string
+	Type        string
+	StorageType string
+	Size        int64
+}
+
 type Movie struct {
 	ID          string
 	CreatedAt   time.Time
