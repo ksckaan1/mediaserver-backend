@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"mediaserver/internal/customerrors"
 	"mediaserver/internal/domain/core/model"
-	"mediaserver/internal/pkg/generichandler"
+	"mediaserver/internal/pkg/gh"
 	"net/http"
 	"time"
 )
@@ -39,17 +39,17 @@ type CreateMovieResponse struct {
 	ID string `json:"id"`
 }
 
-func (m *Movie) CreateMovie(ctx context.Context, req *generichandler.Request[*CreateMovieRequest]) (*generichandler.Response[*CreateMovieResponse], error) {
+func (m *Movie) CreateMovie(ctx context.Context, req *gh.Request[*CreateMovieRequest]) (*gh.Response[*CreateMovieResponse], error) {
 	id, err := m.movieService.CreateMovie(ctx, &model.Movie{
 		Title:       req.Body.Title,
 		Description: req.Body.Description,
 		TMDBID:      req.Body.TMDBID,
 	})
 	if err != nil {
-		return &generichandler.Response[*CreateMovieResponse]{}, fmt.Errorf("movieService.CreateMovie: %w", err)
+		return &gh.Response[*CreateMovieResponse]{}, fmt.Errorf("movieService.CreateMovie: %w", err)
 	}
 
-	return &generichandler.Response[*CreateMovieResponse]{
+	return &gh.Response[*CreateMovieResponse]{
 		Body: &CreateMovieResponse{
 			ID: id,
 		},
@@ -66,20 +66,20 @@ type GetMovieByIDResponse struct {
 	TMDBInfo    *model.TMDBInfo `json:"tmdb_info"`
 }
 
-func (m *Movie) GetMovieByID(ctx context.Context, req *generichandler.Request[any]) (*generichandler.Response[*GetMovieByIDResponse], error) {
+func (m *Movie) GetMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.Response[*GetMovieByIDResponse], error) {
 	id := req.Params["id"]
 
 	movie, err := m.movieService.GetMovieByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, customerrors.ErrRecordNotFound) {
-			return &generichandler.Response[*GetMovieByIDResponse]{
+			return &gh.Response[*GetMovieByIDResponse]{
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrRecordNotFound
 		}
-		return &generichandler.Response[*GetMovieByIDResponse]{}, fmt.Errorf("movieService.GetMovieByID: %w", err)
+		return &gh.Response[*GetMovieByIDResponse]{}, fmt.Errorf("movieService.GetMovieByID: %w", err)
 	}
 
-	return &generichandler.Response[*GetMovieByIDResponse]{
+	return &gh.Response[*GetMovieByIDResponse]{
 		Body: &GetMovieByIDResponse{
 			ID:          id,
 			CreatedAt:   movie.CreatedAt,
@@ -92,27 +92,27 @@ func (m *Movie) GetMovieByID(ctx context.Context, req *generichandler.Request[an
 	}, nil
 }
 
-func (m *Movie) ListMovies(ctx context.Context, req *generichandler.Request[any]) (*generichandler.Response[*model.MovieList], error) {
+func (m *Movie) ListMovies(ctx context.Context, req *gh.Request[any]) (*gh.Response[*model.MovieList], error) {
 	limit, err := req.GetQueryInt64("limit", -1)
 	if err != nil {
-		return &generichandler.Response[*model.MovieList]{
+		return &gh.Response[*model.MovieList]{
 			StatusCode: http.StatusBadRequest,
 		}, fmt.Errorf("req.GetQueryInt64 (limit): %w", err)
 	}
 
 	offset, err := req.GetQueryInt64("offset", 0)
 	if err != nil {
-		return &generichandler.Response[*model.MovieList]{
+		return &gh.Response[*model.MovieList]{
 			StatusCode: http.StatusBadRequest,
 		}, fmt.Errorf("req.GetQueryInt64 (offset): %w", err)
 	}
 
 	movies, err := m.movieService.ListMovies(ctx, limit, offset)
 	if err != nil {
-		return &generichandler.Response[*model.MovieList]{}, fmt.Errorf("movieService.ListMovies: %w", err)
+		return &gh.Response[*model.MovieList]{}, fmt.Errorf("movieService.ListMovies: %w", err)
 	}
 
-	return &generichandler.Response[*model.MovieList]{
+	return &gh.Response[*model.MovieList]{
 		Body:       movies,
 		StatusCode: http.StatusOK,
 	}, nil
@@ -124,7 +124,7 @@ type UpdateMovieByIDRequest struct {
 	TMDBID      int64  `json:"tmdb_id"`
 }
 
-func (m *Movie) UpdateMovieByID(ctx context.Context, req *generichandler.Request[*UpdateMovieByIDRequest]) (*generichandler.Response[any], error) {
+func (m *Movie) UpdateMovieByID(ctx context.Context, req *gh.Request[*UpdateMovieByIDRequest]) (*gh.Response[any], error) {
 	movieID := req.Params["id"]
 
 	err := m.movieService.UpdateMovieByID(ctx, &model.Movie{
@@ -135,32 +135,32 @@ func (m *Movie) UpdateMovieByID(ctx context.Context, req *generichandler.Request
 	})
 	if err != nil {
 		if errors.Is(err, customerrors.ErrRecordNotFound) {
-			return &generichandler.Response[any]{
+			return &gh.Response[any]{
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrRecordNotFound
 		}
-		return &generichandler.Response[any]{}, fmt.Errorf("movieService.UpdateMovieByID: %w", err)
+		return &gh.Response[any]{}, fmt.Errorf("movieService.UpdateMovieByID: %w", err)
 	}
 
-	return &generichandler.Response[any]{
+	return &gh.Response[any]{
 		StatusCode: http.StatusNoContent,
 	}, nil
 }
 
-func (m *Movie) DeleteMovieByID(ctx context.Context, req *generichandler.Request[any]) (*generichandler.Response[any], error) {
+func (m *Movie) DeleteMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.Response[any], error) {
 	movieID := req.Params["id"]
 
 	err := m.movieService.DeleteMovieByID(ctx, movieID)
 	if err != nil {
 		if errors.Is(err, customerrors.ErrRecordNotFound) {
-			return &generichandler.Response[any]{
+			return &gh.Response[any]{
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrRecordNotFound
 		}
-		return &generichandler.Response[any]{}, fmt.Errorf("movieService.DeleteMovieByID: %w", err)
+		return &gh.Response[any]{}, fmt.Errorf("movieService.DeleteMovieByID: %w", err)
 	}
 
-	return &generichandler.Response[any]{
+	return &gh.Response[any]{
 		StatusCode: http.StatusNoContent,
 	}, nil
 }
