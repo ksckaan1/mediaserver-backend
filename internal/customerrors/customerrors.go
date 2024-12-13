@@ -6,8 +6,9 @@ import (
 )
 
 var (
-	ErrInvalidTitle   = errors.New("invalid title")
-	ErrRecordNotFound = errors.New("record not found")
+	ErrInvalidTitle        = errors.New("invalid title")
+	ErrRecordNotFound      = errors.New("record not found")
+	ErrUnsupportedFileType = errors.New("unsupported file type")
 )
 
 type ErrUnexpectedStatusCode struct {
