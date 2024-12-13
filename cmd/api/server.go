@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 	"mediaserver/config"
+	"mediaserver/internal/domain/core/application/media"
 	movieapp "mediaserver/internal/domain/core/application/movie"
+	"mediaserver/internal/domain/core/service/localstorage"
 	movieservice "mediaserver/internal/domain/core/service/movie"
 	"mediaserver/internal/infrastructure/repository"
 	"mediaserver/internal/infrastructure/tmdbclient"
@@ -22,10 +24,12 @@ type Server struct {
 	logger   port.Logger
 	router   *fiber.App
 	movieApp *movieapp.Movie
+	mediaApp *media.Media
 }
 
 func NewServer(cfg *config.Config, logger port.Logger) *Server {
 	router := fiber.New(fiber.Config{
+		BodyLimit:             1 << 30, // 1GB
 		DisableStartupMessage: true,
 	})
 
@@ -72,6 +76,16 @@ func (s *Server) Init(ctx context.Context) error {
 	s.movieApp, err = movieapp.New(movieService)
 	if err != nil {
 		return fmt.Errorf("movieapp.New: %w", err)
+	}
+
+	lss, err := localstorage.New(repo, s.cfg, idGen, s.logger)
+	if err != nil {
+		return fmt.Errorf("localstorage.New: %w", err)
+	}
+
+	s.mediaApp, err = media.New(lss, s.logger)
+	if err != nil {
+		return fmt.Errorf("media.New: %w", err)
 	}
 
 	s.linkRoutes()
