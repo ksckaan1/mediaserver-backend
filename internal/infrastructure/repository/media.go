@@ -30,7 +30,7 @@ func (m *Repository) GetMediaByID(ctx context.Context, id string) (*model.Media,
 	media, err := m.queries.GetMediaByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, fmt.Errorf("queries.GetMediaByID: %w", customerrors.ErrRecordNotFound)
+			return nil, fmt.Errorf("queries.GetMediaByID: %w", customerrors.ErrMediaNotFound)
 		}
 		return nil, fmt.Errorf("queries.GetMediaByID: %w", err)
 	}
@@ -48,7 +48,7 @@ func (m *Repository) DeleteMediaByID(ctx context.Context, id string) error {
 	_, err := m.queries.DeleteMediaByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return fmt.Errorf("queries.DeleteMediaByID: %w", customerrors.ErrRecordNotFound)
+			return fmt.Errorf("queries.DeleteMediaByID: %w", customerrors.ErrMediaNotFound)
 		}
 		return fmt.Errorf("queries.DeleteMediaByID: %w", err)
 	}

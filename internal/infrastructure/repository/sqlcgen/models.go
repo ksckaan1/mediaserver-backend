@@ -25,6 +25,7 @@ type Movie struct {
 	Title       string
 	TmdbID      int64
 	Description string
+	MediaID     string
 }
 
 type TmdbInfo struct {

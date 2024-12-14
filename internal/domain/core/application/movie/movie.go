@@ -30,9 +30,10 @@ func New(movieService MovieService) (*Movie, error) {
 }
 
 type CreateMovieRequest struct {
-	Title       string `json:"title"`
+	Title       string `json:"title" validate:"required"`
 	Description string `json:"description"`
 	TMDBID      int64  `json:"tmdb_id"`
+	MediaID     string `json:"media_id"`
 }
 
 type CreateMovieResponse struct {
@@ -44,8 +45,14 @@ func (m *Movie) CreateMovie(ctx context.Context, req *gh.Request[*CreateMovieReq
 		Title:       req.Body.Title,
 		Description: req.Body.Description,
 		TMDBID:      req.Body.TMDBID,
+		MediaID:     req.Body.MediaID,
 	})
 	if err != nil {
+		if errors.Is(err, customerrors.ErrMediaNotFound) {
+			return &gh.Response[*CreateMovieResponse]{
+				StatusCode: http.StatusNotFound,
+			}, customerrors.ErrMediaNotFound
+		}
 		return &gh.Response[*CreateMovieResponse]{}, fmt.Errorf("movieService.CreateMovie: %w", err)
 	}
 
@@ -64,6 +71,7 @@ type GetMovieByIDResponse struct {
 	Title       string          `json:"title"`
 	Description string          `json:"description"`
 	TMDBInfo    *model.TMDBInfo `json:"tmdb_info"`
+	MediaInfo   *model.Media    `json:"media_info"`
 }
 
 func (m *Movie) GetMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.Response[*GetMovieByIDResponse], error) {
@@ -71,10 +79,10 @@ func (m *Movie) GetMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.Res
 
 	movie, err := m.movieService.GetMovieByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, customerrors.ErrRecordNotFound) {
+		if errors.Is(err, customerrors.ErrMovieNotFound) {
 			return &gh.Response[*GetMovieByIDResponse]{
 				StatusCode: http.StatusNotFound,
-			}, customerrors.ErrRecordNotFound
+			}, customerrors.ErrMovieNotFound
 		}
 		return &gh.Response[*GetMovieByIDResponse]{}, fmt.Errorf("movieService.GetMovieByID: %w", err)
 	}
@@ -87,6 +95,7 @@ func (m *Movie) GetMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.Res
 			Title:       movie.Title,
 			Description: movie.Description,
 			TMDBInfo:    movie.TMDBInfo,
+			MediaInfo:   movie.MediaInfo,
 		},
 		StatusCode: http.StatusOK,
 	}, nil
@@ -119,9 +128,10 @@ func (m *Movie) ListMovies(ctx context.Context, req *gh.Request[any]) (*gh.Respo
 }
 
 type UpdateMovieByIDRequest struct {
-	Title       string `json:"title"`
+	Title       string `json:"title" validate:"required"`
 	Description string `json:"description"`
 	TMDBID      int64  `json:"tmdb_id"`
+	MediaID     string `json:"media_id"`
 }
 
 func (m *Movie) UpdateMovieByID(ctx context.Context, req *gh.Request[*UpdateMovieByIDRequest]) (*gh.Response[any], error) {
@@ -132,12 +142,18 @@ func (m *Movie) UpdateMovieByID(ctx context.Context, req *gh.Request[*UpdateMovi
 		Title:       req.Body.Title,
 		Description: req.Body.Description,
 		TMDBID:      req.Body.TMDBID,
+		MediaID:     req.Body.MediaID,
 	})
 	if err != nil {
-		if errors.Is(err, customerrors.ErrRecordNotFound) {
+		if errors.Is(err, customerrors.ErrMovieNotFound) {
 			return &gh.Response[any]{
 				StatusCode: http.StatusNotFound,
-			}, customerrors.ErrRecordNotFound
+			}, customerrors.ErrMovieNotFound
+		}
+		if errors.Is(err, customerrors.ErrMediaNotFound) {
+			return &gh.Response[any]{
+				StatusCode: http.StatusNotFound,
+			}, customerrors.ErrMediaNotFound
 		}
 		return &gh.Response[any]{}, fmt.Errorf("movieService.UpdateMovieByID: %w", err)
 	}
@@ -152,10 +168,10 @@ func (m *Movie) DeleteMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.
 
 	err := m.movieService.DeleteMovieByID(ctx, movieID)
 	if err != nil {
-		if errors.Is(err, customerrors.ErrRecordNotFound) {
+		if errors.Is(err, customerrors.ErrMovieNotFound) {
 			return &gh.Response[any]{
 				StatusCode: http.StatusNotFound,
-			}, customerrors.ErrRecordNotFound
+			}, customerrors.ErrMovieNotFound
 		}
 		return &gh.Response[any]{}, fmt.Errorf("movieService.DeleteMovieByID: %w", err)
 	}

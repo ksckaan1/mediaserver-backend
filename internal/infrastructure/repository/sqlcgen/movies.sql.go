@@ -28,12 +28,13 @@ INSERT INTO movies (
   updated_at,
   title,
   tmdb_id,
-  description
+  description,
+  media_id
 ) VALUES (
   ?,
   (datetime(CURRENT_TIMESTAMP, 'localtime')),
   (datetime(CURRENT_TIMESTAMP, 'localtime')),
-  ?, ?, ?
+  ?, ?, ?, ?
 )
 `
 
@@ -42,6 +43,7 @@ type CreateMovieParams struct {
 	Title       string
 	TmdbID      int64
 	Description string
+	MediaID     string
 }
 
 func (q *Queries) CreateMovie(ctx context.Context, arg CreateMovieParams) error {
@@ -50,6 +52,7 @@ func (q *Queries) CreateMovie(ctx context.Context, arg CreateMovieParams) error 
 		arg.Title,
 		arg.TmdbID,
 		arg.Description,
+		arg.MediaID,
 	)
 	return err
 }
@@ -67,7 +70,7 @@ func (q *Queries) DeleteMovieByID(ctx context.Context, id string) (string, error
 }
 
 const getMovieByID = `-- name: GetMovieByID :one
-SELECT id, created_at, updated_at, title, tmdb_id, description
+SELECT id, created_at, updated_at, title, tmdb_id, description, media_id
 FROM movies
 WHERE id = ?
 `
@@ -82,12 +85,13 @@ func (q *Queries) GetMovieByID(ctx context.Context, id string) (Movie, error) {
 		&i.Title,
 		&i.TmdbID,
 		&i.Description,
+		&i.MediaID,
 	)
 	return i, err
 }
 
 const listMovies = `-- name: ListMovies :many
-SELECT id, created_at, updated_at, title, tmdb_id, description
+SELECT id, created_at, updated_at, title, tmdb_id, description, media_id
 FROM movies
 LIMIT ? OFFSET ?
 `
@@ -113,6 +117,7 @@ func (q *Queries) ListMovies(ctx context.Context, arg ListMoviesParams) ([]Movie
 			&i.Title,
 			&i.TmdbID,
 			&i.Description,
+			&i.MediaID,
 		); err != nil {
 			return nil, err
 		}
@@ -132,6 +137,7 @@ UPDATE movies
 SET updated_at = (datetime(CURRENT_TIMESTAMP, 'localtime')),
     title = ?,
     tmdb_id = ?,
+    media_id = ?,
     description = ?
 WHERE id = ?
 RETURNING id
@@ -140,6 +146,7 @@ RETURNING id
 type UpdateMovieByIDParams struct {
 	Title       string
 	TmdbID      int64
+	MediaID     string
 	Description string
 	ID          string
 }
@@ -148,6 +155,7 @@ func (q *Queries) UpdateMovieByID(ctx context.Context, arg UpdateMovieByIDParams
 	row := q.db.QueryRowContext(ctx, updateMovieByID,
 		arg.Title,
 		arg.TmdbID,
+		arg.MediaID,
 		arg.Description,
 		arg.ID,
 	)

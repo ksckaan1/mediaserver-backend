@@ -19,6 +19,7 @@ func (m *Repository) CreateMovie(ctx context.Context, movie *model.Movie) error 
 		Title:       movie.Title,
 		TmdbID:      movie.TMDBID,
 		Description: movie.Description,
+		MediaID:     movie.MediaID,
 	})
 	if err != nil {
 		return fmt.Errorf("queries.CreateMovie: %w", err)
@@ -30,7 +31,7 @@ func (m *Repository) GetMovieByID(ctx context.Context, id string) (*model.Movie,
 	movie, err := m.queries.GetMovieByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, fmt.Errorf("queries.GetMovieByID: %w", customerrors.ErrRecordNotFound)
+			return nil, fmt.Errorf("queries.GetMovieByID: %w", customerrors.ErrMovieNotFound)
 		}
 		return nil, fmt.Errorf("queries.GetMovieByID: %w", err)
 	}
@@ -41,6 +42,7 @@ func (m *Repository) GetMovieByID(ctx context.Context, id string) (*model.Movie,
 		Title:       movie.Title,
 		TMDBID:      movie.TmdbID,
 		Description: movie.Description,
+		MediaID:     movie.MediaID,
 	}, nil
 }
 
@@ -76,6 +78,7 @@ func (m *Repository) ListMovies(ctx context.Context, limit, offset int64) (*mode
 				Title:       m.Title,
 				TMDBID:      m.TmdbID,
 				Description: m.Description,
+				MediaID:     m.MediaID,
 			}
 		}),
 		Count:  count,
@@ -90,12 +93,13 @@ func (m *Repository) UpdateMovieByID(ctx context.Context, movie *model.Movie) er
 		Title:       movie.Title,
 		TmdbID:      movie.TMDBID,
 		Description: movie.Description,
+		MediaID:     movie.MediaID,
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return fmt.Errorf("queries.UpdateMovieByID: %w", customerrors.ErrRecordNotFound)
+			return fmt.Errorf("queries.UpdateMovieByID: %w", customerrors.ErrMovieNotFound)
 		}
-		return fmt.Errorf("queries.UpdateMovie: %w", err)
+		return fmt.Errorf("queries.UpdateMovieByID: %w", err)
 	}
 	return nil
 }
@@ -104,7 +108,7 @@ func (m *Repository) DeleteMovieByID(ctx context.Context, id string) error {
 	_, err := m.queries.DeleteMovieByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return fmt.Errorf("queries.DeleteMovieByID: %w", customerrors.ErrRecordNotFound)
+			return fmt.Errorf("queries.DeleteMovieByID: %w", customerrors.ErrMovieNotFound)
 		}
 		return fmt.Errorf("queries.DeleteMovieByID: %w", err)
 	}

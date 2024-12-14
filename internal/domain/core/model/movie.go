@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type Movie struct {
 	ID          string    `json:"id"`
@@ -9,6 +11,7 @@ type Movie struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	TMDBID      int64     `json:"tmdb_id"`
+	MediaID     string    `json:"media_id"`
 }
 
 type MovieList struct {
@@ -25,4 +28,5 @@ type GetMovieByIDResponse struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	TMDBInfo    *TMDBInfo `json:"tmdb_info"`
+	MediaInfo   *Media    `json:"media_info"`
 }
