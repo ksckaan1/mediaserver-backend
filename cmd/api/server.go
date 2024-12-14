@@ -14,7 +14,7 @@ import (
 	"mediaserver/internal/pkg/idgen"
 	"mediaserver/internal/port"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 
 	"github.com/gofiber/fiber/v2"
 )
