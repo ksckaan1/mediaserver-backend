@@ -41,7 +41,7 @@ func (t *TMDBClient) GetMovieDetail(ctx context.Context, id int64) (*model.TMDBI
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("check status code: %d", customerrors.ErrUnexpectedStatusCode{
+		return nil, fmt.Errorf("check status code: %w", customerrors.ErrUnexpectedStatusCode{
 			StatusCode: resp.StatusCode,
 		})
 	}
