@@ -10,8 +10,8 @@ import (
 )
 
 const createMedia = `-- name: CreateMedia :exec
-INSERT INTO medias (id, path, type, storage_type, size, created_at)
-		VALUES(?, ?, ?, ?, ?, (datetime (CURRENT_TIMESTAMP, 'localtime')))
+INSERT INTO medias (id, path, type, storage_type, mime_type, size, created_at)
+		VALUES(?, ?, ?, ?, ?, ?, (datetime (CURRENT_TIMESTAMP, 'localtime')))
 `
 
 type CreateMediaParams struct {
@@ -19,6 +19,7 @@ type CreateMediaParams struct {
 	Path        string
 	Type        string
 	StorageType string
+	MimeType    string
 	Size        int64
 }
 
@@ -28,6 +29,7 @@ func (q *Queries) CreateMedia(ctx context.Context, arg CreateMediaParams) error 
 		arg.Path,
 		arg.Type,
 		arg.StorageType,
+		arg.MimeType,
 		arg.Size,
 	)
 	return err
@@ -46,7 +48,7 @@ func (q *Queries) DeleteMediaByID(ctx context.Context, id string) (string, error
 }
 
 const getMediaByID = `-- name: GetMediaByID :one
-SELECT id, created_at, path, type, storage_type, size
+SELECT id, created_at, path, type, storage_type, mime_type, size
 FROM medias
 WHERE id = ?
 `
@@ -60,6 +62,7 @@ func (q *Queries) GetMediaByID(ctx context.Context, id string) (Media, error) {
 		&i.Path,
 		&i.Type,
 		&i.StorageType,
+		&i.MimeType,
 		&i.Size,
 	)
 	return i, err

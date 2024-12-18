@@ -18,6 +18,7 @@ func (m *Repository) CreateMedia(ctx context.Context, media *model.Media) error 
 		Path:        media.Path,
 		Type:        media.Type.String(),
 		StorageType: media.StorageType.String(),
+		MimeType:    media.MimeType,
 		Size:        media.Size,
 	})
 	if err != nil {
@@ -40,6 +41,7 @@ func (m *Repository) GetMediaByID(ctx context.Context, id string) (*model.Media,
 		Path:        media.Path,
 		Type:        mediatype.FromString(media.Type),
 		StorageType: storagetype.FromString(media.StorageType),
+		MimeType:    media.MimeType,
 		Size:        media.Size,
 	}, nil
 }

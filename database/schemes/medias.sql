@@ -4,5 +4,6 @@ CREATE TABLE medias (
     path TEXT NOT NULL,
     type TEXT NOT NULL,
     storage_type TEXT NOT NULL,
+    mime_type TEXT NOT NULL,
     size INTEGER NOT NULL
 )

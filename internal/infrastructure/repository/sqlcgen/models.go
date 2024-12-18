@@ -26,6 +26,7 @@ type Media struct {
 	Path        string
 	Type        string
 	StorageType string
+	MimeType    string
 	Size        int64
 }
 

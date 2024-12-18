@@ -1,6 +1,6 @@
 -- name: CreateMedia :exec
-INSERT INTO medias (id, path, type, storage_type, size, created_at)
-		VALUES(?, ?, ?, ?, ?, (datetime (CURRENT_TIMESTAMP, 'localtime')));
+INSERT INTO medias (id, path, type, storage_type, mime_type, size, created_at)
+		VALUES(?, ?, ?, ?, ?, ?, (datetime (CURRENT_TIMESTAMP, 'localtime')));
 
 -- name: GetMediaByID :one
 SELECT *
