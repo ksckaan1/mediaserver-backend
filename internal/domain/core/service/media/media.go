@@ -29,9 +29,8 @@ func New(repo Repository, idgen port.IDGenerator, lg port.Logger) (*Media, error
 }
 
 func (m *Media) Create(ctx context.Context, fi *model.FileInfo) (string, error) {
-	id := m.idgen.NewID()
 	err := m.repo.CreateMedia(ctx, &model.Media{
-		ID:          id,
+		ID:          fi.ID,
 		Path:        fi.Path,
 		Type:        fi.Type,
 		StorageType: fi.StorageType,
@@ -46,9 +45,9 @@ func (m *Media) Create(ctx context.Context, fi *model.FileInfo) (string, error) 
 		return "", err
 	}
 	m.logger.Info(ctx, "media created",
-		"id", id,
+		"id", fi.ID,
 	)
-	return id, nil
+	return fi.ID, nil
 }
 
 func (m *Media) GetMediaByID(ctx context.Context, id string) (*model.Media, error) {

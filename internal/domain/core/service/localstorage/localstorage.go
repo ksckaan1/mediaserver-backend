@@ -79,6 +79,7 @@ func (l *LocalStorage) Save(ctx context.Context, fh *multipart.FileHeader) (*mod
 		return nil, fmt.Errorf("writeFile: %w", err)
 	}
 	return &model.FileInfo{
+		ID:          id,
 		Path:        fileName,
 		Type:        mediaType,
 		StorageType: storagetype.Local,

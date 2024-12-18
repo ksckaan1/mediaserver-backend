@@ -24,6 +24,7 @@ type MediaList struct {
 }
 
 type FileInfo struct {
+	ID          string                  `json:"id"`
 	Path        string                  `json:"path"`
 	Type        mediatype.MediaType     `json:"type"`
 	StorageType storagetype.StorageType `json:"storage_type"`
