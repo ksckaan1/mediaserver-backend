@@ -12,6 +12,7 @@ import (
 
 type StorageService interface {
 	Save(ctx context.Context, fh *multipart.FileHeader) (*model.FileInfo, error)
+	Delete(ctx context.Context, mediaFilePath string) error
 }
 
 type MediaService interface {

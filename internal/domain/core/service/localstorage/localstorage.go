@@ -142,3 +142,15 @@ func (l *LocalStorage) writeFile(ctx context.Context, f multipart.File, fileName
 	}
 	return nil
 }
+
+func (l *LocalStorage) Delete(ctx context.Context, mediaFilePath string) error {
+	dst := filepath.Join(l.cfg.StoragePath, mediaFilePath)
+	err := os.Remove(dst)
+	if err != nil {
+		return fmt.Errorf("os.Remove: %w", err)
+	}
+	l.logger.Info(ctx, "file deleted",
+		"path", dst,
+	)
+	return nil
+}
