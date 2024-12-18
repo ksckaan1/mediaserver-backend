@@ -3,6 +3,7 @@ package media
 import (
 	"context"
 	"fmt"
+	"mediaserver/internal/domain/core/model"
 	"mediaserver/internal/pkg/gh"
 	"mediaserver/internal/port"
 	"mime/multipart"
@@ -10,23 +11,29 @@ import (
 )
 
 type StorageService interface {
-	Save(ctx context.Context, fh *multipart.FileHeader) (string, error)
+	Save(ctx context.Context, fh *multipart.FileHeader) (*model.FileInfo, error)
+}
+
+type MediaService interface {
+	Create(ctx context.Context, fi *model.FileInfo) (string, error)
 }
 
 type Media struct {
 	logger         port.Logger
 	storageService StorageService
+	mediaService   MediaService
 }
 
-func New(storageService StorageService, logger port.Logger) (*Media, error) {
+func New(storageService StorageService, mediaService MediaService, logger port.Logger) (*Media, error) {
 	return &Media{
 		storageService: storageService,
+		mediaService:   mediaService,
 		logger:         logger,
 	}, nil
 }
 
 type UploadMediaRequest struct {
-	File *multipart.FileHeader `form:"file"`
+	File *multipart.FileHeader `form:"file" validate:"required"`
 }
 
 type UploadMediaResponse struct {
@@ -34,11 +41,14 @@ type UploadMediaResponse struct {
 }
 
 func (m *Media) UploadMedia(ctx context.Context, req *gh.Request[UploadMediaRequest]) (*gh.Response[*UploadMediaResponse], error) {
-	id, err := m.storageService.Save(ctx, req.Body.File)
+	fileInfo, err := m.storageService.Save(ctx, req.Body.File)
 	if err != nil {
 		return &gh.Response[*UploadMediaResponse]{}, fmt.Errorf("storageService.Save: %w", err)
 	}
-
+	id, err := m.mediaService.Create(ctx, fileInfo)
+	if err != nil {
+		return &gh.Response[*UploadMediaResponse]{}, fmt.Errorf("mediaService.Create: %w", err)
+	}
 	return &gh.Response[*UploadMediaResponse]{
 		Body: &UploadMediaResponse{
 			ID: id,

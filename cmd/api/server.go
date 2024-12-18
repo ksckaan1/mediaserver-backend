@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 	"mediaserver/config"
-	"mediaserver/internal/domain/core/application/media"
+	mediaapp "mediaserver/internal/domain/core/application/media"
+	mediaservice "mediaserver/internal/domain/core/service/media"
+
 	movieapp "mediaserver/internal/domain/core/application/movie"
 	"mediaserver/internal/domain/core/service/localstorage"
 	movieservice "mediaserver/internal/domain/core/service/movie"
@@ -24,7 +26,7 @@ type Server struct {
 	logger   port.Logger
 	router   *fiber.App
 	movieApp *movieapp.Movie
-	mediaApp *media.Media
+	mediaApp *mediaapp.Media
 }
 
 func NewServer(cfg *config.Config, logger port.Logger) *Server {
@@ -83,9 +85,14 @@ func (s *Server) Init(ctx context.Context) error {
 		return fmt.Errorf("localstorage.New: %w", err)
 	}
 
-	s.mediaApp, err = media.New(lss, s.logger)
+	mediaService, err := mediaservice.New(repo, idGen, s.logger)
 	if err != nil {
-		return fmt.Errorf("media.New: %w", err)
+		return fmt.Errorf("mediaservice.New: %w", err)
+	}
+
+	s.mediaApp, err = mediaapp.New(lss, mediaService, s.logger)
+	if err != nil {
+		return fmt.Errorf("mediaapp.New: %w", err)
 	}
 
 	s.linkRoutes()

@@ -12,5 +12,14 @@ type Media struct {
 	Path        string                  `json:"path"`
 	Type        mediatype.MediaType     `json:"type"`
 	StorageType storagetype.StorageType `json:"storage_type"`
+	MimeType    string                  `json:"mime_type"`
+	Size        int64                   `json:"size"`
+}
+
+type FileInfo struct {
+	Path        string                  `json:"path"`
+	Type        mediatype.MediaType     `json:"type"`
+	StorageType storagetype.StorageType `json:"storage_type"`
+	MimeType    string                  `json:"mime_type"`
 	Size        int64                   `json:"size"`
 }
