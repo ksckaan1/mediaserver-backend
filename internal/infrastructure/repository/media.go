@@ -10,6 +10,8 @@ import (
 	"mediaserver/internal/domain/core/enum/storagetype"
 	"mediaserver/internal/domain/core/model"
 	"mediaserver/internal/infrastructure/repository/sqlcgen"
+
+	"github.com/samber/lo"
 )
 
 func (m *Repository) CreateMedia(ctx context.Context, media *model.Media) error {
@@ -43,6 +45,45 @@ func (m *Repository) GetMediaByID(ctx context.Context, id string) (*model.Media,
 		StorageType: storagetype.FromString(media.StorageType),
 		MimeType:    media.MimeType,
 		Size:        media.Size,
+	}, nil
+}
+
+func (m *Repository) ListMedias(ctx context.Context, limit, offset int64) (*model.MediaList, error) {
+	count, err := m.queries.CountMedias(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("queries.CountMedias: %w", err)
+	}
+	if count == 0 {
+		return &model.MediaList{
+			List:   make([]*model.Media, 0),
+			Count:  count,
+			Limit:  limit,
+			Offset: offset,
+		}, nil
+	}
+
+	list, err := m.queries.ListMedias(ctx, sqlcgen.ListMediasParams{
+		Limit:  limit,
+		Offset: offset,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("queries.ListMedias: %w", err)
+	}
+	return &model.MediaList{
+		List: lo.Map(list, func(m sqlcgen.Media, _ int) *model.Media {
+			return &model.Media{
+				ID:          m.ID,
+				CreatedAt:   m.CreatedAt,
+				Path:        m.Path,
+				Type:        mediatype.FromString(m.Type),
+				StorageType: storagetype.FromString(m.StorageType),
+				MimeType:    m.MimeType,
+				Size:        m.Size,
+			}
+		}),
+		Count:  count,
+		Limit:  limit,
+		Offset: offset,
 	}, nil
 }
 

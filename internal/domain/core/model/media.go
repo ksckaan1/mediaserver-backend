@@ -16,6 +16,13 @@ type Media struct {
 	Size        int64                   `json:"size"`
 }
 
+type MediaList struct {
+	List   []*Media `json:"list"`
+	Count  int64    `json:"count"`
+	Limit  int64    `json:"limit"`
+	Offset int64    `json:"offset"`
+}
+
 type FileInfo struct {
 	Path        string                  `json:"path"`
 	Type        mediatype.MediaType     `json:"type"`

@@ -7,6 +7,15 @@ SELECT *
 FROM medias
 WHERE id = ?;
 
+-- name: ListMedias :many
+SELECT *
+FROM medias
+LIMIT ? OFFSET ?;
+
+-- name: CountMedias :one
+SELECT COUNT(*)
+FROM medias;
+
 -- name: DeleteMediaByID :one
 DELETE FROM medias
 WHERE id = ?

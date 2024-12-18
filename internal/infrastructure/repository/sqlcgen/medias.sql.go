@@ -9,6 +9,18 @@ import (
 	"context"
 )
 
+const countMedias = `-- name: CountMedias :one
+SELECT COUNT(*)
+FROM medias
+`
+
+func (q *Queries) CountMedias(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countMedias)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createMedia = `-- name: CreateMedia :exec
 INSERT INTO medias (id, path, type, storage_type, mime_type, size, created_at)
 		VALUES(?, ?, ?, ?, ?, ?, (datetime (CURRENT_TIMESTAMP, 'localtime')))
@@ -66,4 +78,46 @@ func (q *Queries) GetMediaByID(ctx context.Context, id string) (Media, error) {
 		&i.Size,
 	)
 	return i, err
+}
+
+const listMedias = `-- name: ListMedias :many
+SELECT id, created_at, path, type, storage_type, mime_type, size
+FROM medias
+LIMIT ? OFFSET ?
+`
+
+type ListMediasParams struct {
+	Limit  int64
+	Offset int64
+}
+
+func (q *Queries) ListMedias(ctx context.Context, arg ListMediasParams) ([]Media, error) {
+	rows, err := q.db.QueryContext(ctx, listMedias, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Media
+	for rows.Next() {
+		var i Media
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.Path,
+			&i.Type,
+			&i.StorageType,
+			&i.MimeType,
+			&i.Size,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
