@@ -17,20 +17,14 @@ import (
 	"github.com/h2non/filetype"
 )
 
-type Repository interface {
-	CreateMedia(ctx context.Context, media *model.Media) error
-}
-
 type LocalStorage struct {
-	repo   Repository
 	cfg    *config.Config
 	idgen  port.IDGenerator
 	logger port.Logger
 }
 
-func New(repo Repository, cfg *config.Config, idgen port.IDGenerator, logger port.Logger) (*LocalStorage, error) {
+func New(cfg *config.Config, idgen port.IDGenerator, logger port.Logger) (*LocalStorage, error) {
 	return &LocalStorage{
-		repo:   repo,
 		cfg:    cfg,
 		idgen:  idgen,
 		logger: logger,
