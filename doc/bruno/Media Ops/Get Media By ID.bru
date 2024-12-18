@@ -1,0 +1,27 @@
+meta {
+  name: Get Media By ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HOST}}/api/v1/media/:media_id
+  body: none
+  auth: none
+}
+
+params:path {
+  media_id: 1867667821345902592
+}
+
+body:json {
+  {
+    "title": "Example Movie",
+    "description": "Example Description",
+    "tmdb_id": "123123"
+  }
+}
+
+body:multipart-form {
+  file: @file(/Users/ksckaan1/Movies/big-buck-bunny.mp4)
+}

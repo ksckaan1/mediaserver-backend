@@ -12,4 +12,7 @@ func (s *Server) linkRoutes() {
 
 	// MEDIA OPS
 	v1.Post("/media", H(s.mediaApp.UploadMedia))
+	v1.Get("/media", H(s.mediaApp.ListMedias))
+	v1.Get("/media/:id", H(s.mediaApp.GetMediaByID))
+	v1.Delete("/media/:id", H(s.mediaApp.DeleteMediaByID))
 }
