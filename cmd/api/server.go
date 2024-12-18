@@ -80,7 +80,7 @@ func (s *Server) Init(ctx context.Context) error {
 		return fmt.Errorf("movieapp.New: %w", err)
 	}
 
-	lss, err := localstorage.New(repo, s.cfg, idGen, s.logger)
+	lss, err := localstorage.New(s.cfg, idGen, s.logger)
 	if err != nil {
 		return fmt.Errorf("localstorage.New: %w", err)
 	}
