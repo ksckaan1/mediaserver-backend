@@ -3,7 +3,7 @@
 ------------
 
 -- name: CreateSeries :exec
-INSERT INTO series (id, created_at, updated_at, name, description, tmdb_id)
+INSERT INTO series (id, created_at, updated_at, title, description, tmdb_id)
 		VALUES(?, (datetime (CURRENT_TIMESTAMP, 'localtime')), (datetime (CURRENT_TIMESTAMP, 'localtime')), ?, ?, ?);
 
 -- name: ListSeries :many
@@ -22,7 +22,7 @@ WHERE id = ?;
 
 -- name: UpdateSeriesByID :one
 UPDATE series
-SET name = ?, description = ?, tmdb_id = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
+SET title = ?, description = ?, tmdb_id = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
 WHERE id = ?
 RETURNING id;
 
@@ -36,7 +36,7 @@ RETURNING id;
 -------------
 
 -- name: CreateSeason :exec
-INSERT INTO seasons (id, created_at, updated_at, name, description, series_id, `order`)
+INSERT INTO seasons (id, created_at, updated_at, title, description, series_id, `order`)
     VALUES(?, (datetime (CURRENT_TIMESTAMP, 'localtime')), (datetime (CURRENT_TIMESTAMP, 'localtime')), ?, ?, ?, ?);
 
 -- name: ListSeasonsBySeriesID :many
@@ -57,7 +57,7 @@ WHERE id = ?;
 
 -- name: UpdateSeasonByID :one
 UPDATE seasons
-SET name = ?, description = ?, `order` = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
+SET title = ?, description = ?, `order` = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
 WHERE id = ?
 RETURNING id;
 
@@ -71,7 +71,7 @@ RETURNING id;
 --------------
 
 -- name: CreateEpisode :exec
-INSERT INTO episodes (id, created_at, updated_at, name, description, season_id, `order`, media_id)
+INSERT INTO episodes (id, created_at, updated_at, title, description, season_id, `order`, media_id)
     VALUES(?, (datetime (CURRENT_TIMESTAMP, 'localtime')), (datetime (CURRENT_TIMESTAMP, 'localtime')), ?, ?, ?, ?, ?);
 
 -- name: ListEpisodesBySeasonID :many
@@ -92,7 +92,7 @@ WHERE id = ?;
 
 -- name: UpdateEpisodeByID :one
 UPDATE episodes
-SET name = ?, description = ?, `order` = ?, media_id = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
+SET title = ?, description = ?, `order` = ?, media_id = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
 WHERE id = ?
 RETURNING id; 
 

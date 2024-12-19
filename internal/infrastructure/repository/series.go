@@ -15,7 +15,7 @@ import (
 func (m *Repository) CreateSeries(ctx context.Context, series *model.Series) error {
 	err := m.queries.CreateSeries(ctx, sqlcgen.CreateSeriesParams{
 		ID:          series.ID,
-		Name:        series.Name,
+		Title:       series.Title,
 		Description: series.Description,
 		TmdbID:      series.TMDBID,
 	})
@@ -51,7 +51,7 @@ func (m *Repository) ListSeries(ctx context.Context, limit, offset int64) (*mode
 				ID:          s.ID,
 				CreatedAt:   s.CreatedAt,
 				UpdatedAt:   s.UpdatedAt,
-				Name:        s.Name,
+				Title:       s.Title,
 				Description: s.Description,
 				TMDBID:      s.TmdbID,
 			}
@@ -74,7 +74,7 @@ func (m *Repository) GetSeriesByID(ctx context.Context, id string) (*model.Serie
 		ID:          series.ID,
 		CreatedAt:   series.CreatedAt,
 		UpdatedAt:   series.UpdatedAt,
-		Name:        series.Name,
+		Title:       series.Title,
 		Description: series.Description,
 		TMDBID:      series.TmdbID,
 	}, nil
@@ -83,7 +83,7 @@ func (m *Repository) GetSeriesByID(ctx context.Context, id string) (*model.Serie
 func (m *Repository) UpdateSeriesByID(ctx context.Context, series *model.Series) error {
 	_, err := m.queries.UpdateSeriesByID(ctx, sqlcgen.UpdateSeriesByIDParams{
 		ID:          series.ID,
-		Name:        series.Name,
+		Title:       series.Title,
 		Description: series.Description,
 		TmdbID:      series.TMDBID,
 	})
@@ -110,7 +110,7 @@ func (m *Repository) DeleteSeriesByID(ctx context.Context, id string) error {
 func (m *Repository) CreateSeason(ctx context.Context, season *model.Season) error {
 	err := m.queries.CreateSeason(ctx, sqlcgen.CreateSeasonParams{
 		ID:          season.ID,
-		Name:        season.Name,
+		Title:       season.Title,
 		Description: season.Description,
 		SeriesID:    season.SeriesID,
 		Order:       season.Order,
@@ -146,7 +146,7 @@ func (m *Repository) ListSeasonsBySeriesID(ctx context.Context, seriesID string,
 				ID:          s.ID,
 				CreatedAt:   s.CreatedAt,
 				UpdatedAt:   s.UpdatedAt,
-				Name:        s.Name,
+				Title:       s.Title,
 				Description: s.Description,
 				SeriesID:    s.SeriesID,
 				Order:       s.Order,
@@ -170,7 +170,7 @@ func (m *Repository) GetSeasonByID(ctx context.Context, id string) (*model.Seaso
 		ID:          season.ID,
 		CreatedAt:   season.CreatedAt,
 		UpdatedAt:   season.UpdatedAt,
-		Name:        season.Name,
+		Title:       season.Title,
 		Description: season.Description,
 		SeriesID:    season.SeriesID,
 		Order:       season.Order,
@@ -180,7 +180,7 @@ func (m *Repository) GetSeasonByID(ctx context.Context, id string) (*model.Seaso
 func (m *Repository) UpdateSeasonByID(ctx context.Context, season *model.Season) error {
 	_, err := m.queries.UpdateSeasonByID(ctx, sqlcgen.UpdateSeasonByIDParams{
 		ID:          season.ID,
-		Name:        season.Name,
+		Title:       season.Title,
 		Description: season.Description,
 		Order:       season.Order,
 	})
@@ -207,7 +207,7 @@ func (m *Repository) DeleteSeasonByID(ctx context.Context, id string) error {
 func (m *Repository) CreateEpisode(ctx context.Context, episode *model.Episode) error {
 	err := m.queries.CreateEpisode(ctx, sqlcgen.CreateEpisodeParams{
 		ID:          episode.ID,
-		Name:        episode.Name,
+		Title:       episode.Title,
 		Description: episode.Description,
 		SeasonID:    episode.SeasonID,
 		Order:       episode.Order,
@@ -244,7 +244,7 @@ func (m *Repository) ListEpisodesBySeasonID(ctx context.Context, seasonID string
 				ID:          e.ID,
 				CreatedAt:   e.CreatedAt,
 				UpdatedAt:   e.UpdatedAt,
-				Name:        e.Name,
+				Title:       e.Title,
 				Description: e.Description,
 				SeasonID:    e.SeasonID,
 				Order:       e.Order,
@@ -269,7 +269,7 @@ func (m *Repository) GetEpisodeByID(ctx context.Context, id string) (*model.Epis
 		ID:          episode.ID,
 		CreatedAt:   episode.CreatedAt,
 		UpdatedAt:   episode.UpdatedAt,
-		Name:        episode.Name,
+		Title:       episode.Title,
 		Description: episode.Description,
 		SeasonID:    episode.SeasonID,
 		Order:       episode.Order,
@@ -280,7 +280,7 @@ func (m *Repository) GetEpisodeByID(ctx context.Context, id string) (*model.Epis
 func (m *Repository) UpdateEpisodeByID(ctx context.Context, episode *model.Episode) error {
 	_, err := m.queries.UpdateEpisodeByID(ctx, sqlcgen.UpdateEpisodeByIDParams{
 		ID:          episode.ID,
-		Name:        episode.Name,
+		Title:       episode.Title,
 		Description: episode.Description,
 		Order:       episode.Order,
 		MediaID:     episode.MediaID,

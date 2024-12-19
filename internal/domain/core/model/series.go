@@ -6,9 +6,18 @@ type Series struct {
 	ID          string    `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	Name        string    `json:"name"`
+	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	TMDBID      int64     `json:"tmdb_id"`
+}
+
+type GetSeriesResponse struct {
+	ID          string    `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	TMDBInfo    *TMDBInfo `json:"tmdb_info"`
 }
 
 type SeriesList struct {
@@ -22,7 +31,7 @@ type Season struct {
 	ID          string    `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	Name        string    `json:"name"`
+	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	SeriesID    string    `json:"series_id"`
 	Order       int64     `json:"order"`
@@ -39,7 +48,7 @@ type Episode struct {
 	ID          string    `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	Name        string    `json:"name"`
+	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	SeasonID    string    `json:"season_id"`
 	Order       int64     `json:"order"`

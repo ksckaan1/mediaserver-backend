@@ -49,13 +49,13 @@ func (q *Queries) CountSeries(ctx context.Context) (int64, error) {
 
 const createEpisode = `-- name: CreateEpisode :exec
 
-INSERT INTO episodes (id, created_at, updated_at, name, description, season_id, ` + "`" + `order` + "`" + `, media_id)
+INSERT INTO episodes (id, created_at, updated_at, title, description, season_id, ` + "`" + `order` + "`" + `, media_id)
     VALUES(?, (datetime (CURRENT_TIMESTAMP, 'localtime')), (datetime (CURRENT_TIMESTAMP, 'localtime')), ?, ?, ?, ?, ?)
 `
 
 type CreateEpisodeParams struct {
 	ID          string
-	Name        string
+	Title       string
 	Description string
 	SeasonID    string
 	Order       int64
@@ -68,7 +68,7 @@ type CreateEpisodeParams struct {
 func (q *Queries) CreateEpisode(ctx context.Context, arg CreateEpisodeParams) error {
 	_, err := q.db.ExecContext(ctx, createEpisode,
 		arg.ID,
-		arg.Name,
+		arg.Title,
 		arg.Description,
 		arg.SeasonID,
 		arg.Order,
@@ -79,13 +79,13 @@ func (q *Queries) CreateEpisode(ctx context.Context, arg CreateEpisodeParams) er
 
 const createSeason = `-- name: CreateSeason :exec
 
-INSERT INTO seasons (id, created_at, updated_at, name, description, series_id, ` + "`" + `order` + "`" + `)
+INSERT INTO seasons (id, created_at, updated_at, title, description, series_id, ` + "`" + `order` + "`" + `)
     VALUES(?, (datetime (CURRENT_TIMESTAMP, 'localtime')), (datetime (CURRENT_TIMESTAMP, 'localtime')), ?, ?, ?, ?)
 `
 
 type CreateSeasonParams struct {
 	ID          string
-	Name        string
+	Title       string
 	Description string
 	SeriesID    string
 	Order       int64
@@ -97,7 +97,7 @@ type CreateSeasonParams struct {
 func (q *Queries) CreateSeason(ctx context.Context, arg CreateSeasonParams) error {
 	_, err := q.db.ExecContext(ctx, createSeason,
 		arg.ID,
-		arg.Name,
+		arg.Title,
 		arg.Description,
 		arg.SeriesID,
 		arg.Order,
@@ -107,13 +107,13 @@ func (q *Queries) CreateSeason(ctx context.Context, arg CreateSeasonParams) erro
 
 const createSeries = `-- name: CreateSeries :exec
 
-INSERT INTO series (id, created_at, updated_at, name, description, tmdb_id)
+INSERT INTO series (id, created_at, updated_at, title, description, tmdb_id)
 		VALUES(?, (datetime (CURRENT_TIMESTAMP, 'localtime')), (datetime (CURRENT_TIMESTAMP, 'localtime')), ?, ?, ?)
 `
 
 type CreateSeriesParams struct {
 	ID          string
-	Name        string
+	Title       string
 	Description string
 	TmdbID      int64
 }
@@ -124,7 +124,7 @@ type CreateSeriesParams struct {
 func (q *Queries) CreateSeries(ctx context.Context, arg CreateSeriesParams) error {
 	_, err := q.db.ExecContext(ctx, createSeries,
 		arg.ID,
-		arg.Name,
+		arg.Title,
 		arg.Description,
 		arg.TmdbID,
 	)
@@ -168,7 +168,7 @@ func (q *Queries) DeleteSeriesByID(ctx context.Context, id string) (string, erro
 }
 
 const getEpisodeByID = `-- name: GetEpisodeByID :one
-SELECT id, created_at, updated_at, name, description, season_id, ` + "`" + `order` + "`" + `, media_id
+SELECT id, created_at, updated_at, title, description, season_id, ` + "`" + `order` + "`" + `, media_id
 FROM episodes
 WHERE id = ?
 `
@@ -180,7 +180,7 @@ func (q *Queries) GetEpisodeByID(ctx context.Context, id string) (Episode, error
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Name,
+		&i.Title,
 		&i.Description,
 		&i.SeasonID,
 		&i.Order,
@@ -190,7 +190,7 @@ func (q *Queries) GetEpisodeByID(ctx context.Context, id string) (Episode, error
 }
 
 const getSeasonByID = `-- name: GetSeasonByID :one
-SELECT id, created_at, updated_at, name, description, series_id, ` + "`" + `order` + "`" + `
+SELECT id, created_at, updated_at, title, description, series_id, ` + "`" + `order` + "`" + `
 FROM seasons
 WHERE id = ?
 `
@@ -202,7 +202,7 @@ func (q *Queries) GetSeasonByID(ctx context.Context, id string) (Season, error) 
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Name,
+		&i.Title,
 		&i.Description,
 		&i.SeriesID,
 		&i.Order,
@@ -211,7 +211,7 @@ func (q *Queries) GetSeasonByID(ctx context.Context, id string) (Season, error) 
 }
 
 const getSeriesByID = `-- name: GetSeriesByID :one
-SELECT id, created_at, updated_at, name, description, tmdb_id
+SELECT id, created_at, updated_at, title, description, tmdb_id
 FROM series
 WHERE id = ?
 `
@@ -223,7 +223,7 @@ func (q *Queries) GetSeriesByID(ctx context.Context, id string) (Series, error) 
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Name,
+		&i.Title,
 		&i.Description,
 		&i.TmdbID,
 	)
@@ -231,7 +231,7 @@ func (q *Queries) GetSeriesByID(ctx context.Context, id string) (Series, error) 
 }
 
 const listEpisodesBySeasonID = `-- name: ListEpisodesBySeasonID :many
-SELECT id, created_at, updated_at, name, description, season_id, ` + "`" + `order` + "`" + `, media_id
+SELECT id, created_at, updated_at, title, description, season_id, ` + "`" + `order` + "`" + `, media_id
 FROM episodes
 WHERE season_id = ?
 LIMIT ? OFFSET ?
@@ -256,7 +256,7 @@ func (q *Queries) ListEpisodesBySeasonID(ctx context.Context, arg ListEpisodesBy
 			&i.ID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Name,
+			&i.Title,
 			&i.Description,
 			&i.SeasonID,
 			&i.Order,
@@ -276,7 +276,7 @@ func (q *Queries) ListEpisodesBySeasonID(ctx context.Context, arg ListEpisodesBy
 }
 
 const listSeasonsBySeriesID = `-- name: ListSeasonsBySeriesID :many
-SELECT id, created_at, updated_at, name, description, series_id, ` + "`" + `order` + "`" + `
+SELECT id, created_at, updated_at, title, description, series_id, ` + "`" + `order` + "`" + `
 FROM seasons
 WHERE series_id = ?
 LIMIT ? OFFSET ?
@@ -301,7 +301,7 @@ func (q *Queries) ListSeasonsBySeriesID(ctx context.Context, arg ListSeasonsBySe
 			&i.ID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Name,
+			&i.Title,
 			&i.Description,
 			&i.SeriesID,
 			&i.Order,
@@ -320,7 +320,7 @@ func (q *Queries) ListSeasonsBySeriesID(ctx context.Context, arg ListSeasonsBySe
 }
 
 const listSeries = `-- name: ListSeries :many
-SELECT id, created_at, updated_at, name, description, tmdb_id
+SELECT id, created_at, updated_at, title, description, tmdb_id
 FROM series
 LIMIT ? OFFSET ?
 `
@@ -343,7 +343,7 @@ func (q *Queries) ListSeries(ctx context.Context, arg ListSeriesParams) ([]Serie
 			&i.ID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Name,
+			&i.Title,
 			&i.Description,
 			&i.TmdbID,
 		); err != nil {
@@ -362,13 +362,13 @@ func (q *Queries) ListSeries(ctx context.Context, arg ListSeriesParams) ([]Serie
 
 const updateEpisodeByID = `-- name: UpdateEpisodeByID :one
 UPDATE episodes
-SET name = ?, description = ?, ` + "`" + `order` + "`" + ` = ?, media_id = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
+SET title = ?, description = ?, ` + "`" + `order` + "`" + ` = ?, media_id = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
 WHERE id = ?
 RETURNING id
 `
 
 type UpdateEpisodeByIDParams struct {
-	Name        string
+	Title       string
 	Description string
 	Order       int64
 	MediaID     string
@@ -377,7 +377,7 @@ type UpdateEpisodeByIDParams struct {
 
 func (q *Queries) UpdateEpisodeByID(ctx context.Context, arg UpdateEpisodeByIDParams) (string, error) {
 	row := q.db.QueryRowContext(ctx, updateEpisodeByID,
-		arg.Name,
+		arg.Title,
 		arg.Description,
 		arg.Order,
 		arg.MediaID,
@@ -390,13 +390,13 @@ func (q *Queries) UpdateEpisodeByID(ctx context.Context, arg UpdateEpisodeByIDPa
 
 const updateSeasonByID = `-- name: UpdateSeasonByID :one
 UPDATE seasons
-SET name = ?, description = ?, ` + "`" + `order` + "`" + ` = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
+SET title = ?, description = ?, ` + "`" + `order` + "`" + ` = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
 WHERE id = ?
 RETURNING id
 `
 
 type UpdateSeasonByIDParams struct {
-	Name        string
+	Title       string
 	Description string
 	Order       int64
 	ID          string
@@ -404,7 +404,7 @@ type UpdateSeasonByIDParams struct {
 
 func (q *Queries) UpdateSeasonByID(ctx context.Context, arg UpdateSeasonByIDParams) (string, error) {
 	row := q.db.QueryRowContext(ctx, updateSeasonByID,
-		arg.Name,
+		arg.Title,
 		arg.Description,
 		arg.Order,
 		arg.ID,
@@ -416,13 +416,13 @@ func (q *Queries) UpdateSeasonByID(ctx context.Context, arg UpdateSeasonByIDPara
 
 const updateSeriesByID = `-- name: UpdateSeriesByID :one
 UPDATE series
-SET name = ?, description = ?, tmdb_id = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
+SET title = ?, description = ?, tmdb_id = ?, updated_at = (datetime (CURRENT_TIMESTAMP, 'localtime'))
 WHERE id = ?
 RETURNING id
 `
 
 type UpdateSeriesByIDParams struct {
-	Name        string
+	Title       string
 	Description string
 	TmdbID      int64
 	ID          string
@@ -430,7 +430,7 @@ type UpdateSeriesByIDParams struct {
 
 func (q *Queries) UpdateSeriesByID(ctx context.Context, arg UpdateSeriesByIDParams) (string, error) {
 	row := q.db.QueryRowContext(ctx, updateSeriesByID,
-		arg.Name,
+		arg.Title,
 		arg.Description,
 		arg.TmdbID,
 		arg.ID,

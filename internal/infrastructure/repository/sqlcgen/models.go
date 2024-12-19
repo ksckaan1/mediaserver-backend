@@ -13,7 +13,7 @@ type Episode struct {
 	ID          string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Name        string
+	Title       string
 	Description string
 	SeasonID    string
 	Order       int64
@@ -44,7 +44,7 @@ type Season struct {
 	ID          string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Name        string
+	Title       string
 	Description string
 	SeriesID    string
 	Order       int64
@@ -54,7 +54,7 @@ type Series struct {
 	ID          string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Name        string
+	Title       string
 	Description string
 	TmdbID      int64
 }
