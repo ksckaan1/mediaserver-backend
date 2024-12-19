@@ -12,3 +12,8 @@ runners:
       - DB_AUTO_MIGRATE=true
     log:
       overwrite: true
+
+  sqlc:
+    cmd: "sqlc generate"
+    log:
+      overwrite: true
