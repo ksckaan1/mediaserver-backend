@@ -10,65 +10,31 @@ import (
 )
 
 const getTMDBInfo = `-- name: GetTMDBInfo :one
-SELECT id, title, original_title, poster_path, backdrop_path, vote_average, vote_count, popularity, release_date FROM tmdb_infos WHERE id = ?
+SELECT id, data FROM tmdb_infos WHERE id = ?
 `
 
-func (q *Queries) GetTMDBInfo(ctx context.Context, id int64) (TmdbInfo, error) {
+func (q *Queries) GetTMDBInfo(ctx context.Context, id string) (TmdbInfo, error) {
 	row := q.db.QueryRowContext(ctx, getTMDBInfo, id)
 	var i TmdbInfo
-	err := row.Scan(
-		&i.ID,
-		&i.Title,
-		&i.OriginalTitle,
-		&i.PosterPath,
-		&i.BackdropPath,
-		&i.VoteAverage,
-		&i.VoteCount,
-		&i.Popularity,
-		&i.ReleaseDate,
-	)
+	err := row.Scan(&i.ID, &i.Data)
 	return i, err
 }
 
 const setTMDBInfo = `-- name: SetTMDBInfo :exec
-INSERT INTO tmdb_infos (id,title, original_title, poster_path, backdrop_path, vote_average, vote_count, popularity, release_date)
-		VALUES(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9) ON CONFLICT (id)
+INSERT INTO tmdb_infos (id, data)
+		VALUES(?1, ?2) ON CONFLICT (id)
 		DO
 		UPDATE
 		SET
-			title = ?2,
-			original_title = ?3,
-			poster_path = ?4,
-			backdrop_path = ?5,
-			vote_average = ?6,
-			vote_count = ?7,
-			popularity = ?8,
-			release_date = ?9
+			data = ?2
 `
 
 type SetTMDBInfoParams struct {
-	ID            int64
-	Title         string
-	OriginalTitle string
-	PosterPath    string
-	BackdropPath  string
-	VoteAverage   float64
-	VoteCount     int64
-	Popularity    float64
-	ReleaseDate   string
+	ID   string
+	Data []byte
 }
 
 func (q *Queries) SetTMDBInfo(ctx context.Context, arg SetTMDBInfoParams) error {
-	_, err := q.db.ExecContext(ctx, setTMDBInfo,
-		arg.ID,
-		arg.Title,
-		arg.OriginalTitle,
-		arg.PosterPath,
-		arg.BackdropPath,
-		arg.VoteAverage,
-		arg.VoteCount,
-		arg.Popularity,
-		arg.ReleaseDate,
-	)
+	_, err := q.db.ExecContext(ctx, setTMDBInfo, arg.ID, arg.Data)
 	return err
 }

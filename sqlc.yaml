@@ -7,3 +7,8 @@ sql:
       go:
         package: "sqlcgen"
         out: "internal/infrastructure/repository/sqlcgen"
+        overrides:
+          - column: "tmdb_infos.data"
+            go_type:
+              type: "byte"
+              slice: true
