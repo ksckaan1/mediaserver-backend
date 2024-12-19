@@ -8,7 +8,6 @@ import (
 	"mediaserver/internal/domain/core/model"
 	"mediaserver/internal/pkg/gh"
 	"net/http"
-	"time"
 )
 
 type MovieService interface {
@@ -64,39 +63,21 @@ func (m *Movie) CreateMovie(ctx context.Context, req *gh.Request[*CreateMovieReq
 	}, nil
 }
 
-type GetMovieByIDResponse struct {
-	ID          string          `json:"id"`
-	CreatedAt   time.Time       `json:"created_at"`
-	UpdatedAt   time.Time       `json:"updated_at"`
-	Title       string          `json:"title"`
-	Description string          `json:"description"`
-	TMDBInfo    *model.TMDBInfo `json:"tmdb_info"`
-	MediaInfo   *model.Media    `json:"media_info"`
-}
-
-func (m *Movie) GetMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.Response[*GetMovieByIDResponse], error) {
+func (m *Movie) GetMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.Response[*model.GetMovieByIDResponse], error) {
 	id := req.Params["id"]
 
 	movie, err := m.movieService.GetMovieByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, customerrors.ErrMovieNotFound) {
-			return &gh.Response[*GetMovieByIDResponse]{
+			return &gh.Response[*model.GetMovieByIDResponse]{
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMovieNotFound
 		}
-		return &gh.Response[*GetMovieByIDResponse]{}, fmt.Errorf("movieService.GetMovieByID: %w", err)
+		return &gh.Response[*model.GetMovieByIDResponse]{}, fmt.Errorf("movieService.GetMovieByID: %w", err)
 	}
 
-	return &gh.Response[*GetMovieByIDResponse]{
-		Body: &GetMovieByIDResponse{
-			ID:          id,
-			CreatedAt:   movie.CreatedAt,
-			UpdatedAt:   movie.UpdatedAt,
-			Title:       movie.Title,
-			Description: movie.Description,
-			TMDBInfo:    movie.TMDBInfo,
-			MediaInfo:   movie.MediaInfo,
-		},
+	return &gh.Response[*model.GetMovieByIDResponse]{
+		Body:       movie,
 		StatusCode: http.StatusOK,
 	}, nil
 }
