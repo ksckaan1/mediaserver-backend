@@ -17,12 +17,12 @@ type Repository interface {
 
 	// TMDBInfo
 	SetTMDBInfo(ctx context.Context, info *model.TMDBInfo) error
-	GetTMDBInfoByID(ctx context.Context, id int64) (*model.TMDBInfo, error)
+	GetTMDBInfoByID(ctx context.Context, id string) (*model.TMDBInfo, error)
 }
 
 type TMDBClient interface {
-	GetMovieDetail(ctx context.Context, id int64) (*model.TMDBInfo, error)
-	GetSeriesDetail(ctx context.Context, id int64) (*model.TMDBInfo, error)
+	GetMovieDetail(ctx context.Context, id string) (*model.TMDBInfo, error)
+	GetSeriesDetail(ctx context.Context, id string) (*model.TMDBInfo, error)
 }
 
 type Series struct {
@@ -47,7 +47,7 @@ func (s *Series) CreateSeries(ctx context.Context, series *model.Series) (string
 		err      error
 	)
 
-	if series.TMDBID != 0 {
+	if series.TMDBID != "" {
 		tmdbInfo, err = s.tmdbClient.GetSeriesDetail(ctx, series.TMDBID)
 		if err != nil {
 			err = fmt.Errorf("tmdbClient.GetSeriesDetail: %w", err)
@@ -106,8 +106,8 @@ func (s *Series) GetSeriesByID(ctx context.Context, id string) (*model.GetSeries
 
 	var ti *model.TMDBInfo
 
-	if series.TMDBID != 0 {
-		tmdbInfo, err := s.repo.GetTMDBInfoByID(ctx, series.TMDBID)
+	if series.TMDBID != "" {
+		tmdbInfo, err := s.repo.GetTMDBInfoByID(ctx, fmt.Sprintf("series-%s", series.TMDBID))
 		if err != nil {
 			err = fmt.Errorf("repo.GetTMDBInfoByID: %w", err)
 			s.logger.Error(ctx, "error when getting tmdb info",

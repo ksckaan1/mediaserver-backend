@@ -31,7 +31,7 @@ func New(movieService MovieService) (*Movie, error) {
 type CreateMovieRequest struct {
 	Title       string `json:"title" validate:"required"`
 	Description string `json:"description"`
-	TMDBID      int64  `json:"tmdb_id"`
+	TMDBID      string `json:"tmdb_id"`
 	MediaID     string `json:"media_id"`
 }
 
@@ -111,7 +111,7 @@ func (m *Movie) ListMovies(ctx context.Context, req *gh.Request[any]) (*gh.Respo
 type UpdateMovieByIDRequest struct {
 	Title       string `json:"title" validate:"required"`
 	Description string `json:"description"`
-	TMDBID      int64  `json:"tmdb_id"`
+	TMDBID      string `json:"tmdb_id"`
 	MediaID     string `json:"media_id"`
 }
 

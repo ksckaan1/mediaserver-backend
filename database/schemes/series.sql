@@ -4,7 +4,7 @@ CREATE TABLE series (
   updated_at DATETIME NOT NULL,
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
-  tmdb_id INTEGER NOT NULL
+  tmdb_id VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE seasons (

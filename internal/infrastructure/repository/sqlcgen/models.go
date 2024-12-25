@@ -35,7 +35,7 @@ type Movie struct {
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime
 	Title       string
-	TmdbID      int64
+	TmdbID      string
 	Description string
 	MediaID     string
 }
@@ -56,7 +56,7 @@ type Series struct {
 	UpdatedAt   time.Time
 	Title       string
 	Description string
-	TmdbID      int64
+	TmdbID      string
 }
 
 type TmdbInfo struct {

@@ -24,9 +24,9 @@ func New(apiKey string) (*TMDBClient, error) {
 	}, nil
 }
 
-const movieDetailURL = "https://api.themoviedb.org/3/movie/%d"
+const movieDetailURL = "https://api.themoviedb.org/3/movie/%s"
 
-func (t *TMDBClient) GetMovieDetail(ctx context.Context, id int64) (*model.TMDBInfo, error) {
+func (t *TMDBClient) GetMovieDetail(ctx context.Context, id string) (*model.TMDBInfo, error) {
 	uri := fmt.Sprintf(movieDetailURL, id)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, uri, http.NoBody)
 	if err != nil {
@@ -53,14 +53,14 @@ func (t *TMDBClient) GetMovieDetail(ctx context.Context, id int64) (*model.TMDBI
 	}
 
 	return &model.TMDBInfo{
-		ID:   fmt.Sprintf("movie-%d", id),
+		ID:   fmt.Sprintf("movie-%s", id),
 		Data: result,
 	}, nil
 }
 
-const seriesDetailURL = "https://api.themoviedb.org/3/tv/%d"
+const seriesDetailURL = "https://api.themoviedb.org/3/tv/%s"
 
-func (t *TMDBClient) GetSeriesDetail(ctx context.Context, id int64) (*model.TMDBInfo, error) {
+func (t *TMDBClient) GetSeriesDetail(ctx context.Context, id string) (*model.TMDBInfo, error) {
 	uri := fmt.Sprintf(seriesDetailURL, id)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, uri, http.NoBody)
 	if err != nil {
@@ -87,7 +87,7 @@ func (t *TMDBClient) GetSeriesDetail(ctx context.Context, id int64) (*model.TMDB
 	}
 
 	return &model.TMDBInfo{
-		ID:   fmt.Sprintf("series-%d", id),
+		ID:   fmt.Sprintf("series-%s", id),
 		Data: result,
 	}, nil
 }

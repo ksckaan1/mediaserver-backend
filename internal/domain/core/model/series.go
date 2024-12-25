@@ -8,7 +8,7 @@ type Series struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
-	TMDBID      int64     `json:"tmdb_id"`
+	TMDBID      string    `json:"tmdb_id"`
 }
 
 type GetSeriesResponse struct {

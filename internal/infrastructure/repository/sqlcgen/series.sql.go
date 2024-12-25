@@ -115,7 +115,7 @@ type CreateSeriesParams struct {
 	ID          string
 	Title       string
 	Description string
-	TmdbID      int64
+	TmdbID      string
 }
 
 // ----------
@@ -424,7 +424,7 @@ RETURNING id
 type UpdateSeriesByIDParams struct {
 	Title       string
 	Description string
-	TmdbID      int64
+	TmdbID      string
 	ID          string
 }
 

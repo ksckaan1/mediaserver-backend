@@ -24,7 +24,7 @@ type Repository interface {
 }
 
 type TMDBClient interface {
-	GetMovieDetail(ctx context.Context, id int64) (*model.TMDBInfo, error)
+	GetMovieDetail(ctx context.Context, id string) (*model.TMDBInfo, error)
 }
 
 type Movie struct {
@@ -57,7 +57,7 @@ func (m *Movie) CreateMovie(ctx context.Context, movie *model.Movie) (string, er
 
 	var tmdbInfo *model.TMDBInfo
 
-	if movie.TMDBID != 0 {
+	if movie.TMDBID != "" {
 		tmdbInfo, err = m.tmdbClient.GetMovieDetail(ctx, movie.TMDBID)
 		if err != nil {
 			err = fmt.Errorf("tmdbClient.GetMovieDetail: %w", err)
@@ -128,8 +128,8 @@ func (m *Movie) GetMovieByID(ctx context.Context, id string) (*model.GetMovieByI
 
 	var ti *model.TMDBInfo
 
-	if movie.TMDBID != 0 {
-		tmdbInfo, err := m.repo.GetTMDBInfoByID(ctx, fmt.Sprintf("movie-%d", movie.TMDBID))
+	if movie.TMDBID != "" {
+		tmdbInfo, err := m.repo.GetTMDBInfoByID(ctx, fmt.Sprintf("movie-%s", movie.TMDBID))
 		if err != nil {
 			err = fmt.Errorf("repo.GetTMDBInfoByID: %w", err)
 			m.logger.Error(ctx, "error when getting tmdb info",
@@ -197,7 +197,7 @@ func (m *Movie) UpdateMovieByID(ctx context.Context, movie *model.Movie) error {
 
 	var tmdbInfo *model.TMDBInfo
 
-	if movie.TMDBID != 0 {
+	if movie.TMDBID != "" {
 		tmdbInfo, err = m.tmdbClient.GetMovieDetail(ctx, movie.TMDBID)
 		if err != nil {
 			err = fmt.Errorf("tmdbClient.GetMovieDetail: %w", err)
