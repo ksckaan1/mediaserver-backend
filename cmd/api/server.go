@@ -5,12 +5,16 @@ import (
 	"database/sql"
 	"fmt"
 	"mediaserver/config"
-	mediaapp "mediaserver/internal/domain/core/application/media"
-	mediaservice "mediaserver/internal/domain/core/service/media"
 
-	movieapp "mediaserver/internal/domain/core/application/movie"
-	"mediaserver/internal/domain/core/service/localstorage"
+	mediaservice "mediaserver/internal/domain/core/service/media"
 	movieservice "mediaserver/internal/domain/core/service/movie"
+	seriesservice "mediaserver/internal/domain/core/service/series"
+
+	mediaapp "mediaserver/internal/domain/core/application/media"
+	movieapp "mediaserver/internal/domain/core/application/movie"
+	seriesapp "mediaserver/internal/domain/core/application/series"
+
+	"mediaserver/internal/domain/core/service/localstorage"
 	"mediaserver/internal/infrastructure/repository"
 	"mediaserver/internal/infrastructure/tmdbclient"
 	"mediaserver/internal/pkg/idgen"
@@ -22,11 +26,12 @@ import (
 )
 
 type Server struct {
-	cfg      *config.Config
-	logger   port.Logger
-	router   *fiber.App
-	movieApp *movieapp.Movie
-	mediaApp *mediaapp.Media
+	cfg       *config.Config
+	logger    port.Logger
+	router    *fiber.App
+	movieApp  *movieapp.Movie
+	mediaApp  *mediaapp.Media
+	seriesApp *seriesapp.Series
 }
 
 func NewServer(cfg *config.Config, logger port.Logger) *Server {
@@ -93,6 +98,16 @@ func (s *Server) Init(ctx context.Context) error {
 	s.mediaApp, err = mediaapp.New(lss, mediaService, s.logger)
 	if err != nil {
 		return fmt.Errorf("mediaapp.New: %w", err)
+	}
+
+	seriesService, err := seriesservice.New(repo, tmdbClient, idGen, s.logger)
+	if err != nil {
+		return fmt.Errorf("seriesservice.New: %w", err)
+	}
+
+	s.seriesApp, err = seriesapp.New(seriesService, s.logger)
+	if err != nil {
+		return fmt.Errorf("seriesapp.New: %w", err)
 	}
 
 	s.linkRoutes()
