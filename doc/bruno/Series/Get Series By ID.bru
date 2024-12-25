@@ -1,20 +1,24 @@
 meta {
-  name: Create Movie
+  name: Get Series By ID
   type: http
-  seq: 1
+  seq: 3
 }
 
-post {
-  url: {{HOST}}/api/v1/movie
-  body: json
+get {
+  url: {{HOST}}/api/v1/series/:series_id
+  body: none
   auth: none
+}
+
+params:path {
+  series_id: 1871986469892001792
 }
 
 body:json {
   {
-    "title": "Venom: The Last Dance",
+    "title": "Dark123",
     "description": "Eddie and Venom are on the run. Hunted by both of their worlds and with the net closing in, the duo are forced into a devastating decision that will bring the curtains down on Venom and Eddie's last dance.",
-    "tmdb_id": "912649",
-    "media_id": "1867667821345902592"
+    "tmdb_id": "70523",
+    "media_id": "1869444790664302592"
   }
 }
