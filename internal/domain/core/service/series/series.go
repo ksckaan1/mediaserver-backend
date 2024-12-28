@@ -15,6 +15,13 @@ type Repository interface {
 	UpdateSeriesByID(ctx context.Context, series *model.Series) error
 	DeleteSeriesByID(ctx context.Context, id string) error
 
+	// Season
+	CreateSeason(ctx context.Context, season *model.Season) error
+	GetSeasonByID(ctx context.Context, id string) (*model.Season, error)
+	ListSeasonsBySeriesID(ctx context.Context, seriesID string, limit, offset int64) (*model.SeasonList, error)
+	UpdateSeasonByID(ctx context.Context, season *model.Season) error
+	DeleteSeasonByID(ctx context.Context, id string) error
+
 	// TMDBInfo
 	SetTMDBInfo(ctx context.Context, info *model.TMDBInfo) error
 	GetTMDBInfoByID(ctx context.Context, id string) (*model.TMDBInfo, error)
