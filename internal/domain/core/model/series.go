@@ -55,6 +55,17 @@ type Episode struct {
 	MediaID     string    `json:"media_id"`
 }
 
+type GetEpisodeByIDResponse struct {
+	ID          string    `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	SeasonID    string    `json:"season_id"`
+	Order       int64     `json:"order"`
+	MediaInfo   *Media    `json:"media_info"`
+}
+
 type EpisodeList struct {
 	List   []*Episode `json:"list"`
 	Count  int64      `json:"count"`

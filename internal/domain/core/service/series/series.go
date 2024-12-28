@@ -22,9 +22,19 @@ type Repository interface {
 	UpdateSeasonByID(ctx context.Context, season *model.Season) error
 	DeleteSeasonByID(ctx context.Context, id string) error
 
+	// Episode
+	CreateEpisode(ctx context.Context, episode *model.Episode) error
+	GetEpisodeByID(ctx context.Context, id string) (*model.Episode, error)
+	ListEpisodesBySeasonID(ctx context.Context, seasonID string, limit, offset int64) (*model.EpisodeList, error)
+	UpdateEpisodeByID(ctx context.Context, episode *model.Episode) error
+	DeleteEpisodeByID(ctx context.Context, id string) error
+
 	// TMDBInfo
 	SetTMDBInfo(ctx context.Context, info *model.TMDBInfo) error
 	GetTMDBInfoByID(ctx context.Context, id string) (*model.TMDBInfo, error)
+
+	// Media
+	GetMediaByID(ctx context.Context, id string) (*model.Media, error)
 }
 
 type TMDBClient interface {
