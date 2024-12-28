@@ -22,4 +22,11 @@ func (s *Server) linkRoutes() {
 	v1.Get("/series/:id", H(s.seriesApp.GetSeriesByID))
 	v1.Put("/series/:id", H(s.seriesApp.UpdateSeriesByID))
 	v1.Delete("/series/:id", H(s.seriesApp.DeleteSeriesByID))
+
+	// SEASONS
+	v1.Post("/season", H(s.seriesApp.CreateSeason))
+	v1.Get("/series/:series_id/season", H(s.seriesApp.ListSeasonsBySeriesID))
+	v1.Get("/season/:id", H(s.seriesApp.GetSeasonByID))
+	v1.Put("/season/:id", H(s.seriesApp.UpdateSeasonByID))
+	v1.Delete("/season/:id", H(s.seriesApp.DeleteSeasonByID))
 }

@@ -12,11 +12,19 @@ import (
 )
 
 type SeriesService interface {
+	// Series
 	CreateSeries(ctx context.Context, series *model.Series) (string, error)
 	GetSeriesByID(ctx context.Context, id string) (*model.GetSeriesResponse, error)
 	ListSeries(ctx context.Context, limit, offset int64) (*model.SeriesList, error)
 	UpdateSeriesByID(ctx context.Context, series *model.Series) error
 	DeleteSeriesByID(ctx context.Context, id string) error
+
+	// Season
+	CreateSeason(ctx context.Context, season *model.Season) (string, error)
+	GetSeasonByID(ctx context.Context, id string) (*model.Season, error)
+	ListSeasonsBySeriesID(ctx context.Context, seriesID string, limit, offset int64) (*model.SeasonList, error)
+	UpdateSeasonByID(ctx context.Context, season *model.Season) error
+	DeleteSeasonByID(ctx context.Context, id string) error
 }
 
 type Series struct {
