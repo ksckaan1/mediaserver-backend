@@ -1,0 +1,23 @@
+meta {
+  name: Update Season
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{HOST}}/api/v1/season/:season_id
+  body: json
+  auth: none
+}
+
+params:path {
+  season_id: 1873034084960178176s
+}
+
+body:json {
+  {
+    "title": "Season 1",
+    "description": "Eddie and Venom are on the run. Hunted by both of their worlds and with the net closing in, the duo are forced into a devastating decision that will bring the curtains down on Venom and Eddie's last dance.",
+    "order": 0
+  }
+}
