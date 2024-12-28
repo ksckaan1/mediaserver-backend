@@ -25,6 +25,13 @@ type SeriesService interface {
 	ListSeasonsBySeriesID(ctx context.Context, seriesID string, limit, offset int64) (*model.SeasonList, error)
 	UpdateSeasonByID(ctx context.Context, season *model.Season) error
 	DeleteSeasonByID(ctx context.Context, id string) error
+
+	// Episode
+	CreateEpisode(ctx context.Context, episode *model.Episode) (string, error)
+	GetEpisodeByID(ctx context.Context, id string) (*model.GetEpisodeByIDResponse, error)
+	ListEpisodesBySeasonID(ctx context.Context, seasonID string, limit, offset int64) (*model.EpisodeList, error)
+	UpdateEpisodeByID(ctx context.Context, episode *model.Episode) error
+	DeleteEpisodeByID(ctx context.Context, id string) error
 }
 
 type Series struct {
