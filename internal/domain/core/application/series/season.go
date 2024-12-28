@@ -29,7 +29,7 @@ func (s *Series) CreateSeason(ctx context.Context, req *gh.Request[*CreateSeason
 		Order:       req.Body.Order,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("seriesService.CreateSeason: %w", err)
+		return nil, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[*CreateSeasonResponse]{
 		Body: &CreateSeasonResponse{
@@ -48,7 +48,7 @@ func (s *Series) GetSeasonByID(ctx context.Context, req *gh.Request[any]) (*gh.R
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrSeasonNotFound
 		}
-		return nil, fmt.Errorf("seriesService.GetSeasonByID: %w", err)
+		return nil, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[*model.Season]{
 		Body:       season,
@@ -73,7 +73,7 @@ func (s *Series) ListSeasonsBySeriesID(ctx context.Context, req *gh.Request[any]
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrSeriesNotFound
 		}
-		return nil, fmt.Errorf("seriesService.ListSeasons: %w", err)
+		return nil, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[*model.SeasonList]{
 		Body:       seasons,
@@ -101,7 +101,7 @@ func (s *Series) UpdateSeasonByID(ctx context.Context, req *gh.Request[*UpdateSe
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrSeasonNotFound
 		}
-		return nil, fmt.Errorf("seriesService.UpdateSeasonByID: %w", err)
+		return nil, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[any]{
 		StatusCode: http.StatusNoContent,
@@ -117,7 +117,7 @@ func (s *Series) DeleteSeasonByID(ctx context.Context, req *gh.Request[any]) (*g
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrSeasonNotFound
 		}
-		return nil, fmt.Errorf("seriesService.DeleteSeasonByID: %w", err)
+		return nil, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[any]{
 		StatusCode: http.StatusNoContent,

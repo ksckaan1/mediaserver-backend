@@ -52,7 +52,7 @@ func (m *Movie) CreateMovie(ctx context.Context, req *gh.Request[*CreateMovieReq
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMediaNotFound
 		}
-		return &gh.Response[*CreateMovieResponse]{}, fmt.Errorf("movieService.CreateMovie: %w", err)
+		return &gh.Response[*CreateMovieResponse]{}, customerrors.ErrInternalServerError
 	}
 
 	return &gh.Response[*CreateMovieResponse]{
@@ -73,7 +73,7 @@ func (m *Movie) GetMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.Res
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMovieNotFound
 		}
-		return &gh.Response[*model.GetMovieByIDResponse]{}, fmt.Errorf("movieService.GetMovieByID: %w", err)
+		return &gh.Response[*model.GetMovieByIDResponse]{}, customerrors.ErrInternalServerError
 	}
 
 	return &gh.Response[*model.GetMovieByIDResponse]{
@@ -99,7 +99,7 @@ func (m *Movie) ListMovies(ctx context.Context, req *gh.Request[any]) (*gh.Respo
 
 	movies, err := m.movieService.ListMovies(ctx, limit, offset)
 	if err != nil {
-		return &gh.Response[*model.MovieList]{}, fmt.Errorf("movieService.ListMovies: %w", err)
+		return &gh.Response[*model.MovieList]{}, customerrors.ErrInternalServerError
 	}
 
 	return &gh.Response[*model.MovieList]{
@@ -136,7 +136,7 @@ func (m *Movie) UpdateMovieByID(ctx context.Context, req *gh.Request[*UpdateMovi
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMediaNotFound
 		}
-		return &gh.Response[any]{}, fmt.Errorf("movieService.UpdateMovieByID: %w", err)
+		return &gh.Response[any]{}, customerrors.ErrInternalServerError
 	}
 
 	return &gh.Response[any]{
@@ -154,7 +154,7 @@ func (m *Movie) DeleteMovieByID(ctx context.Context, req *gh.Request[any]) (*gh.
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMovieNotFound
 		}
-		return &gh.Response[any]{}, fmt.Errorf("movieService.DeleteMovieByID: %w", err)
+		return &gh.Response[any]{}, customerrors.ErrInternalServerError
 	}
 
 	return &gh.Response[any]{

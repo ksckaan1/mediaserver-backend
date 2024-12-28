@@ -69,7 +69,7 @@ func (s *Series) CreateSeries(ctx context.Context, req *gh.Request[*CreateSeries
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMediaNotFound
 		}
-		return &gh.Response[*CreateSeriesResponse]{}, fmt.Errorf("seriesService.CreateSeries: %w", err)
+		return &gh.Response[*CreateSeriesResponse]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[*CreateSeriesResponse]{
 		Body: &CreateSeriesResponse{
@@ -88,7 +88,7 @@ func (s *Series) GetSeriesByID(ctx context.Context, req *gh.Request[any]) (*gh.R
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrSeriesNotFound
 		}
-		return &gh.Response[*model.GetSeriesResponse]{}, fmt.Errorf("seriesService.GetSeriesByID: %w", err)
+		return &gh.Response[*model.GetSeriesResponse]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[*model.GetSeriesResponse]{
 		Body:       series,
@@ -113,7 +113,7 @@ func (s *Series) ListSeries(ctx context.Context, req *gh.Request[any]) (*gh.Resp
 
 	seriesList, err := s.seriesService.ListSeries(ctx, limit, offset)
 	if err != nil {
-		return &gh.Response[*model.SeriesList]{}, fmt.Errorf("seriesService.ListSeries: %w", err)
+		return &gh.Response[*model.SeriesList]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[*model.SeriesList]{
 		Body:       seriesList,
@@ -143,7 +143,7 @@ func (s *Series) UpdateSeriesByID(ctx context.Context, req *gh.Request[*UpdateSe
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrSeriesNotFound
 		}
-		return &gh.Response[any]{}, fmt.Errorf("seriesService.UpdateSeriesByID: %w", err)
+		return &gh.Response[any]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[any]{
 		StatusCode: http.StatusOK,
@@ -152,7 +152,6 @@ func (s *Series) UpdateSeriesByID(ctx context.Context, req *gh.Request[*UpdateSe
 
 func (s *Series) DeleteSeriesByID(ctx context.Context, req *gh.Request[any]) (*gh.Response[any], error) {
 	seriesID := req.Params["id"]
-
 	err := s.seriesService.DeleteSeriesByID(ctx, seriesID)
 	if err != nil {
 		if errors.Is(err, customerrors.ErrSeriesNotFound) {
@@ -160,7 +159,7 @@ func (s *Series) DeleteSeriesByID(ctx context.Context, req *gh.Request[any]) (*g
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrSeriesNotFound
 		}
-		return &gh.Response[any]{}, fmt.Errorf("seriesService.DeleteSeriesByID: %w", err)
+		return &gh.Response[any]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[any]{
 		StatusCode: http.StatusNoContent,

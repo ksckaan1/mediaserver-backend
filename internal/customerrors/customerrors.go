@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrInternalServerError = errors.New("internal server error")
 	ErrRecordNotFound      = errors.New("record not found")
 	ErrMovieNotFound       = errors.New("movie not found")
 	ErrMediaNotFound       = errors.New("media not found")

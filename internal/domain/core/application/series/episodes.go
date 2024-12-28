@@ -41,7 +41,7 @@ func (s *Series) CreateEpisode(ctx context.Context, req *gh.Request[*CreateEpiso
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrSeasonNotFound
 		}
-		return &gh.Response[*CreateEpisodeResponse]{}, fmt.Errorf("seriesService.CreateEpisode: %w", err)
+		return &gh.Response[*CreateEpisodeResponse]{}, customerrors.ErrInternalServerError
 	}
 
 	return &gh.Response[*CreateEpisodeResponse]{
@@ -67,7 +67,7 @@ func (s *Series) GetEpisodeByID(ctx context.Context, req *gh.Request[any]) (*gh.
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMediaNotFound
 		}
-		return &gh.Response[*model.GetEpisodeByIDResponse]{}, fmt.Errorf("seriesService.GetEpisodeByID: %w", err)
+		return &gh.Response[*model.GetEpisodeByIDResponse]{}, customerrors.ErrInternalServerError
 	}
 
 	return &gh.Response[*model.GetEpisodeByIDResponse]{
@@ -100,7 +100,7 @@ func (s *Series) ListEpisodesBySeasonID(ctx context.Context, req *gh.Request[any
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrSeasonNotFound
 		}
-		return &gh.Response[*model.EpisodeList]{}, fmt.Errorf("seriesService.ListEpisodesBySeasonID: %w", err)
+		return &gh.Response[*model.EpisodeList]{}, customerrors.ErrInternalServerError
 	}
 
 	return &gh.Response[*model.EpisodeList]{
@@ -136,7 +136,7 @@ func (s *Series) UpdateEpisodeByID(ctx context.Context, req *gh.Request[*UpdateE
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMediaNotFound
 		}
-		return &gh.Response[any]{}, fmt.Errorf("seriesSerivce.UpdateEpisodeByID: %w", err)
+		return &gh.Response[any]{}, customerrors.ErrInternalServerError
 	}
 
 	return &gh.Response[any]{
@@ -153,7 +153,7 @@ func (s *Series) DeleteEpisodeByID(ctx context.Context, req *gh.Request[any]) (*
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrEpisodeNotFound
 		}
-		return &gh.Response[any]{}, fmt.Errorf("seriesService.DeleteEpisodeByID: %w", err)
+		return &gh.Response[any]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[any]{
 		StatusCode: http.StatusNoContent,

@@ -49,11 +49,11 @@ type UploadMediaResponse struct {
 func (m *Media) UploadMedia(ctx context.Context, req *gh.Request[UploadMediaRequest]) (*gh.Response[*UploadMediaResponse], error) {
 	fileInfo, err := m.storageService.Save(ctx, req.Body.File)
 	if err != nil {
-		return &gh.Response[*UploadMediaResponse]{}, fmt.Errorf("storageService.Save: %w", err)
+		return &gh.Response[*UploadMediaResponse]{}, customerrors.ErrInternalServerError
 	}
 	id, err := m.mediaService.Create(ctx, fileInfo)
 	if err != nil {
-		return &gh.Response[*UploadMediaResponse]{}, fmt.Errorf("mediaService.Create: %w", err)
+		return &gh.Response[*UploadMediaResponse]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[*UploadMediaResponse]{
 		Body: &UploadMediaResponse{
@@ -72,7 +72,7 @@ func (m *Media) GetMediaByID(ctx context.Context, req *gh.Request[any]) (*gh.Res
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMediaNotFound
 		}
-		return &gh.Response[*model.Media]{}, fmt.Errorf("mediaService.GetMediaByID: %w", err)
+		return &gh.Response[*model.Media]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[*model.Media]{
 		Body:       media,
@@ -95,7 +95,7 @@ func (m *Media) ListMedias(ctx context.Context, req *gh.Request[any]) (*gh.Respo
 	}
 	medias, err := m.mediaService.ListMedias(ctx, limit, offset)
 	if err != nil {
-		return &gh.Response[*model.MediaList]{}, fmt.Errorf("mediaService.ListMedias: %w", err)
+		return &gh.Response[*model.MediaList]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[*model.MediaList]{
 		Body:       medias,
@@ -112,7 +112,7 @@ func (m *Media) DeleteMediaByID(ctx context.Context, req *gh.Request[any]) (*gh.
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMediaNotFound
 		}
-		return &gh.Response[any]{}, fmt.Errorf("mediaService.GetMediaByID: %w", err)
+		return &gh.Response[any]{}, customerrors.ErrInternalServerError
 	}
 	err = m.mediaService.DeleteMediaByID(ctx, id)
 	if err != nil {
@@ -121,11 +121,11 @@ func (m *Media) DeleteMediaByID(ctx context.Context, req *gh.Request[any]) (*gh.
 				StatusCode: http.StatusNotFound,
 			}, customerrors.ErrMediaNotFound
 		}
-		return &gh.Response[any]{}, fmt.Errorf("mediaService.DeleteMediaByID: %w", err)
+		return &gh.Response[any]{}, customerrors.ErrInternalServerError
 	}
 	err = m.storageService.Delete(ctx, media.Path)
 	if err != nil {
-		return &gh.Response[any]{}, fmt.Errorf("storageService.Delete: %w", err)
+		return &gh.Response[any]{}, customerrors.ErrInternalServerError
 	}
 	return &gh.Response[any]{
 		StatusCode: http.StatusNoContent,
