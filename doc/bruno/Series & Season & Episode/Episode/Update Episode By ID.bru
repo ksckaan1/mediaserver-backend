@@ -1,0 +1,24 @@
+meta {
+  name: Update Episode By ID
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{HOST}}/api/v1/episode/:episode_id
+  body: json
+  auth: none
+}
+
+params:path {
+  episode_id: 1873064996640919552
+}
+
+body:json {
+  {
+    "title": "Episode 3",
+    "description": "ep3 desc",
+    "order": 0,
+    "media_id":""
+  }
+}

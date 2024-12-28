@@ -1,0 +1,21 @@
+meta {
+  name: Create Episode
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{HOST}}/api/v1/episode
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Episode 1",
+    "description": "ep.1",
+    "season_id": "1873063886152798208",
+    "order": 0,
+    "media_id":""
+  }
+}
