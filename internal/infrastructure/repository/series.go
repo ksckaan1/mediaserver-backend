@@ -236,6 +236,8 @@ func (m *Repository) ListEpisodesBySeasonID(ctx context.Context, seasonID string
 	}
 	list, err := m.queries.ListEpisodesBySeasonID(ctx, sqlcgen.ListEpisodesBySeasonIDParams{
 		SeasonID: seasonID,
+		Limit:    limit,
+		Offset:   offset,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("queries.ListEpisodesBySeasonID: %w", err)
