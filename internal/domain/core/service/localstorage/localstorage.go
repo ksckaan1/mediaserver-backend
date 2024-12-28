@@ -98,7 +98,7 @@ func (l *LocalStorage) getMediaType(head []byte) (mediatype.MediaType, error) {
 	if filetype.IsVideo(head) {
 		return mediatype.Video, nil
 	}
-	return "", customerrors.ErrUnsupportedFileType
+	return mediatype.Unknown, customerrors.ErrUnsupportedFileType
 }
 
 func (l *LocalStorage) getExtension(head []byte) (string, error) {

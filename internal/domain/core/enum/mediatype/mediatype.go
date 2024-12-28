@@ -1,11 +1,21 @@
 package mediatype
 
-type MediaType string
+import (
+	"encoding/json"
+)
 
-const (
-	Image MediaType = "image"
-	Video MediaType = "video"
-	Audio MediaType = "audio"
+var _ json.Unmarshaler = (*MediaType)(nil)
+var _ json.Marshaler = (*MediaType)(nil)
+
+type MediaType struct {
+	mediaType string
+}
+
+var (
+	Unknown = MediaType{}
+	Image   = MediaType{"image"}
+	Video   = MediaType{"video"}
+	Audio   = MediaType{"audio"}
 )
 
 func (m MediaType) IsValid() bool {
@@ -18,18 +28,17 @@ func (m MediaType) IsValid() bool {
 }
 
 func (m MediaType) String() string {
-	return string(m)
+	return m.mediaType
 }
 
 func FromString(s string) MediaType {
-	switch s {
-	case "image":
-		return Image
-	case "video":
-		return Video
-	case "audio":
-		return Audio
-	default:
-		return MediaType(s)
-	}
+	return MediaType{s}
+}
+
+func (m *MediaType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(m.mediaType)
+}
+
+func (m *MediaType) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &m.mediaType)
 }

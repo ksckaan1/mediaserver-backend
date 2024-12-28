@@ -1,13 +1,21 @@
 package storagetype
 
-type StorageType string
+import "encoding/json"
 
-const (
-	Local StorageType = "local"
+var _ json.Unmarshaler = (*StorageType)(nil)
+var _ json.Marshaler = (*StorageType)(nil)
+
+type StorageType struct {
+	storageType string
+}
+
+var (
+	Unknown = StorageType{}
+	Local   = StorageType{"local"}
 )
 
 func (s StorageType) String() string {
-	return string(s)
+	return s.storageType
 }
 
 func (s StorageType) IsValid() bool {
@@ -15,10 +23,13 @@ func (s StorageType) IsValid() bool {
 }
 
 func FromString(s string) StorageType {
-	switch s {
-	case "local":
-		return Local
-	default:
-		return StorageType(s)
-	}
+	return StorageType{s}
+}
+
+func (m *StorageType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(m.storageType)
+}
+
+func (m *StorageType) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &m.storageType)
 }
