@@ -1,0 +1,6 @@
+CREATE TABLE otps (
+  email VARCHAR(255) NOT NULL,
+  code VARCHAR(20) NOT NULL,
+  created_at DATETIME NOT NULL,
+  expires_at DATETIME NOT NULL
+);

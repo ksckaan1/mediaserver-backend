@@ -40,6 +40,13 @@ type Movie struct {
 	MediaID     string
 }
 
+type Otp struct {
+	Email     string
+	Code      string
+	CreatedAt time.Time
+	ExpiresAt time.Time
+}
+
 type Season struct {
 	ID          string
 	CreatedAt   time.Time
@@ -62,4 +69,12 @@ type Series struct {
 type TmdbInfo struct {
 	ID   string
 	Data []byte
+}
+
+type User struct {
+	ID        string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Email     string
+	FullName  string
 }
