@@ -13,6 +13,8 @@ var (
 	ErrSeriesNotFound      = errors.New("series not found")
 	ErrSeasonNotFound      = errors.New("season not found")
 	ErrEpisodeNotFound     = errors.New("episode not found")
+	ErrUserNotFound        = errors.New("user not found")
+	ErrOTPNotFound         = errors.New("otp not found")
 	ErrUnsupportedFileType = errors.New("unsupported file type")
 	ErrInvalidMediaType    = errors.New("invalid media type")
 )
