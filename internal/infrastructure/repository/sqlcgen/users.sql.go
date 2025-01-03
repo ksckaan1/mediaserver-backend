@@ -22,7 +22,7 @@ func (q *Queries) CountUsers(ctx context.Context) (int64, error) {
 }
 
 const createUser = `-- name: CreateUser :exec
-INSERT INTO users (id, created_at, updated_at, email, full_name)
+INSERT INTO users (id, created_at, updated_at, email, display_name)
 VALUES (
   ?, 
   (datetime(CURRENT_TIMESTAMP, 'localtime')),
@@ -31,13 +31,13 @@ VALUES (
 `
 
 type CreateUserParams struct {
-	ID       string
-	Email    string
-	FullName string
+	ID          string
+	Email       string
+	DisplayName string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
-	_, err := q.db.ExecContext(ctx, createUser, arg.ID, arg.Email, arg.FullName)
+	_, err := q.db.ExecContext(ctx, createUser, arg.ID, arg.Email, arg.DisplayName)
 	return err
 }
 
@@ -55,7 +55,7 @@ func (q *Queries) DeleteUserByID(ctx context.Context, id string) (string, error)
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, created_at, updated_at, email, full_name
+SELECT id, created_at, updated_at, email, display_name
 FROM users
 WHERE email = ?
 `
@@ -68,13 +68,13 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
-		&i.FullName,
+		&i.DisplayName,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, created_at, updated_at, email, full_name
+SELECT id, created_at, updated_at, email, display_name
 FROM users
 WHERE id = ?
 `
@@ -87,13 +87,13 @@ func (q *Queries) GetUserByID(ctx context.Context, id string) (User, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
-		&i.FullName,
+		&i.DisplayName,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, created_at, updated_at, email, full_name
+SELECT id, created_at, updated_at, email, display_name
 FROM users
 LIMIT ? OFFSET ?
 `
@@ -117,7 +117,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.Email,
-			&i.FullName,
+			&i.DisplayName,
 		); err != nil {
 			return nil, err
 		}
@@ -134,19 +134,19 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 
 const updateUserByID = `-- name: UpdateUserByID :one
 UPDATE users
-SET email = ?, full_name = ?, updated_at = (datetime(CURRENT_TIMESTAMP, 'localtime'))
+SET email = ?, display_name = ?, updated_at = (datetime(CURRENT_TIMESTAMP, 'localtime'))
 WHERE id = ?
 RETURNING id
 `
 
 type UpdateUserByIDParams struct {
-	Email    string
-	FullName string
-	ID       string
+	Email       string
+	DisplayName string
+	ID          string
 }
 
 func (q *Queries) UpdateUserByID(ctx context.Context, arg UpdateUserByIDParams) (string, error) {
-	row := q.db.QueryRowContext(ctx, updateUserByID, arg.Email, arg.FullName, arg.ID)
+	row := q.db.QueryRowContext(ctx, updateUserByID, arg.Email, arg.DisplayName, arg.ID)
 	var id string
 	err := row.Scan(&id)
 	return id, err

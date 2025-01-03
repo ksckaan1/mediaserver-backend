@@ -3,5 +3,5 @@ CREATE TABLE users (
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
-  full_name VARCHAR(255) NOT NULL
+  display_name VARCHAR(255) NOT NULL
 );

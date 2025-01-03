@@ -1,5 +1,5 @@
 -- name: CreateUser :exec
-INSERT INTO users (id, created_at, updated_at, email, full_name)
+INSERT INTO users (id, created_at, updated_at, email, display_name)
 VALUES (
   ?, 
   (datetime(CURRENT_TIMESTAMP, 'localtime')),
@@ -27,7 +27,7 @@ FROM users;
 
 -- name: UpdateUserByID :one
 UPDATE users
-SET email = ?, full_name = ?, updated_at = (datetime(CURRENT_TIMESTAMP, 'localtime'))
+SET email = ?, display_name = ?, updated_at = (datetime(CURRENT_TIMESTAMP, 'localtime'))
 WHERE id = ?
 RETURNING id;
 
