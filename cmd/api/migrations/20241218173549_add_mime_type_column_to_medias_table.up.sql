@@ -1,1 +1,0 @@
-ALTER TABLE medias ADD COLUMN mime_type TEXT NOT NULL DEFAULT '';

@@ -1,1 +1,0 @@
-ALTER TABLE tmdb_infos DROP COLUMN title;
