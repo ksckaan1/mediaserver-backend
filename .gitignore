@@ -1,4 +1,30 @@
+# System files
 .DS_Store
-tmp/
+
+# IDE
 .vscode/
+.idea/
+
+# Build and binary files
+tmp/
 dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go specific
+*.test
+*.out
+
+# Data directories
+data/
+
+# Environment and secrets
+*.env
+.env.*
+.env
+
+# Logs
+*.log
