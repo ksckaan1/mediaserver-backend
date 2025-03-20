@@ -1,0 +1,9 @@
+go 1.24.0
+
+use (
+	./common
+	./media_service
+	./movie_service
+	./series_service
+	./tmdb_service
+)
