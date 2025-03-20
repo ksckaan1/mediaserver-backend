@@ -1,0 +1,21 @@
+syntax = "proto3";
+package tmdbpb;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+option go_package = "common/pb/tmdbpb;tmdbpb";
+
+service TMDBService {
+  rpc GetTMDBInfo(GetTMDBInfoRequest) returns (TMDBInfo);
+}
+
+message GetTMDBInfoRequest {
+  string id = 1;
+}
+
+message TMDBInfo {
+  string id = 1;
+  google.protobuf.Timestamp updated_at = 2;
+  google.protobuf.Struct data = 3;
+}
