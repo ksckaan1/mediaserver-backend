@@ -2,6 +2,7 @@ package app
 
 import (
 	"common/pb/mediapb"
+	"common/pb/tmdbpb"
 	"context"
 	"fmt"
 	"movie_service/internal/domain/core/models"
@@ -18,6 +19,19 @@ func (m *Movie) validateMedia(ctx context.Context, mediaID string) error {
 	})
 	if err != nil {
 		return fmt.Errorf("mediaClient.GetMediaByID: %w", err)
+	}
+	return nil
+}
+
+func (m *Movie) validateTMDBInfo(ctx context.Context, tmdbID string) error {
+	if tmdbID == "" {
+		return nil
+	}
+	_, err := m.tmdbClient.GetTMDBInfo(ctx, &tmdbpb.GetTMDBInfoRequest{
+		Id: tmdbID,
+	})
+	if err != nil {
+		return fmt.Errorf("tmdbClient.GetTMDBInfo: %w", err)
 	}
 	return nil
 }

@@ -3,6 +3,7 @@ package app
 import (
 	"common/pb/mediapb"
 	"common/pb/moviepb"
+	"common/pb/tmdbpb"
 	"context"
 	"fmt"
 	"movie_service/internal/domain/core/models"
@@ -22,18 +23,21 @@ type Movie struct {
 	mediaClient   mediapb.MediaServiceClient
 	repo          Repository
 	fuzzySearcher *fuzzySearch
+	tmdbClient    tmdbpb.TMDBServiceClient
 }
 
 func New(
 	repo Repository,
 	idGenerator port.IDGenerator,
 	mediaClient mediapb.MediaServiceClient,
+	tmdbClient tmdbpb.TMDBServiceClient,
 ) (*Movie, error) {
 	return &Movie{
 		repo:          repo,
 		idGenerator:   idGenerator,
 		mediaClient:   mediaClient,
 		fuzzySearcher: &fuzzySearch{},
+		tmdbClient:    tmdbClient,
 	}, nil
 }
 
@@ -41,6 +45,10 @@ func (m *Movie) CreateMovie(ctx context.Context, request *moviepb.CreateMovieReq
 	err := m.validateMedia(ctx, request.MediaId)
 	if err != nil {
 		return nil, fmt.Errorf("validateMedia: %w", err)
+	}
+	err = m.validateTMDBInfo(ctx, request.TmdbId)
+	if err != nil {
+		return nil, fmt.Errorf("validateTMDBInfo: %w", err)
 	}
 	id := m.idGenerator.NewID()
 	err = m.repo.CreateMovie(ctx, &models.Movie{
@@ -84,6 +92,19 @@ func (m *Movie) GetMovieByID(ctx context.Context, request *moviepb.GetMovieByIDR
 			Size:      result.Size,
 		}
 	}
+	var tmdbInfo *moviepb.TMDBInfo
+	if movie.TMDBID != "" {
+		result, err := m.tmdbClient.GetTMDBInfo(ctx, &tmdbpb.GetTMDBInfoRequest{
+			Id: movie.TMDBID,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("tmdbClient.GetTMDBInfo: %w", err)
+		}
+		tmdbInfo = &moviepb.TMDBInfo{
+			Id:   result.Id,
+			Data: result.Data,
+		}
+	}
 	return &moviepb.Movie{
 		Id:          movie.ID,
 		CreatedAt:   timestamppb.New(movie.CreatedAt),
@@ -91,7 +112,7 @@ func (m *Movie) GetMovieByID(ctx context.Context, request *moviepb.GetMovieByIDR
 		Title:       movie.Title,
 		Description: movie.Description,
 		MediaInfo:   mediaInfo,
-		TmdbInfo:    nil,
+		TmdbInfo:    tmdbInfo,
 	}, nil
 }
 
@@ -117,13 +138,15 @@ func (m *Movie) ListMovies(ctx context.Context, request *moviepb.ListMoviesReque
 }
 
 func (m *Movie) UpdateMovieByID(ctx context.Context, request *moviepb.UpdateMovieByIDRequest) (*emptypb.Empty, error) {
-	if request.MediaId != "" {
-		err := m.validateMedia(ctx, request.MediaId)
-		if err != nil {
-			return nil, fmt.Errorf("validateMedia: %w", err)
-		}
+	err := m.validateMedia(ctx, request.MediaId)
+	if err != nil {
+		return nil, fmt.Errorf("validateMedia: %w", err)
 	}
-	err := m.repo.UpdateMovieByID(ctx, &models.Movie{
+	err = m.validateTMDBInfo(ctx, request.TmdbId)
+	if err != nil {
+		return nil, fmt.Errorf("validateTMDBInfo: %w", err)
+	}
+	err = m.repo.UpdateMovieByID(ctx, &models.Movie{
 		ID:          request.MovieId,
 		Title:       request.Title,
 		Description: request.Description,
