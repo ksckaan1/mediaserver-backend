@@ -34,7 +34,6 @@ func (l *loggerMiddleWare) unaryInterceptor(ctx context.Context, req interface{}
 	return resp, err
 }
 
-// LoggingStreamInterceptor, gelen gRPC stream isteklerini loglamak için bir stream interceptor
 func (l *loggerMiddleWare) streamInterceptor(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	startTime := time.Now()
 	ctx := ss.Context()
