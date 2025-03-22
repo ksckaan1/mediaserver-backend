@@ -5,6 +5,7 @@ import (
 	"common/logger"
 	"common/pb/mediapb"
 	"common/pb/moviepb"
+	"common/pb/tmdbpb"
 	"context"
 	"fmt"
 	"movie_service/config"
@@ -18,95 +19,125 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
 func main() {
 	ctx := context.Background()
-	cfg := initConfig()
-	lg := initLogger()
-	
-	mongoClient := initMongoDB(ctx, cfg, lg)
-	defer mongoClient.Disconnect(ctx)
-	
-	idGenerator := initIDGenerator(ctx, lg)
-	grpcClient := initGRPCClient(ctx, cfg, lg)
-	defer grpcClient.Close()
-	
-	repo := initRepository(mongoClient)
-	mediaClient := mediapb.NewMediaServiceClient(grpcClient)
-	appServer := initAppServer(ctx, repo, idGenerator, mediaClient, lg)
-	
-	server := initGRPCServer(lg)
-	listener := initListener(ctx, cfg, lg)
-	
-	registerServices(server, appServer)
-	
-	go handleGracefulShutdown(server, lg)
-	
-	lg.Info(ctx, "server starting", "port", cfg.Port)
-	if err := server.Serve(listener); err != nil {
-		lg.Fatal(ctx, "failed to serve", "error", err)
-	}
-}
 
-func initConfig() *config.Config {
-	cfg := config.New()
-	if err := cfg.Load(); err != nil {
-		panic(err)
-	}
-	return cfg
-}
-
-func initLogger() *logger.Logger {
-	lg, err := logger.New()
+	cfg, err := initConfig()
 	if err != nil {
 		panic(err)
 	}
-	return lg
+
+	lg, err := initLogger()
+	if err != nil {
+		panic(err)
+	}
+
+	mongoClient, err := initMongoDB(ctx, cfg)
+	if err != nil {
+		lg.Fatal(ctx, "initMongoDB", "error", err)
+	}
+	defer mongoClient.Disconnect(ctx)
+
+	idGenerator, err := initIDGenerator()
+	if err != nil {
+		lg.Fatal(ctx, "initIDGenerator", "error", err)
+	}
+
+	mediaClient, err := initMediaClient(cfg)
+	if err != nil {
+		lg.Fatal(ctx, "initMediaClient", "error", err)
+	}
+
+	tmdbClient, err := initTMDBClient(cfg)
+	if err != nil {
+		lg.Fatal(ctx, "initTMDBClient", "error", err)
+	}
+
+	repo := initRepository(mongoClient, cfg)
+
+	appServer, err := app.New(repo, idGenerator, mediaClient, tmdbClient)
+	if err != nil {
+		lg.Fatal(ctx, "app.New", "error", err)
+	}
+
+	server := initGRPCServer(lg)
+
+	listener, err := initListener(cfg)
+	if err != nil {
+		lg.Fatal(ctx, "initListener", "error", err)
+	}
+
+	registerServices(server, appServer)
+
+	go handleGracefulShutdown(server, lg)
+
+	lg.Info(ctx, "server starting", "port", cfg.Port)
+
+	err = server.Serve(listener)
+	if err != nil {
+		lg.Fatal(ctx, "server.Serve", "error", err)
+	}
 }
 
-func initMongoDB(ctx context.Context, cfg *config.Config, lg *logger.Logger) *mongo.Client {
+func initConfig() (*config.Config, error) {
+	cfg := config.New()
+	if err := cfg.Load(); err != nil {
+		return nil, fmt.Errorf("config.Load: %w", err)
+	}
+	return cfg, nil
+}
+
+func initLogger() (*logger.Logger, error) {
+	lg, err := logger.New()
+	if err != nil {
+		return nil, fmt.Errorf("logger.New: %w", err)
+	}
+	return lg, nil
+}
+
+func initMongoDB(ctx context.Context, cfg *config.Config) (*mongo.Client, error) {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	client, err := mongo.Connect(options.Client().ApplyURI(cfg.DatabaseURL).SetServerAPIOptions(serverAPI))
 	if err != nil {
-		lg.Fatal(ctx, "failed to connect to database", "error", err)
+		return nil, fmt.Errorf("mongo.Connect: %w", err)
 	}
-
 	if err = client.Ping(ctx, nil); err != nil {
-		lg.Fatal(ctx, "failed to ping database", "error", err)
+		return nil, fmt.Errorf("mongo.Ping: %w", err)
 	}
-	lg.Info(ctx, "connected to database")
-	return client
+	return client, nil
 }
 
-func initIDGenerator(ctx context.Context, lg *logger.Logger) port.IDGenerator {
+func initIDGenerator() (port.IDGenerator, error) {
 	idGenerator, err := idgen.New()
 	if err != nil {
-		lg.Fatal(ctx, "failed to create id generator", "error", err)
+		return nil, fmt.Errorf("idgen.New: %w", err)
 	}
-	return idGenerator
+	return idGenerator, nil
 }
 
-func initGRPCClient(ctx context.Context, cfg *config.Config, lg *logger.Logger) *grpc.ClientConn {
-	grpcClient, err := grpc.Dial(cfg.MediaServerHost, grpc.WithInsecure())
+func initMediaClient(cfg *config.Config) (mediapb.MediaServiceClient, error) {
+	grpcClient, err := grpc.NewClient(cfg.MediaServerHost, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		lg.Fatal(ctx, "failed to create grpc client", "error", err)
+		return nil, fmt.Errorf("grpc.NewClient: %w", err)
 	}
-	return grpcClient
+	return mediapb.NewMediaServiceClient(grpcClient), nil
 }
 
-func initRepository(client *mongo.Client) *mongodb.Repository {
-	db := client.Database("movie_service")
+func initTMDBClient(cfg *config.Config) (tmdbpb.TMDBServiceClient, error) {
+	grpcClient, err := grpc.NewClient(cfg.TMDBServerHost, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, fmt.Errorf("grpc.NewClient: %w", err)
+	}
+	return tmdbpb.NewTMDBServiceClient(grpcClient), nil
+}
+
+func initRepository(client *mongo.Client, cfg *config.Config) *mongodb.Repository {
+	db := client.Database(cfg.DatabaseName)
 	return mongodb.New(db)
-}
-
-func initAppServer(ctx context.Context, repo *mongodb.Repository, idGenerator port.IDGenerator, mediaClient mediapb.MediaServiceClient, lg *logger.Logger) moviepb.MovieServiceServer {
-	appServer, err := app.New(repo, idGenerator, mediaClient)
-	if err != nil {
-		lg.Fatal(ctx, "failed to create app server", "error", err)
-	}
-	return appServer
 }
 
 func initGRPCServer(lg *logger.Logger) *grpc.Server {
@@ -120,12 +151,12 @@ func initGRPCServer(lg *logger.Logger) *grpc.Server {
 	return grpc.NewServer(opts...)
 }
 
-func initListener(ctx context.Context, cfg *config.Config, lg *logger.Logger) net.Listener {
+func initListener(cfg *config.Config) (net.Listener, error) {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
 	if err != nil {
-		lg.Fatal(ctx, "failed to listen", "error", err)
+		return nil, fmt.Errorf("net.Listen: %w", err)
 	}
-	return listener
+	return listener, nil
 }
 
 func registerServices(server *grpc.Server, appServer moviepb.MovieServiceServer) {
