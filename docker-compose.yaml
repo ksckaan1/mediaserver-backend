@@ -44,7 +44,8 @@ services:
     environment:
       PORT: 8080
       DATABASE_URL: mongodb://movieapp:movieapp123@mongo:27017/movie_service?authSource=movie_service
-      MEDIA_SERVER_HOST: media_service:8080
+      MEDIA_SERVER_HOST: ${MEDIA_SERVER_HOST}
+      TMDB_SERVER_HOST: ${TMDB_SERVER_HOST}
     depends_on:
       mongo:
         condition: service_healthy
