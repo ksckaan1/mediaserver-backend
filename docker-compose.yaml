@@ -43,8 +43,31 @@ services:
       - "9192:8080"
     environment:
       PORT: 8080
-      DATABASE_URL: mongodb://movieapp:movieapp123@mongo:27017/movie_service?authSource=movie_service
+      DATABASE_URL: mongodb://movie:pass123@mongo:27017/movie_service?authSource=movie_service
       MEDIA_SERVER_HOST: ${MEDIA_SERVER_HOST}
+      TMDB_SERVER_HOST: ${TMDB_SERVER_HOST}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    restart: unless-stopped
+    logging: *default-logging
+
+  series_service:
+    build:
+      context: .
+      dockerfile: .docker/series_service.Dockerfile
+    networks:
+      - app
+    ports:
+      - "9193:8080"
+    environment:
+      PORT: 8080
+      DATABASE_URL: mongodb://series:pass123@mongo:27017/series_service?authSource=movie_service
       TMDB_SERVER_HOST: ${TMDB_SERVER_HOST}
     depends_on:
       mongo:
@@ -64,7 +87,7 @@ services:
     networks:
       - app
     ports:
-      - "9193:8080"
+      - "9194:8080"
     environment:
       PORT: 8080
       TMDB_API_KEY: ${TMDB_API_KEY}
