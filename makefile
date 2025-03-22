@@ -14,4 +14,9 @@ gen-proto:
 		--go-grpc_out=Mprotofiles/tmdb_service.proto=common/pb/tmdbpb:. \
 		--proto_path=protofiles \
 		protofiles/tmdb_service.proto
+	protoc \
+		--go_out=Mprotofiles/series_service.proto=common/pb/seriespb:. \
+		--go-grpc_out=Mprotofiles/series_service.proto=common/pb/seriespb:. \
+		--proto_path=protofiles \
+		protofiles/series_service.proto
 	
