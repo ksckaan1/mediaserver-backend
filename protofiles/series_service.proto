@@ -1,5 +1,5 @@
 syntax = "proto3";
-package mediapb;
+package seriespb;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
@@ -8,7 +8,6 @@ import "google/protobuf/empty.proto";
 option go_package = "common/pb/seriespb;seriespb";
 
 
-// SERIES SERVICE
 service SeriesService {
   rpc CreateSeries(CreateSeriesRequest) returns (CreateSeriesResponse);
   rpc GetSeriesByID(GetSeriesByIDRequest) returns (Series);
@@ -48,6 +47,7 @@ message TMDBInfo {
 message ListSeriesRequest {
   int64 limit = 1;
   int64 offset = 2;
+  string search = 3;
 }
 
 message SeriesList {
@@ -68,119 +68,3 @@ message DeleteSeriesByIDRequest {
   string series_id = 1;
 }
 
-// SEASON SERVICE
-service SeasonService {
-  rpc CreateSeason(CreateSeasonRequest) returns (CreateSeasonResponse);
-  rpc GetSeasonByID(GetSeasonByIDRequest) returns (Season);
-  rpc ListSeasonsBySeriesID(ListSeasonsBySeriesIDRequest) returns (SeasonList);
-  rpc UpdateSeasonByID(UpdateSeasonByIDRequest) returns (google.protobuf.Empty);
-  rpc ReorderSeasonsBySeriesID(ReorderSeasonsBySeriesIDRequest) returns (google.protobuf.Empty);
-  rpc DeleteSeasonByID(DeleteSeasonByIDRequest) returns (google.protobuf.Empty);
-}
-  
-message CreateSeasonRequest {
-  string series_id = 1;
-  string title = 2;
-  string description = 3;
-}
-
-message CreateSeasonResponse {
-  string season_id = 1;
-}
-
-message GetSeasonByIDRequest {
-  string season_id = 1;
-}
-
-message Season {
-  string id = 1;
-  google.protobuf.Timestamp created_at = 2;
-  google.protobuf.Timestamp updated_at = 3;
-  string title = 4;
-  string description = 5;
-  string series_id = 6;
-  int32 order = 7;
-}
-
-message ListSeasonsBySeriesIDRequest {
-  string series_id = 1;
-}
-
-message SeasonList {
-  repeated Season list = 1;
-}
-
-message UpdateSeasonByIDRequest {
-  string season_id = 1;
-  string title = 2;
-  string description = 3;
-}
-
-message ReorderSeasonsBySeriesIDRequest {
-  string series_id = 1;
-  repeated string season_ids = 2;
-}
-
-message DeleteSeasonByIDRequest {
-  string season_id = 1;
-}
-
-// EPISODE SERVICE
-service EpisodeService {
-  rpc CreateEpisode(CreateEpisodeRequest) returns (CreateEpisodeResponse);
-  rpc GetEpisodeByID(GetEpisodeByIDRequest) returns (Episode);
-  rpc ListEpisodesBySeasonID(ListEpisodesBySeasonIDRequest) returns (EpisodeList);
-  rpc UpdateEpisodeByID(UpdateEpisodeByIDRequest) returns (google.protobuf.Empty);
-  rpc ReorderEpisodesBySeasonID(ReorderEpisodesBySeasonIDRequest) returns (google.protobuf.Empty);
-  rpc DeleteEpisodeByID(DeleteEpisodeByIDRequest) returns (google.protobuf.Empty);
-}
-
-message CreateEpisodeRequest {
-  string season_id = 1;
-  string title = 2;
-  string description = 3;
-  string media_id = 4;
-}
-
-message CreateEpisodeResponse {
-  string episode_id = 1;
-}
-
-message GetEpisodeByIDRequest {
-  string episode_id = 1;
-}
-
-message Episode {
-  string id = 1;
-  google.protobuf.Timestamp created_at = 2;
-  google.protobuf.Timestamp updated_at = 3;
-  string title = 4;
-  string description = 5;
-  string season_id = 6;
-  string media_id = 7;
-  int32 order = 8;
-}
-
-message ListEpisodesBySeasonIDRequest {
-  string season_id = 1;
-}
-
-message EpisodeList {
-  repeated Episode list = 1;
-}
-
-message UpdateEpisodeByIDRequest {
-  string episode_id = 1;
-  string title = 2;
-  string description = 3;
-  string media_id = 4;
-}
-
-message ReorderEpisodesBySeasonIDRequest {
-  string season_id = 1;
-  repeated string episode_ids = 2;
-}
-
-message DeleteEpisodeByIDRequest {
-  string episode_id = 1;
-}
