@@ -19,4 +19,14 @@ gen-proto:
 		--go-grpc_out=Mprotofiles/series_service.proto=common/pb/seriespb:. \
 		--proto_path=protofiles \
 		protofiles/series_service.proto
+	protoc \
+		--go_out=Mprotofiles/season_service.proto=common/pb/seasonpb:. \
+		--go-grpc_out=Mprotofiles/season_service.proto=common/pb/seasonpb:. \
+		--proto_path=protofiles \
+		protofiles/season_service.proto
+	protoc \
+		--go_out=Mprotofiles/episode_service.proto=common/pb/episodepb:. \
+		--go-grpc_out=Mprotofiles/episode_service.proto=common/pb/episodepb:. \
+		--proto_path=protofiles \
+		protofiles/episode_service.proto
 	
