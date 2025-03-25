@@ -13,6 +13,7 @@ service EpisodeService {
   rpc UpdateEpisodeByID(UpdateEpisodeByIDRequest) returns (google.protobuf.Empty);
   rpc ReorderEpisodesBySeasonID(ReorderEpisodesBySeasonIDRequest) returns (google.protobuf.Empty);
   rpc DeleteEpisodeByID(DeleteEpisodeByIDRequest) returns (google.protobuf.Empty);
+  rpc DeleteAllEpisodesBySeasonID(DeleteAllEpisodesBySeasonIDRequest) returns (google.protobuf.Empty);
 }
 
 message CreateEpisodeRequest {
@@ -59,6 +60,10 @@ message UpdateEpisodeByIDRequest {
 message ReorderEpisodesBySeasonIDRequest {
   string season_id = 1;
   repeated string episode_ids = 2;
+}
+
+message DeleteAllEpisodesBySeasonIDRequest {
+  string season_id = 1;
 }
 
 message DeleteEpisodeByIDRequest {
