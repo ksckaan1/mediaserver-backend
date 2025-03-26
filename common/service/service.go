@@ -5,74 +5,103 @@ import (
 	"common/grpclog"
 	"common/idgen"
 	"common/logger"
+	"common/pb/episodepb"
+	"common/pb/mediapb"
+	"common/pb/moviepb"
+	"common/pb/seriespb"
+	"common/pb/tmdbpb"
 	"common/ports"
 	"context"
 	"fmt"
 	"net"
-	"os"
-	"os/signal"
-	"syscall"
 
+	"github.com/couchbase/gocb/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 type Service[CFG any] struct {
 	Cfg         *CFG
+	ServiceCfg  *ServiceConfig
 	Logger      ports.Logger
 	GrpcServer  *grpc.Server
-	Addr        string
 	IDGenerator ports.IDGenerator
-	listener    net.Listener
+	CBBucket    *gocb.Bucket
+
+	// Clients
+	MediaServiceClient   mediapb.MediaServiceClient
+	TMDBServiceClient    tmdbpb.TMDBServiceClient
+	MovieServiceClient   moviepb.MovieServiceClient
+	SeriesServiceClient  seriespb.SeriesServiceClient
+	EpisodeServiceClient episodepb.EpisodeServiceClient
+
+	// protected fields
+	listener net.Listener
+	cluster  *gocb.Cluster
 }
 
 func Run[CFG any](ctx context.Context, initializer func(context.Context, *Service[CFG]) error) error {
-	cfg := configer.New[CFG]()
-	err := cfg.Load()
-	if err != nil {
-		return fmt.Errorf("configer.Load: %w", err)
-	}
+	s := new(Service[CFG])
 
-	lg, err := logger.New()
+	serviceCfg := configer.New[ServiceConfig]()
+	err := serviceCfg.Load()
+	if err != nil {
+		return fmt.Errorf("configer[ServiceConfig].Load: %w", err)
+	}
+	s.ServiceCfg = serviceCfg.Data
+
+	cfg := configer.New[CFG]()
+	err = cfg.Load()
+	if err != nil {
+		return fmt.Errorf("configer[%T].Load: %w", cfg, err)
+	}
+	s.Cfg = cfg.Data
+
+	s.Logger, err = logger.New()
 	if err != nil {
 		return fmt.Errorf("logger.New: %w", err)
 	}
 
-	lmw := grpclog.New(lg)
+	lmw := grpclog.New(s.Logger)
 	opts := []grpc.ServerOption{
 		grpc.UnaryInterceptor(lmw.UnaryInterceptor),
 		grpc.StreamInterceptor(lmw.StreamInterceptor),
 	}
 
-	grpcServer := grpc.NewServer(opts...)
-	reflection.Register(grpcServer)
+	s.GrpcServer = grpc.NewServer(opts...)
+	reflection.Register(s.GrpcServer)
 
-	idGen, err := idgen.New()
+	s.IDGenerator, err = idgen.New(s.ServiceCfg.IDGeneratorNode)
 	if err != nil {
 		return fmt.Errorf("idgen.New: %w", err)
 	}
 
-	s := &Service[CFG]{
-		Cfg:         &cfg.Data,
-		Logger:      lg,
-		GrpcServer:  grpcServer,
-		IDGenerator: idGen,
+	err = s.initCouchbaseBucket(ctx)
+	if err != nil {
+		return fmt.Errorf("initCouchbaseBucket: %w", err)
 	}
 
+	err = s.initServiceClients()
+	if err != nil {
+		return fmt.Errorf("initServiceClients: %w", err)
+	}
+
+	s.Logger.Info(ctx, "service initializing")
 	err = initializer(ctx, s)
 	if err != nil {
 		return fmt.Errorf("initializer: %w", err)
 	}
+	s.Logger.Info(ctx, "service initialized")
 
-	s.listener, err = net.Listen("tcp", s.Addr)
+	s.listener, err = net.Listen("tcp", s.ServiceCfg.Addr)
 	if err != nil {
 		return fmt.Errorf("net.Listen: %w", err)
 	}
 
-	go handleGracefulShutdown(s.GrpcServer, s.listener, lg)
+	go handleGracefulShutdown(s.GrpcServer, s.listener, s.Logger)
 
-	lg.Info(ctx, "service started",
-		"addr", s.Addr,
+	s.Logger.Info(ctx, "service started",
+		"addr", s.ServiceCfg.Addr,
 	)
 
 	err = s.GrpcServer.Serve(s.listener)
@@ -80,16 +109,7 @@ func Run[CFG any](ctx context.Context, initializer func(context.Context, *Servic
 		return fmt.Errorf("grpcServer.Serve: %w", err)
 	}
 
-	lg.Info(ctx, "service stopped")
+	s.Logger.Info(ctx, "service stopped")
 
 	return nil
-}
-
-func handleGracefulShutdown(server *grpc.Server, listener net.Listener, lg *logger.Logger) {
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
-	<-ch
-	lg.Info(context.Background(), "shutting down gracefully")
-	server.GracefulStop()
-	listener.Close()
 }
