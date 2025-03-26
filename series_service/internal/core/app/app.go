@@ -6,7 +6,7 @@ import (
 	"common/ports"
 	"context"
 	"fmt"
-	"series_service/internal/domain/core/models"
+	"series_service/internal/core/models"
 
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -20,12 +20,12 @@ type App struct {
 	idGenerator ports.IDGenerator
 }
 
-func New(repo Repository, tmdbClient tmdbpb.TMDBServiceClient, idGenerator ports.IDGenerator) (*App, error) {
+func New(repo Repository, tmdbClient tmdbpb.TMDBServiceClient, idGenerator ports.IDGenerator) *App {
 	return &App{
 		tmdbClient:  tmdbClient,
 		repo:        repo,
 		idGenerator: idGenerator,
-	}, nil
+	}
 }
 
 func (h *App) CreateSeries(ctx context.Context, req *seriespb.CreateSeriesRequest) (*seriespb.CreateSeriesResponse, error) {
