@@ -312,7 +312,6 @@ type ListSeriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Limit         int64                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
 	Offset        int64                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
-	Search        string                 `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -359,13 +358,6 @@ func (x *ListSeriesRequest) GetOffset() int64 {
 		return x.Offset
 	}
 	return 0
-}
-
-func (x *ListSeriesRequest) GetSearch() string {
-	if x != nil {
-		return x.Search
-	}
-	return ""
 }
 
 type SeriesList struct {
@@ -572,11 +564,10 @@ const file_series_service_proto_rawDesc = "" +
 	"\ttmdb_info\x18\x06 \x01(\v2\x12.seriespb.TMDBInfoR\btmdbInfo\"G\n" +
 	"\bTMDBInfo\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12+\n" +
-	"\x04data\x18\x02 \x01(\v2\x17.google.protobuf.StructR\x04data\"Y\n" +
+	"\x04data\x18\x02 \x01(\v2\x17.google.protobuf.StructR\x04data\"A\n" +
 	"\x11ListSeriesRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x03R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x02 \x01(\x03R\x06offset\x12\x16\n" +
-	"\x06search\x18\x03 \x01(\tR\x06search\"v\n" +
+	"\x06offset\x18\x02 \x01(\x03R\x06offset\"v\n" +
 	"\n" +
 	"SeriesList\x12$\n" +
 	"\x04list\x18\x01 \x03(\v2\x10.seriespb.SeriesR\x04list\x12\x14\n" +

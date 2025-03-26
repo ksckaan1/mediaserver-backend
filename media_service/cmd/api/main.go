@@ -1,21 +1,24 @@
 package main
 
 import (
+	"common/configer"
+	"common/grpclog"
 	"common/idgen"
 	"common/logger"
 	"common/pb/mediapb"
+	"common/ports"
 	"context"
 	"errors"
 	"fmt"
 	"media_service/config"
 	"media_service/database/postgresql/migrations"
-	"media_service/internal/domain/core/app"
-	"media_service/internal/domain/core/infrastructure/repository"
+	"media_service/internal/core/app"
+	"media_service/internal/infra/repository"
 	"media_service/internal/pkg/s3storage"
-	"media_service/internal/port"
 	"net"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -27,59 +30,94 @@ import (
 
 func main() {
 	ctx := context.Background()
-	cfg := initConfig()
-	lg := initLogger()
-
-	conn := initDatabase(ctx, cfg, lg)
-	defer conn.Close(ctx)
-
-	if err := runMigrations(ctx, cfg, lg); err != nil {
-		lg.Fatal(ctx, "failed to migrate database", "error", err)
+	cfg, err := initConfig()
+	if err != nil {
+		panic(err)
 	}
 
-	repo := initRepository(ctx, conn, lg)
-	idGen := initIDGenerator(ctx, lg)
-	s3Storage := initS3Storage(ctx, cfg, idGen, lg)
-	appServer := initAppServer(ctx, repo, s3Storage, idGen, lg)
+	lg, err := logger.New()
+	if err != nil {
+		panic(err)
+	}
+
+	conn, err := initDatabase(ctx, cfg)
+	if err != nil {
+		lg.Fatal(ctx, "initDatabase",
+			"error", err,
+		)
+	}
+	defer conn.Close(ctx)
+
+	err = runMigrations(ctx, cfg, lg)
+	if err != nil {
+		lg.Fatal(ctx, "runMigrations",
+			"error", err,
+		)
+	}
+
+	repo, err := repository.New(conn)
+	if err != nil {
+		lg.Fatal(ctx, "repository.New",
+			"error", err,
+		)
+	}
+
+	idGen, err := idgen.New()
+	if err != nil {
+		lg.Fatal(ctx, "idgen.New",
+			"error", err,
+		)
+	}
+
+	s3Storage, err := s3storage.New(cfg, idGen)
+	if err != nil {
+		lg.Fatal(ctx, "s3storage.New",
+			"error", err,
+		)
+	}
+
+	appServer := app.New(repo, s3Storage, idGen)
 
 	server := initGRPCServer(lg)
-	listener := initListener(ctx, cfg, lg)
+
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Data.Port))
+	if err != nil {
+		lg.Fatal(ctx, "net.Listen",
+			"error", err,
+		)
+	}
 
 	registerServices(server, appServer)
 
 	go handleGracefulShutdown(server, lg)
 
-	lg.Info(ctx, "server starting", "port", cfg.Port)
-	if err := server.Serve(listener); err != nil {
-		lg.Fatal(ctx, "failed to serve", "error", err)
-	}
-}
-
-func initConfig() *config.Config {
-	cfg := config.New()
-	if err := cfg.Load(); err != nil {
-		panic(err)
-	}
-	return cfg
-}
-
-func initLogger() *logger.Logger {
-	lg, err := logger.New()
+	lg.Info(ctx, "server starting", "port", cfg.Data.Port)
+	err = server.Serve(listener)
 	if err != nil {
-		panic(err)
+		lg.Fatal(ctx, "server.Serve",
+			"error", err,
+		)
 	}
-	return lg
 }
 
-func initDatabase(ctx context.Context, cfg *config.Config, lg *logger.Logger) *pgx.Conn {
-	conn, err := pgx.Connect(ctx, cfg.DatabaseURL)
+func initConfig() (*configer.Configer[config.Config], error) {
+	cfg := configer.New[config.Config]()
+	err := cfg.Load()
 	if err != nil {
-		lg.Fatal(ctx, "failed to connect to database", "error", err)
+		return nil, fmt.Errorf("configer.Load: %w", err)
 	}
-	return conn
+	return cfg, nil
 }
 
-func runMigrations(ctx context.Context, cfg *config.Config, lg port.Logger) error {
+func initDatabase(ctx context.Context, cfg *configer.Configer[config.Config]) (*pgx.Conn, error) {
+	conn, err := pgx.Connect(ctx, cfg.Data.DatabaseURL)
+	if err != nil {
+		return nil, fmt.Errorf("pgx.Connect: %w", err)
+	}
+	return conn, nil
+}
+
+func runMigrations(ctx context.Context, cfg *configer.Configer[config.Config], lg ports.Logger) error {
 	lg.Info(ctx, "database migration starting")
 
 	migrationSource, err := iofs.New(migrations.MigrationsFS, ".")
@@ -87,7 +125,7 @@ func runMigrations(ctx context.Context, cfg *config.Config, lg port.Logger) erro
 		return fmt.Errorf("iofs.New: %w", err)
 	}
 
-	m, err := migrate.NewWithSourceInstance("iofs", migrationSource, cfg.DatabaseURL)
+	m, err := migrate.NewWithSourceInstance("iofs", migrationSource, cfg.Data.DatabaseURL)
 	if err != nil {
 		return fmt.Errorf("migrate.NewWithSourceInstance: %w", err)
 	}
@@ -104,55 +142,13 @@ func runMigrations(ctx context.Context, cfg *config.Config, lg port.Logger) erro
 	return nil
 }
 
-func initRepository(ctx context.Context, conn *pgx.Conn, lg *logger.Logger) app.Repository {
-	repo, err := repository.New(conn)
-	if err != nil {
-		lg.Fatal(ctx, "error when init repository", "error", err)
-	}
-	return repo
-}
-
-func initIDGenerator(ctx context.Context, lg *logger.Logger) port.IDGenerator {
-	idGen, err := idgen.New()
-	if err != nil {
-		lg.Fatal(ctx, "error when init idgen", "error", err)
-	}
-	return idGen
-}
-
-func initS3Storage(ctx context.Context, cfg *config.Config, idGen port.IDGenerator, lg *logger.Logger) port.Storage {
-	s3Storage, err := s3storage.New(cfg, idGen)
-	if err != nil {
-		lg.Fatal(ctx, "error when init s3 storage", "error", err)
-	}
-	return s3Storage
-}
-
-func initAppServer(ctx context.Context, repo app.Repository, storage port.Storage, idGen port.IDGenerator, lg *logger.Logger) mediapb.MediaServiceServer {
-	appServer, err := app.New(repo, storage, idGen)
-	if err != nil {
-		lg.Fatal(ctx, "error when init app server", "error", err)
-	}
-	return appServer
-}
-
-func initGRPCServer(lg *logger.Logger) *grpc.Server {
-	lmw := &loggerMiddleWare{
-		logger: lg,
-	}
+func initGRPCServer(lg ports.Logger) *grpc.Server {
+	lmw := grpclog.New(lg)
 	opts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(lmw.unaryInterceptor),
-		grpc.StreamInterceptor(lmw.streamInterceptor),
+		grpc.UnaryInterceptor(lmw.UnaryInterceptor),
+		grpc.StreamInterceptor(lmw.StreamInterceptor),
 	}
 	return grpc.NewServer(opts...)
-}
-
-func initListener(ctx context.Context, cfg *config.Config, lg *logger.Logger) net.Listener {
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
-	if err != nil {
-		lg.Fatal(ctx, "failed to listen", "error", err)
-	}
-	return listener
 }
 
 func registerServices(server *grpc.Server, appServer mediapb.MediaServiceServer) {
@@ -160,9 +156,9 @@ func registerServices(server *grpc.Server, appServer mediapb.MediaServiceServer)
 	reflection.Register(server)
 }
 
-func handleGracefulShutdown(server *grpc.Server, lg *logger.Logger) {
+func handleGracefulShutdown(server *grpc.Server, lg ports.Logger) {
 	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, os.Interrupt, os.Kill)
+	signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
 	<-ch
 	lg.Info(context.Background(), "initiating graceful shutdown")
 	server.GracefulStop()

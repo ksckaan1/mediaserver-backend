@@ -328,7 +328,6 @@ type ListMoviesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Limit         int64                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
 	Offset        int64                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
-	Search        string                 `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -375,13 +374,6 @@ func (x *ListMoviesRequest) GetOffset() int64 {
 		return x.Offset
 	}
 	return 0
-}
-
-func (x *ListMoviesRequest) GetSearch() string {
-	if x != nil {
-		return x.Search
-	}
-	return ""
 }
 
 type MovieList struct {
@@ -748,11 +740,10 @@ const file_movie_service_proto_rawDesc = "" +
 	"\vdescription\x18\x05 \x01(\tR\vdescription\x12-\n" +
 	"\n" +
 	"media_info\x18\x06 \x01(\v2\x0e.moviepb.MediaR\tmediaInfo\x12.\n" +
-	"\ttmdb_info\x18\a \x01(\v2\x11.moviepb.TMDBInfoR\btmdbInfo\"Y\n" +
+	"\ttmdb_info\x18\a \x01(\v2\x11.moviepb.TMDBInfoR\btmdbInfo\"A\n" +
 	"\x11ListMoviesRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x03R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x02 \x01(\x03R\x06offset\x12\x16\n" +
-	"\x06search\x18\x03 \x01(\tR\x06search\"s\n" +
+	"\x06offset\x18\x02 \x01(\x03R\x06offset\"s\n" +
 	"\tMovieList\x12\"\n" +
 	"\x04list\x18\x01 \x03(\v2\x0e.moviepb.MovieR\x04list\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x14\n" +

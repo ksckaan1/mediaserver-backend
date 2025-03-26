@@ -22,11 +22,11 @@ type TMDB struct {
 	tmdbpb.UnimplementedTMDBServiceServer
 }
 
-func New(tmdbClient TMDBClient, repository Repository) (*TMDB, error) {
+func New(tmdbClient TMDBClient, repository Repository) *TMDB {
 	return &TMDB{
 		tmdbClient: tmdbClient,
 		repository: repository,
-	}, nil
+	}
 }
 
 func (t *TMDB) GetTMDBInfo(ctx context.Context, req *tmdbpb.GetTMDBInfoRequest) (*tmdbpb.TMDBInfo, error) {

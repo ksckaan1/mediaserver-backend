@@ -1,10 +1,13 @@
 package main
 
 import (
+	"common/configer"
+	"common/grpclog"
 	"common/idgen"
 	"common/logger"
 	"common/pb/seriespb"
 	"common/pb/tmdbpb"
+	"common/ports"
 	"context"
 	"fmt"
 	"net"
@@ -13,7 +16,6 @@ import (
 	"series_service/config"
 	"series_service/internal/domain/core/app"
 	"series_service/internal/infrastructure/repository/mongodb"
-	"series_service/internal/port"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -69,7 +71,7 @@ func main() {
 
 	go handleGracefulShutdown(server, lg)
 
-	lg.Info(ctx, "server starting", "port", cfg.Port)
+	lg.Info(ctx, "server starting", "port", cfg.Data.Port)
 
 	err = server.Serve(listener)
 	if err != nil {
@@ -77,10 +79,10 @@ func main() {
 	}
 }
 
-func initConfig() (*config.Config, error) {
-	cfg := config.New()
+func initConfig() (*configer.Configer[config.Config], error) {
+	cfg := configer.New[config.Config]()
 	if err := cfg.Load(); err != nil {
-		return nil, fmt.Errorf("config.Load: %w", err)
+		return nil, fmt.Errorf("configer.Load: %w", err)
 	}
 	return cfg, nil
 }
@@ -93,10 +95,9 @@ func initLogger() (*logger.Logger, error) {
 	return lg, nil
 }
 
-func initMongoDB(ctx context.Context, cfg *config.Config) (*mongo.Client, error) {
+func initMongoDB(ctx context.Context, cfg *configer.Configer[config.Config]) (*mongo.Client, error) {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	fmt.Println("cfg.DatabaseURL", cfg.DatabaseURL)
-	client, err := mongo.Connect(options.Client().ApplyURI(cfg.DatabaseURL).SetServerAPIOptions(serverAPI))
+	client, err := mongo.Connect(options.Client().ApplyURI(cfg.Data.DatabaseURL).SetServerAPIOptions(serverAPI))
 	if err != nil {
 		return nil, fmt.Errorf("mongo.Connect: %w", err)
 	}
@@ -106,7 +107,7 @@ func initMongoDB(ctx context.Context, cfg *config.Config) (*mongo.Client, error)
 	return client, nil
 }
 
-func initIDGenerator() (port.IDGenerator, error) {
+func initIDGenerator() (ports.IDGenerator, error) {
 	idGenerator, err := idgen.New()
 	if err != nil {
 		return nil, fmt.Errorf("idgen.New: %w", err)
@@ -114,32 +115,30 @@ func initIDGenerator() (port.IDGenerator, error) {
 	return idGenerator, nil
 }
 
-func initTMDBClient(cfg *config.Config) (tmdbpb.TMDBServiceClient, error) {
-	grpcClient, err := grpc.NewClient(cfg.TMDBServerHost, grpc.WithTransportCredentials(insecure.NewCredentials()))
+func initTMDBClient(cfg *configer.Configer[config.Config]) (tmdbpb.TMDBServiceClient, error) {
+	grpcClient, err := grpc.NewClient(cfg.Data.TMDBServerHost, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, fmt.Errorf("grpc.NewClient: %w", err)
 	}
 	return tmdbpb.NewTMDBServiceClient(grpcClient), nil
 }
 
-func initRepository(client *mongo.Client, cfg *config.Config) *mongodb.Repository {
-	db := client.Database(cfg.DatabaseName)
+func initRepository(client *mongo.Client, cfg *configer.Configer[config.Config]) *mongodb.Repository {
+	db := client.Database(cfg.Data.DatabaseName)
 	return mongodb.New(db)
 }
 
 func initGRPCServer(lg *logger.Logger) *grpc.Server {
-	lmw := &loggerMiddleWare{
-		logger: lg,
-	}
+	lmw := grpclog.New(lg)
 	opts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(lmw.unaryInterceptor),
-		grpc.StreamInterceptor(lmw.streamInterceptor),
+		grpc.UnaryInterceptor(lmw.UnaryInterceptor),
+		grpc.StreamInterceptor(lmw.StreamInterceptor),
 	}
 	return grpc.NewServer(opts...)
 }
 
-func initListener(cfg *config.Config) (net.Listener, error) {
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
+func initListener(cfg *configer.Configer[config.Config]) (net.Listener, error) {
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Data.Port))
 	if err != nil {
 		return nil, fmt.Errorf("net.Listen: %w", err)
 	}
