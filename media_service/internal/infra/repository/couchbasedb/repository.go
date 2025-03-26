@@ -99,8 +99,11 @@ func (r *Repository) ListMedias(ctx context.Context, limit int64, offset int64) 
 		}, nil
 	}
 	cursor, err := r.scope.Query(lo.Ternary(limit < 0, listQuery, listQueryWithLimit), &gocb.QueryOptions{
-		NamedParameters: map[string]interface{}{"limit": limit, "offset": offset},
-		Context:         ctx,
+		NamedParameters: map[string]any{
+			"limit":  limit,
+			"offset": offset,
+		},
+		Context: ctx,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("scope.Query: %w", err)
