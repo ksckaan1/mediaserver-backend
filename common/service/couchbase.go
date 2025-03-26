@@ -9,11 +9,11 @@ import (
 )
 
 func (s *Service[CFG]) initCouchbaseBucket(ctx context.Context) error {
-	if s.ServiceCfg.CouchbaseURL == "" || s.ServiceCfg.CouchbaseUser == "" || s.ServiceCfg.CouchbasePassword == "" || s.ServiceCfg.CouchbaseBucket == "" {
+	if s.ServiceCfg.CouchbaseHost == "" || s.ServiceCfg.CouchbaseUser == "" || s.ServiceCfg.CouchbasePassword == "" || s.ServiceCfg.CouchbaseBucket == "" {
 		return nil
 	}
 	var err error
-	s.cluster, err = gocb.Connect(s.ServiceCfg.CouchbaseURL, gocb.ClusterOptions{
+	s.cluster, err = gocb.Connect(fmt.Sprintf("couchbase://%s", s.ServiceCfg.CouchbaseHost), gocb.ClusterOptions{
 		Authenticator: gocb.PasswordAuthenticator{
 			Username: s.ServiceCfg.CouchbaseUser,
 			Password: s.ServiceCfg.CouchbasePassword,

@@ -87,6 +87,7 @@ func Run[CFG any](ctx context.Context, initializer func(context.Context, *Servic
 	}
 
 	s.Logger.Info(ctx, "service initializing")
+
 	err = initializer(ctx, s)
 	if err != nil {
 		return fmt.Errorf("initializer: %w", err)

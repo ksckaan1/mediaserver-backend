@@ -3,8 +3,9 @@ package service
 type ServiceConfig struct {
 	Addr            string `env:"ADDR" envDefault:":8080"`
 	IDGeneratorNode int64  `env:"ID_GENERATOR_NODE" envDefault:"1"`
+
 	// Couchbase
-	CouchbaseURL      string `env:"COUCHBASE_URL"`
+	CouchbaseHost     string `env:"COUCHBASE_HOST"`
 	CouchbaseUser     string `env:"COUCHBASE_USER"`
 	CouchbasePassword string `env:"COUCHBASE_PASSWORD"`
 	CouchbaseBucket   string `env:"COUCHBASE_BUCKET"`
