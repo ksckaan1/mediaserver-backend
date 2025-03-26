@@ -10,8 +10,8 @@ type IDGen struct {
 	node *snowflake.Node
 }
 
-func New() (*IDGen, error) {
-	node, err := snowflake.NewNode(1)
+func New(nodeNum int64) (*IDGen, error) {
+	node, err := snowflake.NewNode(nodeNum)
 	if err != nil {
 		return nil, fmt.Errorf("idgen.New: %w", err)
 	}
