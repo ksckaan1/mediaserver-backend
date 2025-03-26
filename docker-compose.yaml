@@ -6,6 +6,7 @@ x-logging: &default-logging
 
 services:
   media_service:
+    container_name: media_service
     build:
       context: .
       dockerfile: .docker/media_service.Dockerfile
@@ -14,125 +15,113 @@ services:
     ports:
       - "9191:8080"
     environment:
-      PORT: 8080
-      DATABASE_URL: postgres://mediaservice:mediaservice@postgres:5432/mediaservice?sslmode=disable
+      ADDR: ":8080"
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
       S3_ENDPOINT: ${S3_ENDPOINT}
       S3_REGION: ${S3_REGION}
       S3_BUCKET: ${S3_BUCKET}
       S3_ACCESS_KEY: ${S3_ACCESS_KEY}
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       S3_USE_SSL: ${S3_USE_SSL}
-    depends_on:
-      postgres:
-        condition: service_healthy
+      ID_GENERATOR_NODE: 1
     restart: unless-stopped
     logging: *default-logging
+    depends_on:
+      - cbq
 
-  # movie_service:
-  #   build:
-  #     context: .
-  #     dockerfile: .docker/movie_service.Dockerfile
-  #   networks:
-  #     - app
-  #   ports:
-  #     - "9192:8080"
-  #   environment:
-  #     PORT: 8080
-  #     DATABASE_URL: mongodb://movie:pass123@mongo:27017/movie_service?authSource=movie_service
-  #     MEDIA_SERVER_HOST: ${MEDIA_SERVER_HOST}
-  #     TMDB_SERVER_HOST: ${TMDB_SERVER_HOST}
-  #   depends_on:
-  #     mongo:
-  #       condition: service_healthy
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '0.5'
-  #         memory: 512M
-  #   restart: unless-stopped
-  #   logging: *default-logging
+  tmdb_service:
+    container_name: tmdb_service
+    build:
+      context: .
+      dockerfile: .docker/tmdb_service.Dockerfile
+    networks:
+      - app
+    ports:
+      - "9192:8080"
+    environment:
+      ADDR: ":8080"
+      TMDB_API_KEY: ${TMDB_API_KEY}
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      - cbq
 
-  # series_service:
-  #   build:
-  #     context: .
-  #     dockerfile: .docker/series_service.Dockerfile
-  #   networks:
-  #     - app
-  #   ports:
-  #     - "9193:8080"
-  #   environment:
-  #     PORT: 8080
-  #     DATABASE_URL: mongodb://series:pass123@mongo:27017/series_service?authSource=movie_service
-  #     TMDB_SERVER_HOST: ${TMDB_SERVER_HOST}
-  #   depends_on:
-  #     mongo:
-  #       condition: service_healthy
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '0.5'
-  #         memory: 512M
-  #   restart: unless-stopped
-  #   logging: *default-logging
+  movie_service:
+    container_name: movie_service
+    build:
+      context: .
+      dockerfile: .docker/movie_service.Dockerfile
+    networks:
+      - app
+    ports:
+      - "9193:8080"
+    environment:
+      ADDR: ":8080"
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+      MEDIA_SERVICE_ADDR: ${MEDIA_SERVICE_ADDR}
+      TMDB_SERVICE_ADDR: ${TMDB_SERVICE_ADDR}
+      ID_GENERATOR_NODE: 1
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      - cbq
 
-  # tmdb_service:
-  #   build:
-  #     context: .
-  #     dockerfile: .docker/tmdb_service.Dockerfile
-  #   networks:
-  #     - app
-  #   ports:
-  #     - "9194:8080"
-  #   environment:
-  #     PORT: 8080
-  #     TMDB_API_KEY: ${TMDB_API_KEY}
-  #     COUCHBASE_URL: couchbase://couchbase
-  #     COUCHBASE_USER: ${COUCHBASE_USER}
-  #     COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
-  #     COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
-  #   restart: unless-stopped
-  #   logging: *default-logging
+  series_service:
+    container_name: series_service
+    build:
+      context: .
+      dockerfile: .docker/series_service.Dockerfile
+    networks:
+      - app
+    ports:
+      - "9194:8080"
+    environment:
+      ADDR: ":8080"
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+      TMDB_SERVICE_ADDR: ${TMDB_SERVICE_ADDR}
+      ID_GENERATOR_NODE: 1
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      - cbq
 
   episode_service:
+    container_name: episode_service
     build:
       context: .
       dockerfile: .docker/episode_service.Dockerfile
     networks:
       - app
     ports:
-      - "9194:8080"
+      - "9196:8080"
     environment:
-      PORT: 8080
-      MEDIA_SERVER_HOST: ${MEDIA_SERVER_HOST}
-      COUCHBASE_URL: couchbase://couchbase
+      ADDR: ":8080"
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
       COUCHBASE_USER: ${COUCHBASE_USER}
       COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
       COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+      MEDIA_SERVICE_ADDR: ${MEDIA_SERVICE_ADDR}
+      ID_GENERATOR_NODE: 1
     restart: unless-stopped
     logging: *default-logging
-
-
-  postgres:
-    image: postgres:latest
-    networks:
-      - app
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./.docker/db-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 2s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    logging: *default-logging
+    depends_on:
+      - cbq
 
   minio:
+    container_name: minio
     image: minio/minio:latest
     environment:
       MINIO_ROOT_USER: ${S3_ACCESS_KEY}
@@ -144,7 +133,7 @@ services:
       - minio_data:/data
     command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 10s
       timeout: 10s
       retries: 3
@@ -154,18 +143,13 @@ services:
     logging: *default-logging
 
   minio-client:
+    container_name: minio-client
     image: minio/mc:latest
     depends_on:
       minio:
         condition: service_healthy
     entrypoint: >
-      /bin/sh -c "
-      sleep 5;
-      /usr/bin/mc config host add myminio http://minio:9000 ${S3_ACCESS_KEY} ${S3_SECRET_KEY};
-      /usr/bin/mc mb myminio/media || true;
-      /usr/bin/mc anonymous set public myminio/media;
-      exit 0;
-      "
+      /bin/sh -c " sleep 5; /usr/bin/mc config host add myminio http://${S3_ENDPOINT} ${S3_ACCESS_KEY} ${S3_SECRET_KEY}; /usr/bin/mc mb myminio/${S3_BUCKET} || true; /usr/bin/mc anonymous set public myminio/${S3_BUCKET}; exit 0; "
     environment:
       MINIO_ROOT_USER: ${S3_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
@@ -173,86 +157,62 @@ services:
       - app
     logging: *default-logging
 
-  # mongo:
-  #   image: mongo:latest
-  #   restart: unless-stopped
-  #   networks:
-  #     - app
-  #   ports:
-  #     - "27017:27017"
-  #   environment:
-  #     MONGO_INITDB_DATABASE: movie_service
-  #   volumes:
-  #     - mongo_data:/data/db
-  #     - ./.docker/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-  #   healthcheck:
-  #     test: ["CMD","mongosh", "--eval", "db.adminCommand('ping')"]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 3
-  #     start_period: 5s
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '1.0'
-  #         memory: 1G
-  #   logging: *default-logging
-
-  # mongo-express:
-  #   image: mongo-express:latest
-  #   restart: unless-stopped
-  #   networks:
-  #     - app
-  #   ports:
-  #     - "9090:8081"
-  #   environment:
-  #     ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/movie_service
-  #     ME_CONFIG_BASICAUTH: "false"
-  #   depends_on:
-  #     mongo:
-  #       condition: service_healthy
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '0.2'
-  #         memory: 256M
-  #   logging: *default-logging
-
-  # memcached:
-  #   image: memcached
-  #   command:
-  #     - --conn-limit=1024
-  #     - --memory-limit=64
-  #     - --threads=4
-  #   networks:
-  #     - app
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '0.3'
-  #         memory: 128M
-  #   logging: *default-logging
-
   couchbase:
-    image: couchbase:community
     container_name: couchbase
+    image: couchbase:community
     networks:
       - app
     ports:
-      - "8091:8091"  # Management Panel
-      - "8092:8092"  # Views
-      - "8093:8093"  # Query (N1QL)
-      - "8094:8094"  # Search
-      - "11207:11207"  # Data protocol (SSL)
-      - "11210:11210"  # Data protocol
+      - "8091:8091" # Management Panel
+      - "8092:8092" # Views
+      - "8093:8093" # Query (N1QL)
+      - "8094:8094" # Search
+      - "11207:11207" # Data protocol (SSL)
+      - "11210:11210" # Data protocol
+    volumes:
+      - couchbase_data:/var/lib/couchbase
     environment:
       - COUCHBASE_ADMINISTRATOR_USERNAME=${COUCHBASE_USER}
       - COUCHBASE_ADMINISTRATOR_PASSWORD=${COUCHBASE_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8091" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  couchbase-cli:
+    container_name: couchbase-cli
+    image: couchbaseutils/couchbase-cli:v5.5.0
+    environment:
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+    volumes:
+      - ./.docker/init/couchbase.sh:/init/couchbase.sh
+    entrypoint: >
+      /bin/sh /init/couchbase.sh
+    networks:
+      - app
+    depends_on:
+      couchbase:
+        condition: service_healthy
+
+  cbq:
+    container_name: cbq
+    image: sequoiatools/cbq:latest
+    networks:
+      - app
+    command: -u ${COUCHBASE_USER} -p ${COUCHBASE_PASSWORD} -e ${COUCHBASE_HOST} -f /init/couchbase.sql
+    volumes:
+      - ./.docker/init/couchbase.sql:/init/couchbase.sql
+    depends_on:
+      - couchbase-cli
 
 volumes:
-  postgres_data:
-  # mongo_data:
   minio_data:
+  couchbase_data:
+
 
 networks:
   app:
