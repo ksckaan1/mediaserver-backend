@@ -8,10 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func TestABC(t *testing.T) {
-	client, err := grpc.NewClient("localhost:9191", grpc.WithInsecure())
+	client, err := grpc.NewClient("localhost:9191", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	require.NoError(t, err)
 
 	mediaClient := mediapb.NewMediaServiceClient(client)
@@ -30,11 +31,12 @@ func TestABC(t *testing.T) {
 	defer stream.CloseSend()
 
 	err = stream.Send(&mediapb.UploadMediaRequest{
-		Title: "gopher.png",
+		Title: "00e915c5e8b481c31b47e6a53c01251a.jpg",
 	})
 	require.NoError(t, err)
 
-	file, err := os.Open("/Users/ksckaan1/Pictures/gopher.png")
+	// "C:\Users\kubra\OneDrive\Resimler\redmi12c\00e915c5e8b481c31b47e6a53c01251a.jpg"
+	file, err := os.Open("C:\\Users\\kubra\\OneDrive\\Resimler\\redmi12c\\00e915c5e8b481c31b47e6a53c01251a.jpg")
 	require.NoError(t, err)
 	defer file.Close()
 

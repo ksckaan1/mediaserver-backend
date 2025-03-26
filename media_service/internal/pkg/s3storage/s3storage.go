@@ -1,7 +1,6 @@
 package s3storage
 
 import (
-	"common/configer"
 	"common/ports"
 	"context"
 	"fmt"
@@ -20,17 +19,17 @@ type S3Stroage struct {
 	idGenerator ports.IDGenerator
 }
 
-func New(cfg *configer.Configer[config.Config], idGenerator ports.IDGenerator) (*S3Stroage, error) {
-	minioClient, err := minio.New(cfg.Data.S3Endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(cfg.Data.S3AccessKey, cfg.Data.S3SecretKey, ""),
-		Secure: cfg.Data.S3UseSSL,
+func New(cfg *config.Config, idGenerator ports.IDGenerator) (*S3Stroage, error) {
+	minioClient, err := minio.New(cfg.S3Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(cfg.S3AccessKey, cfg.S3SecretKey, ""),
+		Secure: cfg.S3UseSSL,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("minio.New: %w", err)
 	}
 	return &S3Stroage{
 		minioClient: minioClient,
-		bucketName:  cfg.Data.S3Bucket,
+		bucketName:  cfg.S3Bucket,
 		idGenerator: idGenerator,
 	}, nil
 }

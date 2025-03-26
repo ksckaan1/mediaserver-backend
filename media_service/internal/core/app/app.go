@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"media_service/internal/core/model"
+	"media_service/internal/core/models"
 	"media_service/internal/port"
 	"os"
 
@@ -86,7 +86,7 @@ func (a *App) UploadMedia(stream grpc.ClientStreamingServer[mediapb.UploadMediaR
 		return fmt.Errorf("storage.Save: %w", err)
 	}
 
-	err = a.repo.CreateMedia(ctx, &model.Media{
+	err = a.repo.CreateMedia(ctx, &models.Media{
 		ID:       id,
 		Title:    resp.Title,
 		Path:     filePath,
@@ -126,7 +126,7 @@ func (a *App) ListMedias(ctx context.Context, req *mediapb.ListMediasRequest) (*
 		return nil, fmt.Errorf("repo.ListMedias: %w", err)
 	}
 	return &mediapb.MediaList{
-		List: lo.Map(medias.List, func(m *model.Media, _ int) *mediapb.Media {
+		List: lo.Map(medias.List, func(m *models.Media, _ int) *mediapb.Media {
 			return &mediapb.Media{
 				Id:        m.ID,
 				CreatedAt: timestamppb.New(m.CreatedAt),
@@ -145,7 +145,7 @@ func (a *App) ListMedias(ctx context.Context, req *mediapb.ListMediasRequest) (*
 }
 
 func (a *App) UpdateMediaByID(ctx context.Context, req *mediapb.UpdateMediaByIDRequest) (*emptypb.Empty, error) {
-	err := a.repo.UpdateMediaByID(ctx, &model.Media{
+	err := a.repo.UpdateMediaByID(ctx, &models.Media{
 		ID:    req.MediaId,
 		Title: req.Title,
 	})
