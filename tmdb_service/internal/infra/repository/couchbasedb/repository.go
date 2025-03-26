@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
-	"tmdb_service/internal/domain/core/customerrors"
-	"tmdb_service/internal/domain/core/models"
+	"tmdb_service/internal/core/customerrors"
+	"tmdb_service/internal/core/models"
 
 	"github.com/couchbase/gocb/v2"
 )
@@ -15,10 +15,10 @@ type Repository struct {
 	coll *gocb.Collection
 }
 
-func New(bucket *gocb.Bucket) (*Repository, error) {
+func New(bucket *gocb.Bucket) *Repository {
 	return &Repository{
 		coll: bucket.Scope("tmdb_service").Collection("infos"),
-	}, nil
+	}
 }
 
 func (r *Repository) GetTMDBInfo(ctx context.Context, id string) (*models.TMDBInfo, error) {

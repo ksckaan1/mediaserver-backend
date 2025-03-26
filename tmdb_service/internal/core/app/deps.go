@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	"tmdb_service/internal/domain/core/models"
+	"tmdb_service/internal/core/models"
 )
 
 type TMDBClient interface {

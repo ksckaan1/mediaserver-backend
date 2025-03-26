@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"tmdb_service/internal/domain/core/customerrors"
+	"tmdb_service/internal/core/customerrors"
 )
 
 type TMDBClient struct {

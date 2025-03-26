@@ -7,30 +7,28 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"tmdb_service/internal/domain/core/customerrors"
-	"tmdb_service/internal/domain/core/models"
+	"tmdb_service/internal/core/customerrors"
+	"tmdb_service/internal/core/models"
 
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var _ tmdbpb.TMDBServiceServer = (*TMDB)(nil)
-
-type TMDB struct {
+type App struct {
+	tmdbpb.UnimplementedTMDBServiceServer
 	tmdbClient TMDBClient
 	repository Repository
-	tmdbpb.UnimplementedTMDBServiceServer
 }
 
-func New(tmdbClient TMDBClient, repository Repository) *TMDB {
-	return &TMDB{
+func New(tmdbClient TMDBClient, repository Repository) *App {
+	return &App{
 		tmdbClient: tmdbClient,
 		repository: repository,
 	}
 }
 
-func (t *TMDB) GetTMDBInfo(ctx context.Context, req *tmdbpb.GetTMDBInfoRequest) (*tmdbpb.TMDBInfo, error) {
-	info, err := t.repository.GetTMDBInfo(ctx, req.Id)
+func (a *App) GetTMDBInfo(ctx context.Context, req *tmdbpb.GetTMDBInfoRequest) (*tmdbpb.TMDBInfo, error) {
+	info, err := a.repository.GetTMDBInfo(ctx, req.Id)
 	if err != nil && !errors.Is(err, customerrors.ErrRecordNotFound) {
 		return nil, fmt.Errorf("repository.GetTMDBInfo: %w", err)
 	}
@@ -49,16 +47,16 @@ func (t *TMDB) GetTMDBInfo(ctx context.Context, req *tmdbpb.GetTMDBInfoRequest) 
 
 	var data map[string]any
 
-	entityType, id := t.getEntityType(req.Id)
+	entityType, id := a.getEntityType(req.Id)
 
 	switch entityType {
 	case "movie":
-		data, err = t.tmdbClient.GetMovieDetail(ctx, id)
+		data, err = a.tmdbClient.GetMovieDetail(ctx, id)
 		if err != nil {
 			return nil, fmt.Errorf("tmdbClient.GetMovieDetail: %w", err)
 		}
 	case "series":
-		data, err = t.tmdbClient.GetSeriesDetail(ctx, id)
+		data, err = a.tmdbClient.GetSeriesDetail(ctx, id)
 		if err != nil {
 			return nil, fmt.Errorf("tmdbClient.GetSeriesDetail: %w", err)
 		}
@@ -76,7 +74,7 @@ func (t *TMDB) GetTMDBInfo(ctx context.Context, req *tmdbpb.GetTMDBInfoRequest) 
 		Data: data,
 	}
 
-	err = t.repository.SetTMDBInfo(ctx, info)
+	err = a.repository.SetTMDBInfo(ctx, info)
 	if err != nil {
 		return nil, fmt.Errorf("repository.SetTMDBInfo: %w", err)
 	}
@@ -88,7 +86,7 @@ func (t *TMDB) GetTMDBInfo(ctx context.Context, req *tmdbpb.GetTMDBInfoRequest) 
 	}, nil
 }
 
-func (t *TMDB) getEntityType(id string) (string, string) {
+func (a *App) getEntityType(id string) (string, string) {
 	if id == "" {
 		return "", ""
 	}
