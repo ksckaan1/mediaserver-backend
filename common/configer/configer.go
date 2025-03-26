@@ -7,12 +7,12 @@ import (
 )
 
 type Configer[T any] struct {
-	Data T
+	Data *T
 }
 
 func New[T any]() *Configer[T] {
 	return &Configer[T]{
-		Data: *new(T),
+		Data: new(T),
 	}
 }
 
