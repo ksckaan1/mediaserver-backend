@@ -27,6 +27,8 @@ func New(bucket *gocb.Bucket) (*Repository, error) {
 }
 
 func (r *Repository) CreateEpisode(ctx context.Context, episode *models.Episode) error {
+	episode.CreatedAt = time.Now()
+	episode.UpdatedAt = time.Now()
 	_, err := r.coll.Insert(episode.ID, episode, &gocb.InsertOptions{
 		Context: ctx,
 	})
@@ -79,9 +81,13 @@ func (r *Repository) GetEpisodeByID(ctx context.Context, episodeID string) (*mod
 	return &episode, nil
 }
 
+type listResult struct {
+	Episodes models.Episode `json:"episodes"`
+}
+
 func (r *Repository) ListEpisodesBySeasonID(ctx context.Context, seasonID string) ([]*models.Episode, error) {
 	query := `SELECT * FROM episodes WHERE season_id = $1;`
-	result, err := r.scope.Query(query, &gocb.QueryOptions{
+	cursor, err := r.scope.Query(query, &gocb.QueryOptions{
 		Context:              ctx,
 		PositionalParameters: []any{seasonID},
 	})
@@ -89,13 +95,13 @@ func (r *Repository) ListEpisodesBySeasonID(ctx context.Context, seasonID string
 		return nil, fmt.Errorf("scope.Query: %w", err)
 	}
 	var episodes []*models.Episode
-	for result.Next() {
-		var episode models.Episode
-		err = result.Row(&episode)
+	for cursor.Next() {
+		var result listResult
+		err = cursor.Row(&result)
 		if err != nil {
 			return nil, fmt.Errorf("result.Row: %w", err)
 		}
-		episodes = append(episodes, &episode)
+		episodes = append(episodes, &result.Episodes)
 	}
 	return episodes, nil
 }
