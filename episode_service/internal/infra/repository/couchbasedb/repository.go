@@ -19,11 +19,11 @@ type Repository struct {
 	scope *gocb.Scope
 }
 
-func New(bucket *gocb.Bucket) (*Repository, error) {
+func New(bucket *gocb.Bucket) *Repository {
 	return &Repository{
 		coll:  bucket.Scope("episode_service").Collection("episodes"),
 		scope: bucket.Scope("episode_service"),
-	}, nil
+	}
 }
 
 func (r *Repository) CreateEpisode(ctx context.Context, episode *models.Episode) error {

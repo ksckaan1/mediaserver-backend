@@ -7,7 +7,6 @@ import (
 	"episode_service/config"
 	"episode_service/internal/core/app"
 	"episode_service/internal/infra/repository/couchbasedb"
-	"fmt"
 )
 
 func main() {
@@ -19,10 +18,7 @@ func main() {
 }
 
 func initializer(ctx context.Context, s *service.Service[config.Config]) error {
-	repo, err := couchbasedb.New(s.CBBucket)
-	if err != nil {
-		return fmt.Errorf("couchbasedb.New: %w", err)
-	}
+	repo := couchbasedb.New(s.CBBucket)
 	appServer := app.New(repo, s.IDGenerator, s.MediaServiceClient)
 	episodepb.RegisterEpisodeServiceServer(s.GrpcServer, appServer)
 	return nil
