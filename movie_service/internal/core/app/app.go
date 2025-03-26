@@ -7,7 +7,7 @@ import (
 	"common/ports"
 	"context"
 	"fmt"
-	"movie_service/internal/domain/core/models"
+	"movie_service/internal/core/models"
 
 	"time"
 
@@ -29,13 +29,13 @@ func New(
 	idGenerator ports.IDGenerator,
 	mediaClient mediapb.MediaServiceClient,
 	tmdbClient tmdbpb.TMDBServiceClient,
-) (*App, error) {
+) *App {
 	return &App{
 		repo:        repo,
 		idGenerator: idGenerator,
 		mediaClient: mediaClient,
 		tmdbClient:  tmdbClient,
-	}, nil
+	}
 }
 
 func (a *App) CreateMovie(ctx context.Context, request *moviepb.CreateMovieRequest) (*moviepb.CreateMovieResponse, error) {
