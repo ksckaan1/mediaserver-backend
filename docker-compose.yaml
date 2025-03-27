@@ -98,6 +98,29 @@ services:
     depends_on:
       - cbq
 
+  season_service:
+    container_name: season_service
+    build:
+      context: .
+      dockerfile: .docker/season_service.Dockerfile
+    networks:
+      - app
+    ports:
+      - "9195:8080"
+    environment:
+      ADDR: ":8080"
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+      SERIES_SERVICE_ADDR: ${SERIES_SERVICE_ADDR}
+      EPISODE_SERVICE_ADDR: ${EPISODE_SERVICE_ADDR}
+      ID_GENERATOR_NODE: 1
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      - cbq
+
   episode_service:
     container_name: episode_service
     build:
@@ -114,12 +137,12 @@ services:
       COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
       COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
       MEDIA_SERVICE_ADDR: ${MEDIA_SERVICE_ADDR}
+      SEASON_SERVICE_ADDR: ${SEASON_SERVICE_ADDR}
       ID_GENERATOR_NODE: 1
     restart: unless-stopped
     logging: *default-logging
     depends_on:
       - cbq
-
   minio:
     container_name: minio
     image: minio/minio:latest

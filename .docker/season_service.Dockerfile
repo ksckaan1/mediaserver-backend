@@ -9,8 +9,8 @@ ENV GOCACHE=/go-cache
 ENV GOMODCACHE=/gomod-cache
 
 # DOWNLOAD SERVICE DEPS
-COPY ./services/media/go.* /app/media/
-WORKDIR /app/media
+COPY ./services/season/go.* /app/season/
+WORKDIR /app/season
 RUN --mount=type=cache,target=/gomod-cache \
     go mod download
 WORKDIR /app
@@ -26,7 +26,7 @@ COPY . .
 
 RUN --mount=type=cache,target=/gomod-cache \
     --mount=type=cache,target=/go-cache \
-    go build -v -ldflags="-s -w" -trimpath -o /app/dist/media /app/services/media/cmd/api
+    go build -v -ldflags="-s -w" -trimpath -o /app/dist/season /app/services/season/cmd/api
 
 FROM alpine:3.19
 
@@ -34,10 +34,10 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-COPY --from=builder /app/dist/media /app/media
+COPY --from=builder /app/dist/season /app/season
 
 USER appuser
 
 EXPOSE 8080
 
-ENTRYPOINT ["/app/media"]
+ENTRYPOINT ["/app/season"]
