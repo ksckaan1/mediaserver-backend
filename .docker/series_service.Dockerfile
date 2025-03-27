@@ -6,9 +6,9 @@ ENV CGO_ENABLED=0 \
     GOOS=linux \
     GOARCH=amd64
 
-COPY ./series_service/go.* .
+COPY ./services/series/go.* ./series/
 
-WORKDIR /app/series_service
+WORKDIR /app/series
 
 RUN go mod download
 
@@ -16,7 +16,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build -o ./dist/series_service ./series_service/cmd/api
+RUN go build -o ./dist/series ./services/series/cmd/api
 
 FROM alpine:3.19
 
@@ -24,10 +24,10 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-COPY --from=builder /app/dist/series_service /app/series_service
+COPY --from=builder /app/dist/series /app/series
 
 USER appuser
 
 EXPOSE 8080
 
-ENTRYPOINT ["/app/series_service"]
+ENTRYPOINT ["/app/series"]

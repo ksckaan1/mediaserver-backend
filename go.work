@@ -1,10 +1,10 @@
 go 1.24.1
 
 use (
-	./common
-	./episode_service
-	./media_service
-	./movie_service
-	./series_service
-	./tmdb_service
+	./shared
+	./services/episode
+	./services/media
+	./services/movie
+	./services/series
+	./services/tmdb
 )
