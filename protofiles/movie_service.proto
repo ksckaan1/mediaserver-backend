@@ -1,0 +1,88 @@
+syntax = "proto3";
+package moviepb;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+
+option go_package = "shared/pb/moviepb;moviepb";
+
+service MovieService {
+  rpc CreateMovie(CreateMovieRequest) returns (CreateMovieResponse);
+  rpc GetMovieByID(GetMovieByIDRequest) returns (Movie);
+  rpc ListMovies(ListMoviesRequest) returns (MovieList);
+  rpc UpdateMovieByID(UpdateMovieByIDRequest) returns (google.protobuf.Empty);
+  rpc DeleteMovieByID(DeleteMovieByIDRequest) returns (google.protobuf.Empty);
+}
+
+message CreateMovieRequest {
+  string title = 1;
+  string description = 2;
+  string tmdb_id = 3;
+  string media_id = 4;
+}
+
+message CreateMovieResponse {
+  string movie_id = 1;
+}
+
+message GetMovieByIDRequest {
+  string movie_id = 1;
+}
+
+message Movie {
+  string id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp updated_at = 3;
+  string title = 4;
+  string description = 5;
+  Media media_info = 6;
+  TMDBInfo tmdb_info = 7;
+}
+
+message ListMoviesRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+
+message MovieList {
+  repeated Movie list = 1;
+  int64 count = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
+
+message UpdateMovieByIDRequest {
+  string movie_id = 1;
+  string title = 2;
+  string description = 3;
+  string tmdb_id = 4;
+  string media_id = 5;
+}
+
+message DeleteMovieByIDRequest {
+  string movie_id = 1;
+}
+
+message TMDBInfo {
+  string id = 1;
+  google.protobuf.Struct data = 2;
+}
+
+enum MediaType {
+  UNKNOWN = 0;
+  IMAGE = 1;
+  VIDEO = 2;
+  AUDIO = 3;
+}
+
+message Media {
+  string id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp updated_at = 3;
+  string title = 4;
+  string path = 5;
+  MediaType type = 6;
+  string mime_type = 7;
+  int64 size = 8;
+}

@@ -1,1 +1,0 @@
-ALTER TABLE movies ADD COLUMN updated_at DATETIME;

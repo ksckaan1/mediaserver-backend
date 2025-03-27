@@ -1,0 +1,67 @@
+syntax = "proto3";
+package mediapb;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "shared/pb/mediapb;mediapb";
+
+service MediaService {
+  rpc UploadMedia(stream UploadMediaRequest) returns (UploadMediaResponse);
+  rpc GetMediaByID(GetMediaByIDRequest) returns (Media);
+  rpc ListMedias(ListMediasRequest) returns (MediaList);
+  rpc UpdateMediaByID(UpdateMediaByIDRequest) returns (google.protobuf.Empty);
+  rpc DeleteMediaByID(DeleteMediaByIDRequest) returns (google.protobuf.Empty);
+}
+
+message UploadMediaRequest {
+  bytes content = 1;
+  string title = 2;
+}
+
+message UploadMediaResponse {
+  string media_id = 1;
+}
+
+enum MediaType {
+  UNKNOWN = 0;
+  IMAGE = 1;
+  VIDEO = 2;
+  AUDIO = 3;
+}
+
+message GetMediaByIDRequest {
+  string media_id = 1;
+}
+
+message Media {
+  string id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp updated_at = 3;
+  string title = 4;
+  string path = 5;
+  MediaType type = 6;
+  string mime_type = 7;
+  int64 size = 8;
+}
+
+message ListMediasRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+
+message MediaList {
+  repeated Media list = 1;
+  int64 count = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
+
+message UpdateMediaByIDRequest {
+  string media_id = 1;
+  string title = 2;
+}
+
+message DeleteMediaByIDRequest {
+  string media_id = 1;
+}
