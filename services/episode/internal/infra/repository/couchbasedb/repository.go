@@ -85,9 +85,10 @@ type listResult struct {
 	Episodes models.Episode `json:"episodes"`
 }
 
+const listEpisodesQuery = `SELECT * FROM episodes WHERE season_id = $1 ORDER BY 'order' ASC;`
+
 func (r *Repository) ListEpisodesBySeasonID(ctx context.Context, seasonID string) ([]*models.Episode, error) {
-	query := `SELECT * FROM episodes WHERE season_id = $1;`
-	cursor, err := r.scope.Query(query, &gocb.QueryOptions{
+	cursor, err := r.scope.Query(listEpisodesQuery, &gocb.QueryOptions{
 		Context:              ctx,
 		PositionalParameters: []any{seasonID},
 	})

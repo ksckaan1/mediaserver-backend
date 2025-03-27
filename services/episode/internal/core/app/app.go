@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"shared/pb/episodepb"
 	"shared/pb/mediapb"
+	"shared/pb/seasonpb"
 	"shared/ports"
 
 	"github.com/samber/lo"
@@ -15,21 +16,32 @@ import (
 
 type App struct {
 	episodepb.UnimplementedEpisodeServiceServer
-	repository  Repository
-	idGenerator ports.IDGenerator
-	mediaClient mediapb.MediaServiceClient
+	repository   Repository
+	idGenerator  ports.IDGenerator
+	mediaClient  mediapb.MediaServiceClient
+	seasonClient seasonpb.SeasonServiceClient
 }
 
-func New(repository Repository, idGenerator ports.IDGenerator, mediaClient mediapb.MediaServiceClient) *App {
+func New(
+	repository Repository,
+	idGenerator ports.IDGenerator,
+	mediaClient mediapb.MediaServiceClient,
+	seasonClient seasonpb.SeasonServiceClient,
+) *App {
 	return &App{
-		repository:  repository,
-		idGenerator: idGenerator,
-		mediaClient: mediaClient,
+		repository:   repository,
+		idGenerator:  idGenerator,
+		mediaClient:  mediaClient,
+		seasonClient: seasonClient,
 	}
 }
 
 func (a *App) CreateEpisode(ctx context.Context, req *episodepb.CreateEpisodeRequest) (*episodepb.CreateEpisodeResponse, error) {
-	err := a.validateMediaID(ctx, req.MediaId)
+	_, err := a.seasonClient.GetSeasonByID(ctx, &seasonpb.GetSeasonByIDRequest{SeasonId: req.SeasonId})
+	if err != nil {
+		return nil, fmt.Errorf("seasonClient.GetSeasonByID: %w", err)
+	}
+	err = a.validateMediaID(ctx, req.MediaId)
 	if err != nil {
 		return nil, fmt.Errorf("validateMediaID: %w", err)
 	}
@@ -123,8 +135,10 @@ func (a *App) ReorderEpisodesBySeasonID(ctx context.Context, req *episodepb.Reor
 	if err != nil {
 		return nil, fmt.Errorf("repository.ListEpisodesBySeasonID: %w", err)
 	}
-	if len(req.EpisodeIds) != len(episodes) {
-		return nil, fmt.Errorf("invalid episode ids length")
+	if len(lo.Intersect(req.EpisodeIds, lo.Map(episodes, func(e *models.Episode, _ int) string {
+		return e.ID
+	}))) != len(episodes) {
+		return nil, fmt.Errorf("incorrect episode ids")
 	}
 
 	for i, episode := range episodes {
