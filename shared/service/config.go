@@ -15,5 +15,6 @@ type ServiceConfig struct {
 	TMDBServiceAddr    string `env:"TMDB_SERVICE_ADDR"`
 	MovieServiceAddr   string `env:"MOVIE_SERVICE_ADDR"`
 	SeriesServiceAddr  string `env:"SERIES_SERVICE_ADDR"`
+	SeasonServiceAddr  string `env:"SEASON_SERVICE_ADDR"`
 	EpisodeServiceAddr string `env:"EPISODE_SERVICE_ADDR"`
 }

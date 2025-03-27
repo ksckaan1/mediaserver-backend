@@ -11,6 +11,7 @@ import (
 	"shared/pb/episodepb"
 	"shared/pb/mediapb"
 	"shared/pb/moviepb"
+	"shared/pb/seasonpb"
 	"shared/pb/seriespb"
 	"shared/pb/tmdbpb"
 	"shared/ports"
@@ -33,6 +34,7 @@ type Service[CFG any] struct {
 	TMDBServiceClient    tmdbpb.TMDBServiceClient
 	MovieServiceClient   moviepb.MovieServiceClient
 	SeriesServiceClient  seriespb.SeriesServiceClient
+	SeasonServiceClient  seasonpb.SeasonServiceClient
 	EpisodeServiceClient episodepb.EpisodeServiceClient
 
 	// protected fields

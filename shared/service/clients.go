@@ -5,6 +5,7 @@ import (
 	"shared/pb/episodepb"
 	"shared/pb/mediapb"
 	"shared/pb/moviepb"
+	"shared/pb/seasonpb"
 	"shared/pb/seriespb"
 	"shared/pb/tmdbpb"
 
@@ -28,6 +29,10 @@ func (s *Service[CFG]) initServiceClients() error {
 	err = s.initSeriesClient()
 	if err != nil {
 		return fmt.Errorf("initSeriesClient: %w", err)
+	}
+	err = s.initSeasonClient()
+	if err != nil {
+		return fmt.Errorf("initSeasonClient: %w", err)
 	}
 	err = s.initEpisodeClient()
 	if err != nil {
@@ -81,6 +86,18 @@ func (s *Service[CFG]) initSeriesClient() error {
 		return fmt.Errorf("grpc.NewClient: %w", err)
 	}
 	s.SeriesServiceClient = seriespb.NewSeriesServiceClient(conn)
+	return nil
+}
+
+func (s *Service[CFG]) initSeasonClient() error {
+	if s.ServiceCfg.SeasonServiceAddr == "" {
+		return nil
+	}
+	conn, err := grpc.NewClient(s.ServiceCfg.SeasonServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return fmt.Errorf("grpc.NewClient: %w", err)
+	}
+	s.SeasonServiceClient = seasonpb.NewSeasonServiceClient(conn)
 	return nil
 }
 
