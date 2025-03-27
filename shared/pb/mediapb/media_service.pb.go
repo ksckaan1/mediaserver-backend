@@ -578,7 +578,7 @@ const file_protofiles_media_service_proto_rawDesc = "" +
 	"\n" +
 	"ListMedias\x12\x1a.mediapb.ListMediasRequest\x1a\x12.mediapb.MediaList\x12J\n" +
 	"\x0fUpdateMediaByID\x12\x1f.mediapb.UpdateMediaByIDRequest\x1a\x16.google.protobuf.Empty\x12J\n" +
-	"\x0fDeleteMediaByID\x12\x1f.mediapb.DeleteMediaByIDRequest\x1a\x16.google.protobuf.EmptyB\x1bZ\x19common/pb/mediapb;mediapbb\x06proto3"
+	"\x0fDeleteMediaByID\x12\x1f.mediapb.DeleteMediaByIDRequest\x1a\x16.google.protobuf.EmptyB\x1bZ\x19shared/pb/mediapb;mediapbb\x06proto3"
 
 var (
 	file_protofiles_media_service_proto_rawDescOnce sync.Once

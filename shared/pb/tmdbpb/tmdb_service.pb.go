@@ -140,7 +140,7 @@ const file_tmdb_service_proto_rawDesc = "" +
 	"updated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12+\n" +
 	"\x04data\x18\x03 \x01(\v2\x17.google.protobuf.StructR\x04data2J\n" +
 	"\vTMDBService\x12;\n" +
-	"\vGetTMDBInfo\x12\x1a.tmdbpb.GetTMDBInfoRequest\x1a\x10.tmdbpb.TMDBInfoB\x19Z\x17common/pb/tmdbpb;tmdbpbb\x06proto3"
+	"\vGetTMDBInfo\x12\x1a.tmdbpb.GetTMDBInfoRequest\x1a\x10.tmdbpb.TMDBInfoB\x19Z\x17shared/pb/tmdbpb;tmdbpbb\x06proto3"
 
 var (
 	file_tmdb_service_proto_rawDescOnce sync.Once

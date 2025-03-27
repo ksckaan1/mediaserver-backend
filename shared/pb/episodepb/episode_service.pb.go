@@ -628,7 +628,7 @@ const file_episode_service_proto_rawDesc = "" +
 	"\x11UpdateEpisodeByID\x12#.episodepb.UpdateEpisodeByIDRequest\x1a\x16.google.protobuf.Empty\x12`\n" +
 	"\x19ReorderEpisodesBySeasonID\x12+.episodepb.ReorderEpisodesBySeasonIDRequest\x1a\x16.google.protobuf.Empty\x12P\n" +
 	"\x11DeleteEpisodeByID\x12#.episodepb.DeleteEpisodeByIDRequest\x1a\x16.google.protobuf.Empty\x12d\n" +
-	"\x1bDeleteAllEpisodesBySeasonID\x12-.episodepb.DeleteAllEpisodesBySeasonIDRequest\x1a\x16.google.protobuf.EmptyB\x1fZ\x1dcommon/pb/episodepb;episodepbb\x06proto3"
+	"\x1bDeleteAllEpisodesBySeasonID\x12-.episodepb.DeleteAllEpisodesBySeasonIDRequest\x1a\x16.google.protobuf.EmptyB\x1fZ\x1dshared/pb/episodepb;episodepbb\x06proto3"
 
 var (
 	file_episode_service_proto_rawDescOnce sync.Once

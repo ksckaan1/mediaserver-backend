@@ -587,7 +587,7 @@ const file_series_service_proto_rawDesc = "" +
 	"\n" +
 	"ListSeries\x12\x1b.seriespb.ListSeriesRequest\x1a\x14.seriespb.SeriesList\x12M\n" +
 	"\x10UpdateSeriesByID\x12!.seriespb.UpdateSeriesByIDRequest\x1a\x16.google.protobuf.Empty\x12M\n" +
-	"\x10DeleteSeriesByID\x12!.seriespb.DeleteSeriesByIDRequest\x1a\x16.google.protobuf.EmptyB\x1dZ\x1bcommon/pb/seriespb;seriespbb\x06proto3"
+	"\x10DeleteSeriesByID\x12!.seriespb.DeleteSeriesByIDRequest\x1a\x16.google.protobuf.EmptyB\x1dZ\x1bshared/pb/seriespb;seriespbb\x06proto3"
 
 var (
 	file_series_service_proto_rawDescOnce sync.Once

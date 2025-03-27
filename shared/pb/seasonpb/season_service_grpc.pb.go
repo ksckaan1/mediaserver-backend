@@ -20,12 +20,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SeasonService_CreateSeason_FullMethodName             = "/seasonpb.SeasonService/CreateSeason"
-	SeasonService_GetSeasonByID_FullMethodName            = "/seasonpb.SeasonService/GetSeasonByID"
-	SeasonService_ListSeasonsBySeriesID_FullMethodName    = "/seasonpb.SeasonService/ListSeasonsBySeriesID"
-	SeasonService_UpdateSeasonByID_FullMethodName         = "/seasonpb.SeasonService/UpdateSeasonByID"
-	SeasonService_ReorderSeasonsBySeriesID_FullMethodName = "/seasonpb.SeasonService/ReorderSeasonsBySeriesID"
-	SeasonService_DeleteSeasonByID_FullMethodName         = "/seasonpb.SeasonService/DeleteSeasonByID"
+	SeasonService_CreateSeason_FullMethodName               = "/seasonpb.SeasonService/CreateSeason"
+	SeasonService_GetSeasonByID_FullMethodName              = "/seasonpb.SeasonService/GetSeasonByID"
+	SeasonService_ListSeasonsBySeriesID_FullMethodName      = "/seasonpb.SeasonService/ListSeasonsBySeriesID"
+	SeasonService_UpdateSeasonByID_FullMethodName           = "/seasonpb.SeasonService/UpdateSeasonByID"
+	SeasonService_ReorderSeasonsBySeriesID_FullMethodName   = "/seasonpb.SeasonService/ReorderSeasonsBySeriesID"
+	SeasonService_DeleteSeasonByID_FullMethodName           = "/seasonpb.SeasonService/DeleteSeasonByID"
+	SeasonService_DeleteAllSeasonsBySeriesID_FullMethodName = "/seasonpb.SeasonService/DeleteAllSeasonsBySeriesID"
 )
 
 // SeasonServiceClient is the client API for SeasonService service.
@@ -38,6 +39,7 @@ type SeasonServiceClient interface {
 	UpdateSeasonByID(ctx context.Context, in *UpdateSeasonByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ReorderSeasonsBySeriesID(ctx context.Context, in *ReorderSeasonsBySeriesIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteSeasonByID(ctx context.Context, in *DeleteSeasonByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteAllSeasonsBySeriesID(ctx context.Context, in *DeleteAllSeasonsBySeriesIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type seasonServiceClient struct {
@@ -108,6 +110,16 @@ func (c *seasonServiceClient) DeleteSeasonByID(ctx context.Context, in *DeleteSe
 	return out, nil
 }
 
+func (c *seasonServiceClient) DeleteAllSeasonsBySeriesID(ctx context.Context, in *DeleteAllSeasonsBySeriesIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, SeasonService_DeleteAllSeasonsBySeriesID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SeasonServiceServer is the server API for SeasonService service.
 // All implementations must embed UnimplementedSeasonServiceServer
 // for forward compatibility.
@@ -118,6 +130,7 @@ type SeasonServiceServer interface {
 	UpdateSeasonByID(context.Context, *UpdateSeasonByIDRequest) (*emptypb.Empty, error)
 	ReorderSeasonsBySeriesID(context.Context, *ReorderSeasonsBySeriesIDRequest) (*emptypb.Empty, error)
 	DeleteSeasonByID(context.Context, *DeleteSeasonByIDRequest) (*emptypb.Empty, error)
+	DeleteAllSeasonsBySeriesID(context.Context, *DeleteAllSeasonsBySeriesIDRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSeasonServiceServer()
 }
 
@@ -145,6 +158,9 @@ func (UnimplementedSeasonServiceServer) ReorderSeasonsBySeriesID(context.Context
 }
 func (UnimplementedSeasonServiceServer) DeleteSeasonByID(context.Context, *DeleteSeasonByIDRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSeasonByID not implemented")
+}
+func (UnimplementedSeasonServiceServer) DeleteAllSeasonsBySeriesID(context.Context, *DeleteAllSeasonsBySeriesIDRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAllSeasonsBySeriesID not implemented")
 }
 func (UnimplementedSeasonServiceServer) mustEmbedUnimplementedSeasonServiceServer() {}
 func (UnimplementedSeasonServiceServer) testEmbeddedByValue()                       {}
@@ -275,6 +291,24 @@ func _SeasonService_DeleteSeasonByID_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SeasonService_DeleteAllSeasonsBySeriesID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAllSeasonsBySeriesIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeasonServiceServer).DeleteAllSeasonsBySeriesID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeasonService_DeleteAllSeasonsBySeriesID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeasonServiceServer).DeleteAllSeasonsBySeriesID(ctx, req.(*DeleteAllSeasonsBySeriesIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SeasonService_ServiceDesc is the grpc.ServiceDesc for SeasonService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -305,6 +339,10 @@ var SeasonService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteSeasonByID",
 			Handler:    _SeasonService_DeleteSeasonByID_Handler,
+		},
+		{
+			MethodName: "DeleteAllSeasonsBySeriesID",
+			Handler:    _SeasonService_DeleteAllSeasonsBySeriesID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

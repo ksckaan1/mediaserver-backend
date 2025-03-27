@@ -782,7 +782,7 @@ const file_movie_service_proto_rawDesc = "" +
 	"\n" +
 	"ListMovies\x12\x1a.moviepb.ListMoviesRequest\x1a\x12.moviepb.MovieList\x12J\n" +
 	"\x0fUpdateMovieByID\x12\x1f.moviepb.UpdateMovieByIDRequest\x1a\x16.google.protobuf.Empty\x12J\n" +
-	"\x0fDeleteMovieByID\x12\x1f.moviepb.DeleteMovieByIDRequest\x1a\x16.google.protobuf.EmptyB\x1bZ\x19common/pb/moviepb;moviepbb\x06proto3"
+	"\x0fDeleteMovieByID\x12\x1f.moviepb.DeleteMovieByIDRequest\x1a\x16.google.protobuf.EmptyB\x1bZ\x19shared/pb/moviepb;moviepbb\x06proto3"
 
 var (
 	file_movie_service_proto_rawDescOnce sync.Once

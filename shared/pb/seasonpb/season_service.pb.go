@@ -507,6 +507,50 @@ func (x *DeleteSeasonByIDRequest) GetSeasonId() string {
 	return ""
 }
 
+type DeleteAllSeasonsBySeriesIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SeriesId      string                 `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAllSeasonsBySeriesIDRequest) Reset() {
+	*x = DeleteAllSeasonsBySeriesIDRequest{}
+	mi := &file_season_service_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAllSeasonsBySeriesIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAllSeasonsBySeriesIDRequest) ProtoMessage() {}
+
+func (x *DeleteAllSeasonsBySeriesIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_season_service_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAllSeasonsBySeriesIDRequest.ProtoReflect.Descriptor instead.
+func (*DeleteAllSeasonsBySeriesIDRequest) Descriptor() ([]byte, []int) {
+	return file_season_service_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteAllSeasonsBySeriesIDRequest) GetSeriesId() string {
+	if x != nil {
+		return x.SeriesId
+	}
+	return ""
+}
+
 var File_season_service_proto protoreflect.FileDescriptor
 
 const file_season_service_proto_rawDesc = "" +
@@ -544,14 +588,17 @@ const file_season_service_proto_rawDesc = "" +
 	"\n" +
 	"season_ids\x18\x02 \x03(\tR\tseasonIds\"6\n" +
 	"\x17DeleteSeasonByIDRequest\x12\x1b\n" +
-	"\tseason_id\x18\x01 \x01(\tR\bseasonId2\xf5\x03\n" +
+	"\tseason_id\x18\x01 \x01(\tR\bseasonId\"@\n" +
+	"!DeleteAllSeasonsBySeriesIDRequest\x12\x1b\n" +
+	"\tseries_id\x18\x01 \x01(\tR\bseriesId2\xd8\x04\n" +
 	"\rSeasonService\x12M\n" +
 	"\fCreateSeason\x12\x1d.seasonpb.CreateSeasonRequest\x1a\x1e.seasonpb.CreateSeasonResponse\x12A\n" +
 	"\rGetSeasonByID\x12\x1e.seasonpb.GetSeasonByIDRequest\x1a\x10.seasonpb.Season\x12U\n" +
 	"\x15ListSeasonsBySeriesID\x12&.seasonpb.ListSeasonsBySeriesIDRequest\x1a\x14.seasonpb.SeasonList\x12M\n" +
 	"\x10UpdateSeasonByID\x12!.seasonpb.UpdateSeasonByIDRequest\x1a\x16.google.protobuf.Empty\x12]\n" +
 	"\x18ReorderSeasonsBySeriesID\x12).seasonpb.ReorderSeasonsBySeriesIDRequest\x1a\x16.google.protobuf.Empty\x12M\n" +
-	"\x10DeleteSeasonByID\x12!.seasonpb.DeleteSeasonByIDRequest\x1a\x16.google.protobuf.EmptyB\x1dZ\x1bcommon/pb/seasonpb;seasonpbb\x06proto3"
+	"\x10DeleteSeasonByID\x12!.seasonpb.DeleteSeasonByIDRequest\x1a\x16.google.protobuf.Empty\x12a\n" +
+	"\x1aDeleteAllSeasonsBySeriesID\x12+.seasonpb.DeleteAllSeasonsBySeriesIDRequest\x1a\x16.google.protobuf.EmptyB\x1dZ\x1bshared/pb/seasonpb;seasonpbb\x06proto3"
 
 var (
 	file_season_service_proto_rawDescOnce sync.Once
@@ -565,23 +612,24 @@ func file_season_service_proto_rawDescGZIP() []byte {
 	return file_season_service_proto_rawDescData
 }
 
-var file_season_service_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_season_service_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_season_service_proto_goTypes = []any{
-	(*CreateSeasonRequest)(nil),             // 0: seasonpb.CreateSeasonRequest
-	(*CreateSeasonResponse)(nil),            // 1: seasonpb.CreateSeasonResponse
-	(*GetSeasonByIDRequest)(nil),            // 2: seasonpb.GetSeasonByIDRequest
-	(*Season)(nil),                          // 3: seasonpb.Season
-	(*ListSeasonsBySeriesIDRequest)(nil),    // 4: seasonpb.ListSeasonsBySeriesIDRequest
-	(*SeasonList)(nil),                      // 5: seasonpb.SeasonList
-	(*UpdateSeasonByIDRequest)(nil),         // 6: seasonpb.UpdateSeasonByIDRequest
-	(*ReorderSeasonsBySeriesIDRequest)(nil), // 7: seasonpb.ReorderSeasonsBySeriesIDRequest
-	(*DeleteSeasonByIDRequest)(nil),         // 8: seasonpb.DeleteSeasonByIDRequest
-	(*timestamppb.Timestamp)(nil),           // 9: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),                   // 10: google.protobuf.Empty
+	(*CreateSeasonRequest)(nil),               // 0: seasonpb.CreateSeasonRequest
+	(*CreateSeasonResponse)(nil),              // 1: seasonpb.CreateSeasonResponse
+	(*GetSeasonByIDRequest)(nil),              // 2: seasonpb.GetSeasonByIDRequest
+	(*Season)(nil),                            // 3: seasonpb.Season
+	(*ListSeasonsBySeriesIDRequest)(nil),      // 4: seasonpb.ListSeasonsBySeriesIDRequest
+	(*SeasonList)(nil),                        // 5: seasonpb.SeasonList
+	(*UpdateSeasonByIDRequest)(nil),           // 6: seasonpb.UpdateSeasonByIDRequest
+	(*ReorderSeasonsBySeriesIDRequest)(nil),   // 7: seasonpb.ReorderSeasonsBySeriesIDRequest
+	(*DeleteSeasonByIDRequest)(nil),           // 8: seasonpb.DeleteSeasonByIDRequest
+	(*DeleteAllSeasonsBySeriesIDRequest)(nil), // 9: seasonpb.DeleteAllSeasonsBySeriesIDRequest
+	(*timestamppb.Timestamp)(nil),             // 10: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                     // 11: google.protobuf.Empty
 }
 var file_season_service_proto_depIdxs = []int32{
-	9,  // 0: seasonpb.Season.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 1: seasonpb.Season.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 0: seasonpb.Season.created_at:type_name -> google.protobuf.Timestamp
+	10, // 1: seasonpb.Season.updated_at:type_name -> google.protobuf.Timestamp
 	3,  // 2: seasonpb.SeasonList.list:type_name -> seasonpb.Season
 	0,  // 3: seasonpb.SeasonService.CreateSeason:input_type -> seasonpb.CreateSeasonRequest
 	2,  // 4: seasonpb.SeasonService.GetSeasonByID:input_type -> seasonpb.GetSeasonByIDRequest
@@ -589,14 +637,16 @@ var file_season_service_proto_depIdxs = []int32{
 	6,  // 6: seasonpb.SeasonService.UpdateSeasonByID:input_type -> seasonpb.UpdateSeasonByIDRequest
 	7,  // 7: seasonpb.SeasonService.ReorderSeasonsBySeriesID:input_type -> seasonpb.ReorderSeasonsBySeriesIDRequest
 	8,  // 8: seasonpb.SeasonService.DeleteSeasonByID:input_type -> seasonpb.DeleteSeasonByIDRequest
-	1,  // 9: seasonpb.SeasonService.CreateSeason:output_type -> seasonpb.CreateSeasonResponse
-	3,  // 10: seasonpb.SeasonService.GetSeasonByID:output_type -> seasonpb.Season
-	5,  // 11: seasonpb.SeasonService.ListSeasonsBySeriesID:output_type -> seasonpb.SeasonList
-	10, // 12: seasonpb.SeasonService.UpdateSeasonByID:output_type -> google.protobuf.Empty
-	10, // 13: seasonpb.SeasonService.ReorderSeasonsBySeriesID:output_type -> google.protobuf.Empty
-	10, // 14: seasonpb.SeasonService.DeleteSeasonByID:output_type -> google.protobuf.Empty
-	9,  // [9:15] is the sub-list for method output_type
-	3,  // [3:9] is the sub-list for method input_type
+	9,  // 9: seasonpb.SeasonService.DeleteAllSeasonsBySeriesID:input_type -> seasonpb.DeleteAllSeasonsBySeriesIDRequest
+	1,  // 10: seasonpb.SeasonService.CreateSeason:output_type -> seasonpb.CreateSeasonResponse
+	3,  // 11: seasonpb.SeasonService.GetSeasonByID:output_type -> seasonpb.Season
+	5,  // 12: seasonpb.SeasonService.ListSeasonsBySeriesID:output_type -> seasonpb.SeasonList
+	11, // 13: seasonpb.SeasonService.UpdateSeasonByID:output_type -> google.protobuf.Empty
+	11, // 14: seasonpb.SeasonService.ReorderSeasonsBySeriesID:output_type -> google.protobuf.Empty
+	11, // 15: seasonpb.SeasonService.DeleteSeasonByID:output_type -> google.protobuf.Empty
+	11, // 16: seasonpb.SeasonService.DeleteAllSeasonsBySeriesID:output_type -> google.protobuf.Empty
+	10, // [10:17] is the sub-list for method output_type
+	3,  // [3:10] is the sub-list for method input_type
 	3,  // [3:3] is the sub-list for extension type_name
 	3,  // [3:3] is the sub-list for extension extendee
 	0,  // [0:3] is the sub-list for field type_name
@@ -613,7 +663,7 @@ func file_season_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_season_service_proto_rawDesc), len(file_season_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
