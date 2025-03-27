@@ -4,7 +4,7 @@ package seasonpb;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "common/pb/seasonpb;seasonpb";
+option go_package = "shared/pb/seasonpb;seasonpb";
 
 service SeasonService {
   rpc CreateSeason(CreateSeasonRequest) returns (CreateSeasonResponse);
@@ -13,6 +13,7 @@ service SeasonService {
   rpc UpdateSeasonByID(UpdateSeasonByIDRequest) returns (google.protobuf.Empty);
   rpc ReorderSeasonsBySeriesID(ReorderSeasonsBySeriesIDRequest) returns (google.protobuf.Empty);
   rpc DeleteSeasonByID(DeleteSeasonByIDRequest) returns (google.protobuf.Empty);
+  rpc DeleteAllSeasonsBySeriesID(DeleteAllSeasonsBySeriesIDRequest) returns (google.protobuf.Empty);
 }
   
 message CreateSeasonRequest {
@@ -61,3 +62,8 @@ message ReorderSeasonsBySeriesIDRequest {
 message DeleteSeasonByIDRequest {
   string season_id = 1;
 }
+
+message DeleteAllSeasonsBySeriesIDRequest {
+  string series_id = 1;
+}
+

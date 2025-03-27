@@ -4,7 +4,7 @@ package episodepb;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "common/pb/episodepb;episodepb";
+option go_package = "shared/pb/episodepb;episodepb";
 
 service EpisodeService {
   rpc CreateEpisode(CreateEpisodeRequest) returns (CreateEpisodeResponse);

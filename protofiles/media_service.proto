@@ -4,8 +4,7 @@ package mediapb;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
-
-option go_package = "common/pb/mediapb;mediapb";
+option go_package = "shared/pb/mediapb;mediapb";
 
 service MediaService {
   rpc UploadMedia(stream UploadMediaRequest) returns (UploadMediaResponse);

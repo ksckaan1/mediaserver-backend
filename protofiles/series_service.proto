@@ -5,8 +5,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "common/pb/seriespb;seriespb";
-
+option go_package = "shared/pb/seriespb;seriespb";
 
 service SeriesService {
   rpc CreateSeries(CreateSeriesRequest) returns (CreateSeriesResponse);

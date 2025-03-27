@@ -4,7 +4,7 @@ package tmdbpb;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
-option go_package = "common/pb/tmdbpb;tmdbpb";
+option go_package = "shared/pb/tmdbpb;tmdbpb";
 
 service TMDBService {
   rpc GetTMDBInfo(GetTMDBInfoRequest) returns (TMDBInfo);

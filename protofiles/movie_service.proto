@@ -5,7 +5,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 
-option go_package = "common/pb/moviepb;moviepb";
+option go_package = "shared/pb/moviepb;moviepb";
 
 service MovieService {
   rpc CreateMovie(CreateMovieRequest) returns (CreateMovieResponse);
