@@ -14,6 +14,10 @@ CREATE COLLECTION IF NOT EXISTS `media_server`.movie_service.movies;
 CREATE SCOPE IF NOT EXISTS `media_server`.series_service;
 CREATE COLLECTION IF NOT EXISTS `media_server`.series_service.series;
 
+-- Season Service
+CREATE SCOPE IF NOT EXISTS `media_server`.season_service;
+CREATE COLLECTION IF NOT EXISTS `media_server`.season_service.seasons;
+
 -- Episode Service
 CREATE SCOPE IF NOT EXISTS `media_server`.episode_service;
 CREATE COLLECTION IF NOT EXISTS `media_server`.episode_service.episodes;
