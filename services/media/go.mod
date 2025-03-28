@@ -12,6 +12,11 @@ require (
 	google.golang.org/protobuf v1.36.6
 )
 
+replace (
+	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250324211829-b45e905df463
+	google.golang.org/genproto/googleapis/rpc => google.golang.org/genproto/googleapis/rpc v0.0.0-20250324211829-b45e905df463
+)
+
 require (
 	github.com/couchbase/gocbcore/v10 v10.6.0 // indirect
 	github.com/couchbase/gocbcoreps v0.1.3 // indirect
