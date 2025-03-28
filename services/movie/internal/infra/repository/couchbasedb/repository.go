@@ -69,8 +69,8 @@ func (r *Repository) GetMovieByID(ctx context.Context, id string) (*models.Movie
 
 const (
 	countQuery         = `SELECT COUNT(*) AS count FROM movies;`
-	listQueryWithLimit = `SELECT * FROM movies LIMIT $limit OFFSET $offset;`
-	listQuery          = `SELECT * FROM movies OFFSET $offset;`
+	listQueryWithLimit = `SELECT * FROM movies ORDER BY id ASC LIMIT $limit OFFSET $offset;`
+	listQuery          = `SELECT * FROM movies ORDER BY id ASC OFFSET $offset;`
 )
 
 type countResult struct {

@@ -68,8 +68,8 @@ func (r *Repository) GetMediaByID(ctx context.Context, id string) (*models.Media
 }
 
 const countQuery = "SELECT COUNT(*) as count FROM medias;"
-const listQueryWithLimit = "SELECT * FROM medias LIMIT $limit OFFSET $offset;"
-const listQuery = "SELECT * FROM medias OFFSET $offset;"
+const listQueryWithLimit = "SELECT * FROM medias ORDER BY id ASC LIMIT $limit OFFSET $offset;"
+const listQuery = "SELECT * FROM medias ORDER BY id ASC OFFSET $offset;"
 
 type listResult struct {
 	Medias models.Media `json:"medias"`
