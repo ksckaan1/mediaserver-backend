@@ -69,8 +69,8 @@ func (r *Repository) GetSeriesByID(ctx context.Context, id string) (*models.Seri
 
 const (
 	countQuery         = `SELECT COUNT(*) AS count FROM series;`
-	listQueryWithLimit = `SELECT * FROM series LIMIT $limit OFFSET $offset;`
-	listQuery          = `SELECT * FROM series OFFSET $offset;`
+	listQueryWithLimit = `SELECT * FROM series ORDER BY id ASC LIMIT $limit OFFSET $offset;`
+	listQuery          = `SELECT * FROM series ORDER BY id ASC OFFSET $offset;`
 )
 
 type countResult struct {
