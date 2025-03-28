@@ -1,6 +1,8 @@
 #!/bin/sh
 
-/couchbase-cli/couchbase-cli bucket-list -u ${COUCHBASE_USER} -p ${COUCHBASE_PASSWORD} -c couchbase
+sleep 1000;
+
+/couchbase-cli/couchbase-cli bucket-list -u ${COUCHBASE_USER} -p ${COUCHBASE_PASSWORD} -c couchbase;
 
 if [ $? -eq 0 ]; then
   echo "CLUSTER ALREADY INITIALIZED"
@@ -12,7 +14,7 @@ fi
   --cluster-password ${COUCHBASE_PASSWORD} \
   -c ${COUCHBASE_HOST} \
   --services index,data,query \
-  --cluster-name my-cluster
+  --cluster-name my-cluster;
 
 /couchbase-cli/couchbase-cli bucket-create \
   -u ${COUCHBASE_USER} \
@@ -21,4 +23,4 @@ fi
   --bucket ${COUCHBASE_BUCKET} \
   --bucket-type couchbase \
   --bucket-ramsize 1392 \
-  --bucket-replica 1
+  --bucket-replica 1;

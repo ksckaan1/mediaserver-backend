@@ -193,7 +193,7 @@ services:
       - "11207:11207" # Data protocol (SSL)
       - "11210:11210" # Data protocol
     volumes:
-      - couchbase_data:/var/lib/couchbase
+      - couchbase_data:/opt/couchbase/var
     environment:
       - COUCHBASE_ADMINISTRATOR_USERNAME=${COUCHBASE_USER}
       - COUCHBASE_ADMINISTRATOR_PASSWORD=${COUCHBASE_PASSWORD}
@@ -202,24 +202,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
-  couchbase-cli:
-    container_name: couchbase-cli
-    image: couchbaseutils/couchbase-cli:v5.5.0
-    environment:
-      COUCHBASE_HOST: ${COUCHBASE_HOST}
-      COUCHBASE_USER: ${COUCHBASE_USER}
-      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
-      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
-    volumes:
-      - ./.docker/init/couchbase.sh:/init/couchbase.sh
-    entrypoint: >
-      /bin/sh /init/couchbase.sh
-    networks:
-      - app
-    depends_on:
-      couchbase:
-        condition: service_healthy
 
   cbq:
     container_name: cbq
@@ -230,7 +212,8 @@ services:
     volumes:
       - ./.docker/init/couchbase.sql:/init/couchbase.sql
     depends_on:
-      - couchbase-cli
+      couchbase:
+        condition: service_healthy
 
 volumes:
   minio_data:
