@@ -38,7 +38,7 @@ message Episode {
   string title = 4;
   string description = 5;
   string season_id = 6;
-  string media_id = 7;
+  Media media_info = 7;
   int32 order = 8;
 }
 
@@ -68,4 +68,22 @@ message DeleteAllEpisodesBySeasonIDRequest {
 
 message DeleteEpisodeByIDRequest {
   string episode_id = 1;
+}
+
+enum MediaType {
+  UNKNOWN = 0;
+  IMAGE = 1;
+  VIDEO = 2;
+  AUDIO = 3;
+}
+
+message Media {
+  string id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp updated_at = 3;
+  string title = 4;
+  string path = 5;
+  MediaType type = 6;
+  string mime_type = 7;
+  int64 size = 8;
 }
