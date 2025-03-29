@@ -129,7 +129,7 @@ func (r *Repository) ListSeries(ctx context.Context, limit int64, offset int64) 
 	}, nil
 }
 
-const updateQuery = `UPDATE series SET title = $title, description = $description, tmdb_id = $tmdb_id, updatedAt = $updated_at WHERE id = $id RETURNING *;`
+const updateQuery = `UPDATE series SET title = $title, description = $description, tmdb_id = $tmdb_id, updated_at = $updated_at WHERE id = $id RETURNING *;`
 
 func (r *Repository) UpdateSeriesByID(ctx context.Context, series *models.Series) error {
 	cursor, err := r.scope.Query(updateQuery, &gocb.QueryOptions{
