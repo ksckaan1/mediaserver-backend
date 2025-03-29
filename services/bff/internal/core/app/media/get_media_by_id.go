@@ -1,10 +1,14 @@
 package media
 
 import (
+	"bff-service/internal/core/models"
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
+	"shared/enums/mediatype"
 	"shared/pb/mediapb"
-	"time"
+	"strings"
 )
 
 type GetMediaByID struct {
@@ -18,35 +22,27 @@ func NewGetMediaByID(mediaClient mediapb.MediaServiceClient) *GetMediaByID {
 }
 
 type GetMediaByIDRequest struct {
-	MediaID string `param:"media_id"`
+	MediaID string `params:"media_id"`
 }
 
-type GetMediaByIDResponse struct {
-	ID        string            `json:"id"`
-	CreatedAt time.Time         `json:"created_at"`
-	UpdatedAt time.Time         `json:"updated_at"`
-	Title     string            `json:"title"`
-	Path      string            `json:"path"`
-	Type      mediapb.MediaType `json:"type"`
-	MimeType  string            `json:"mime_type"`
-	Size      int64             `json:"size"`
-}
-
-func (h *GetMediaByID) Handle(ctx context.Context, req *GetMediaByIDRequest) (*GetMediaByIDResponse, error) {
+func (h *GetMediaByID) Handle(ctx context.Context, req *GetMediaByIDRequest) (*models.Media, int, error) {
 	resp, err := h.mediaClient.GetMediaByID(ctx, &mediapb.GetMediaByIDRequest{
 		MediaId: req.MediaID,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("mediaClient.GetMediaByID: %w", err)
+		if strings.Contains(err.Error(), "media not found") {
+			return nil, http.StatusNotFound, errors.New("media not found")
+		}
+		return nil, http.StatusInternalServerError, fmt.Errorf("mediaClient.GetMediaByID: %w", err)
 	}
-	return &GetMediaByIDResponse{
+	return &models.Media{
 		ID:        resp.Id,
 		CreatedAt: resp.CreatedAt.AsTime(),
 		UpdatedAt: resp.UpdatedAt.AsTime(),
 		Title:     resp.Title,
 		Path:      resp.Path,
-		Type:      resp.Type,
+		Type:      mediatype.FromNumber(int32(resp.Type)),
 		MimeType:  resp.MimeType,
 		Size:      resp.Size,
-	}, nil
+	}, http.StatusOK, nil
 }
