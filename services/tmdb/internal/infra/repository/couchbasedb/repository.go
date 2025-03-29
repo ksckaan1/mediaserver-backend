@@ -39,7 +39,7 @@ func (r *Repository) GetTMDBInfo(ctx context.Context, id string) (*models.TMDBIn
 func (r *Repository) SetTMDBInfo(ctx context.Context, info *models.TMDBInfo) error {
 	info.UpdatedAt = time.Now()
 	_, err := r.coll.Upsert(info.Id, info, &gocb.UpsertOptions{
-		Expiry: 24 * time.Hour,
+		// Expiry: 24 * time.Hour,
 	})
 	if err != nil {
 		return fmt.Errorf("coll.Upsert: %w", err)
