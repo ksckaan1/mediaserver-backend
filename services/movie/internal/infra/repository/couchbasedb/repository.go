@@ -129,21 +129,25 @@ func (r *Repository) ListMovies(ctx context.Context, limit int64, offset int64) 
 	}, nil
 }
 
+const updateQuery = `UPDATE movies SET title = $title, description = $description, media_id = $media_id, tmdb_id = $tmdb_id, updated_at = $updated_at WHERE id = $id RETURNING *;`
+
 func (r *Repository) UpdateMovieByID(ctx context.Context, movie *models.Movie) error {
-	_, err := r.coll.Replace(movie.ID, map[string]any{
-		"title":       movie.Title,
-		"description": movie.Description,
-		"media_id":    movie.MediaID,
-		"tmdb_id":     movie.TMDBID,
-		"updated_at":  time.Now(),
-	}, &gocb.ReplaceOptions{
+	result, err := r.scope.Query(updateQuery, &gocb.QueryOptions{
 		Context: ctx,
+		NamedParameters: map[string]any{
+			"title":       movie.Title,
+			"description": movie.Description,
+			"media_id":    movie.MediaID,
+			"tmdb_id":     movie.TMDBID,
+			"updated_at":  time.Now(),
+			"id":          movie.ID,
+		},
 	})
 	if err != nil {
-		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
-		}
-		return fmt.Errorf("coll.Replace: %w", err)
+		return fmt.Errorf("scope.Query: %w", err)
+	}
+	if !result.Next() {
+		return customerrors.ErrRecordNotFound
 	}
 	return nil
 }

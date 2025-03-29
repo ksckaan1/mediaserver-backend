@@ -108,36 +108,44 @@ func (r *Repository) ListEpisodesBySeasonID(ctx context.Context, seasonID string
 	return episodes, nil
 }
 
+const updateQuery = `UPDATE episodes SET title = $title, media_id = $media_id, description = $description, updated_at = $updated_at WHERE id = $id RETURNING *;`
+
 func (r *Repository) UpdateEpisodeByID(ctx context.Context, episode *models.Episode) error {
-	_, err := r.coll.Replace(episode.ID, map[string]any{
-		"title":       episode.Title,
-		"media_id":    episode.MediaID,
-		"description": episode.Description,
-		"updated_at":  time.Now(),
-	}, &gocb.ReplaceOptions{
+	result, err := r.scope.Query(updateQuery, &gocb.QueryOptions{
 		Context: ctx,
+		NamedParameters: map[string]any{
+			"title":       episode.Title,
+			"media_id":    episode.MediaID,
+			"description": episode.Description,
+			"updated_at":  time.Now(),
+			"id":          episode.ID,
+		},
 	})
 	if err != nil {
-		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
-		}
-		return fmt.Errorf("coll.Replace: %w", err)
+		return fmt.Errorf("scope.Query: %w", err)
+	}
+	if !result.Next() {
+		return customerrors.ErrRecordNotFound
 	}
 	return nil
 }
 
+const updateOrder = `UPDATE episodes SET order = $order, updated_at = $updated_at WHERE id = $id RETURNING *;`
+
 func (r *Repository) UpdateEpisodeOrder(ctx context.Context, episode *models.Episode) error {
-	_, err := r.coll.Replace(episode.ID, map[string]any{
-		"order":      episode.Order,
-		"updated_at": time.Now(),
-	}, &gocb.ReplaceOptions{
+	result, err := r.scope.Query(updateOrder, &gocb.QueryOptions{
 		Context: ctx,
+		NamedParameters: map[string]any{
+			"order":      episode.Order,
+			"updated_at": time.Now(),
+			"id":         episode.ID,
+		},
 	})
 	if err != nil {
-		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
-		}
-		return fmt.Errorf("coll.Replace: %w", err)
+		return fmt.Errorf("scope.Query: %w", err)
+	}
+	if !result.Next() {
+		return customerrors.ErrRecordNotFound
 	}
 	return nil
 }

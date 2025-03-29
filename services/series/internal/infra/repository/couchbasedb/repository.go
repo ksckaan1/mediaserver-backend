@@ -129,20 +129,24 @@ func (r *Repository) ListSeries(ctx context.Context, limit int64, offset int64) 
 	}, nil
 }
 
+const updateQuery = `UPDATE series SET title = $title, description = $description, tmdb_id = $tmdb_id, updatedAt = $updated_at WHERE id = $id RETURNING *;`
+
 func (r *Repository) UpdateSeriesByID(ctx context.Context, series *models.Series) error {
-	_, err := r.coll.Replace(series.ID, map[string]any{
-		"series":      series.Title,
-		"description": series.Description,
-		"releaseDate": series.TMDBID,
-		"updatedAt":   time.Now(),
-	}, &gocb.ReplaceOptions{
+	cursor, err := r.scope.Query(updateQuery, &gocb.QueryOptions{
 		Context: ctx,
+		NamedParameters: map[string]any{
+			"title":       series.Title,
+			"description": series.Description,
+			"tmdb_id":     series.TMDBID,
+			"updated_at":  time.Now(),
+			"id":          series.ID,
+		},
 	})
 	if err != nil {
-		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
-		}
-		return fmt.Errorf("r.coll.Replace: %w", err)
+		return fmt.Errorf("r.scope.Query: %w", err)
+	}
+	if !cursor.Next() {
+		return customerrors.ErrRecordNotFound
 	}
 	return nil
 }

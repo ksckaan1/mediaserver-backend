@@ -127,16 +127,23 @@ func (r *Repository) ListMedias(ctx context.Context, limit int64, offset int64) 
 	}, nil
 }
 
+const updateQuery = "UPDATE medias SET title = $title, updated_at = $updated_at WHERE id = $id RETURNING *;"
+
 func (r *Repository) UpdateMediaByID(ctx context.Context, media *models.Media) error {
 	media.UpdatedAt = time.Now()
-	_, err := r.coll.Replace(media.ID, media, &gocb.ReplaceOptions{
+	result, err := r.scope.Query(updateQuery, &gocb.QueryOptions{
 		Context: ctx,
+		NamedParameters: map[string]any{
+			"title":      media.Title,
+			"updated_at": time.Now(),
+			"id":         media.ID,
+		},
 	})
 	if err != nil {
-		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
-		}
-		return fmt.Errorf("coll.Replace: %w", err)
+		return fmt.Errorf("scope.Query: %w", err)
+	}
+	if !result.Next() {
+		return customerrors.ErrRecordNotFound
 	}
 	return nil
 }

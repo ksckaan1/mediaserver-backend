@@ -94,35 +94,43 @@ func (r *Repository) ListSeasonsBySeriesID(ctx context.Context, seriesID string)
 	return seasons, nil
 }
 
+const updateQuery = `UPDATE seasons SET title = $title, description = $description, updated_at = $updated_at WHERE id = $id RETURNING *;`
+
 func (r *Repository) UpdateSeasonByID(ctx context.Context, season *models.Season) error {
-	_, err := r.coll.Replace(season.ID, map[string]any{
-		"title":       season.Title,
-		"description": season.Description,
-		"updated_at":  time.Now(),
-	}, &gocb.ReplaceOptions{
+	result, err := r.scope.Query(updateQuery, &gocb.QueryOptions{
 		Context: ctx,
+		NamedParameters: map[string]any{
+			"title":       season.Title,
+			"description": season.Description,
+			"updated_at":  time.Now(),
+			"id":          season.ID,
+		},
 	})
 	if err != nil {
-		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
-		}
-		return fmt.Errorf("coll.Replace: %w", err)
+		return fmt.Errorf("scope.Query: %w", err)
+	}
+	if !result.Next() {
+		return customerrors.ErrRecordNotFound
 	}
 	return nil
 }
 
+const updateOrderQuery = `UPDATE seasons SET order = $order, updated_at = $updated_at WHERE id = $id RETURNING *;`
+
 func (r *Repository) UpdateSeasonOrderByID(ctx context.Context, season *models.Season) error {
-	_, err := r.coll.Replace(season.ID, map[string]any{
-		"order":      season.Order,
-		"updated_at": time.Now(),
-	}, &gocb.ReplaceOptions{
+	result, err := r.scope.Query(updateOrderQuery, &gocb.QueryOptions{
 		Context: ctx,
+		NamedParameters: map[string]any{
+			"order":      season.Order,
+			"updated_at": time.Now(),
+			"id":         season.ID,
+		},
 	})
 	if err != nil {
-		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
-		}
-		return fmt.Errorf("coll.Replace: %w", err)
+		return fmt.Errorf("scope.Query: %w", err)
+	}
+	if !result.Next() {
+		return customerrors.ErrRecordNotFound
 	}
 	return nil
 }
