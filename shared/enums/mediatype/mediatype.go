@@ -48,6 +48,19 @@ func FromString(s string) MediaType {
 	return MediaType{s}
 }
 
+func FromNumber(n int32) MediaType {
+	switch n {
+	case 1:
+		return Image
+	case 2:
+		return Video
+	case 3:
+		return Audio
+	default:
+		return Unknown
+	}
+}
+
 func (m *MediaType) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m.mediaType)
 }
