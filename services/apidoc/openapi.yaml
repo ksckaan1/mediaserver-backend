@@ -1,0 +1,491 @@
+openapi: 3.1.1
+info:
+  title: Media Server
+  version: v0.0.0
+servers:
+  - url: http://localhost:9190/api/v1
+    description: Local Development server
+paths:
+  /media/:
+    post:
+      summary: Upload Media
+      tags:
+        - public/media
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                media:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media_id:
+                    type: string
+    get:
+      summary: List Medias
+      tags:
+        - public/media
+      parameters:
+        - name: limit
+          in: query
+          required: true
+          description: Number of listed items
+          schema:
+            type: integer
+            example: 10
+        - name: offset
+          in: query
+          required: true
+          description: Number of items to skip
+          schema:
+            type: integer
+            example: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/media"
+
+  /media/{media_id}:
+    get:
+      summary: Get Media By ID
+      tags:
+        - public/media
+      parameters:
+        - name: media_id
+          in: path
+          required: true
+          description: Media ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/media"
+    put:
+      summary: Update Media By ID
+      tags:
+        - public/media
+      parameters:
+        - name: media_id
+          in: path
+          required: true
+          description: Media ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+      responses:
+        "204":
+          description: OK
+    delete:
+      summary: Delete Media By ID
+      tags:
+        - public/media
+      parameters:
+        - name: media_id
+          in: path
+          required: true
+          description: Media ID
+          schema:
+            type: string
+      responses:
+        "204":
+          description: OK
+
+  /movie:
+    post:
+      summary: Create Movie
+      tags:
+        - public/movie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                tmdb_id:
+                  type: string
+                  description: Enter The Movie Database ID like 'movie:1234', 'series:1234' or leave empty
+                media_id:
+                  type: string
+                  description: Enter The Media ID or leave empty
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movie_id:
+                    type: string
+    get:
+      summary: List All Movies
+      tags:
+        - public/movie
+      parameters:
+        - name: limit
+          in: query
+          required: true
+          description: Number of listed items
+          schema:
+            type: integer
+            example: 10
+        - name: offset
+          in: query
+          required: true
+          description: Number of items to skip
+          schema:
+            type: integer
+            example: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: integer
+                    example: 10
+                  offset:
+                    type: integer
+                    example: 0
+                  count:
+                    type: integer
+                    example: 100
+                    description: Total number of items
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/movie"
+  /movie/{movie_id}:
+    get:
+      summary: Get Movie By ID
+      tags:
+        - public/movie
+      parameters:
+        - name: movie_id
+          in: path
+          required: true
+          description: Movie ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/movie"
+    put:
+      summary: Update Movie By ID
+      tags:
+        - public/movie
+      parameters:
+        - name: movie_id
+          in: path
+          required: true
+          description: Movie ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                tmdb_id:
+                  type: string
+                  description: Enter The Movie Database ID like 'movie:1234', 'series:1234' or leave empty
+                media_id:
+                  type: string
+                  description: Enter The Media ID or leave empty
+      responses:
+        "204":
+          description: OK
+    delete:
+      summary: Delete Movie By ID
+      tags:
+        - public/movie
+      parameters:
+        - name: movie_id
+          in: path
+          required: true
+          description: Movie ID
+          schema:
+            type: string
+      responses:
+        "204":
+          description: OK
+
+  /series:
+    post:
+      summary: Create Series
+      tags:
+        - public/series
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                tmdb_id:
+                  type: string
+                  description: Enter The Movie Database ID like 'movie:1234', 'series:1234' or leave empty
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  series_id:
+                    type: string
+    get:
+      summary: List Series
+      parameters:
+        - name: limit
+          in: query
+          required: true
+          description: Number of items per page
+          schema:
+            type: integer
+            example: 10
+        - name: offset
+          in: query
+          required: true
+          description: Number of items to skip
+          schema:
+            type: integer
+            example: 0
+      tags:
+        - public/series
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/series"
+
+  /series/{series_id}:
+    get:
+      summary: Get Series By ID
+      tags:
+        - public/series
+      parameters:
+        - name: series_id
+          in: path
+          required: true
+          description: Series ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/series"
+
+    put:
+      summary: Update Series By ID
+      tags:
+        - public/series
+      parameters:
+        - name: series_id
+          in: path
+          required: true
+          description: Series ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                tmdb_id:
+                  type: string
+                  description: Enter The Movie Database ID like 'movie:1234', 'series:1234' or leave empty
+      responses:
+        "204":
+          description: OK
+
+    delete:
+      summary: Delete Series By ID
+      tags:
+        - public/series
+      parameters:
+        - name: series_id
+          in: path
+          required: true
+          description: Series ID
+          schema:
+            type: string
+      responses:
+        "204":
+          description: OK
+
+components:
+  schemas:
+    media:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        title:
+          type: string
+        path:
+          type: string
+        type:
+          $ref: "#/components/schemas/media_type"
+        mime_type:
+          type: string
+        size:
+          type: integer
+          description: Size of the media file in bytes
+    tmdb:
+      type: object
+      properties:
+        id:
+          type: string
+        data:
+          type: object
+    media_type:
+      type: string
+      enum:
+        - unknown
+        - image
+        - video
+        - audio
+    movie:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        title:
+          type: string
+        description:
+          type: string
+        tmdb_info:
+          nullable: true
+          $ref: "#/components/schemas/tmdb"
+        media_info:
+          nullable: true
+          $ref: "#/components/schemas/media"
+    series:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        title:
+          type: string
+        description:
+          type: string
+        tmdb_info:
+          nullable: true
+          $ref: "#/components/schemas/tmdb"
+
+tags:
+  - name: public/media
+    x-displayName: Media
+  - name: public/movie
+    x-displayName: Movie
+  - name: public/series
+    x-displayName: Series
+
+x-tagGroups:
+  - name: PUBLIC
+    tags:
+      - public/media
+      - public/movie
+      - public/series
