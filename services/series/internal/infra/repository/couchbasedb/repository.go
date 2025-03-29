@@ -25,8 +25,9 @@ func New(bucket *gocb.Bucket) *Repository {
 }
 
 func (r *Repository) CreateSeries(ctx context.Context, series *models.Series) error {
-	series.CreatedAt = time.Now()
-	series.UpdatedAt = time.Now()
+	now := time.Now()
+	series.CreatedAt = now
+	series.UpdatedAt = now
 	_, err := r.coll.Insert(series.ID, series, &gocb.InsertOptions{
 		Context: ctx,
 	})

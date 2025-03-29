@@ -24,8 +24,9 @@ func New(bucket *gocb.Bucket) *Repository {
 }
 
 func (r *Repository) CreateSeason(ctx context.Context, season *models.Season) error {
-	season.CreatedAt = time.Now()
-	season.UpdatedAt = time.Now()
+	now := time.Now()
+	season.CreatedAt = now
+	season.UpdatedAt = now
 	_, err := r.coll.Insert(season.ID, season, &gocb.InsertOptions{
 		Context: ctx,
 	})

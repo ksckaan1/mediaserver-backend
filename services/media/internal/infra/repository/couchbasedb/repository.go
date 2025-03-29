@@ -25,8 +25,9 @@ func New(bucket *gocb.Bucket) *Repository {
 }
 
 func (r *Repository) CreateMedia(ctx context.Context, media *models.Media) error {
-	media.CreatedAt = time.Now()
-	media.UpdatedAt = time.Now()
+	now := time.Now()
+	media.CreatedAt = now
+	media.UpdatedAt = now
 	_, err := r.coll.Insert(media.ID, media, &gocb.InsertOptions{
 		Context: ctx,
 	})
