@@ -86,7 +86,7 @@ type listResult struct {
 	Episodes models.Episode `json:"episodes"`
 }
 
-const listEpisodesQuery = `SELECT * FROM episodes WHERE season_id = $1 ORDER BY 'order' ASC;`
+const listEpisodesQuery = "SELECT * FROM episodes WHERE season_id = $1 ORDER BY `order` ASC;"
 
 func (r *Repository) ListEpisodesBySeasonID(ctx context.Context, seasonID string) ([]*models.Episode, error) {
 	cursor, err := r.scope.Query(listEpisodesQuery, &gocb.QueryOptions{
@@ -130,7 +130,7 @@ func (r *Repository) UpdateEpisodeByID(ctx context.Context, episode *models.Epis
 	return nil
 }
 
-const updateOrder = `UPDATE episodes SET order = $order, updated_at = $updated_at WHERE id = $id RETURNING *;`
+const updateOrder = "UPDATE episodes SET `order` = $order, updated_at = $updated_at WHERE id = $id RETURNING *;"
 
 func (r *Repository) UpdateEpisodeOrder(ctx context.Context, episode *models.Episode) error {
 	result, err := r.scope.Query(updateOrder, &gocb.QueryOptions{
