@@ -57,7 +57,7 @@ func (r *Repository) DeleteEpisodeByID(ctx context.Context, episodeID string) er
 	})
 	if err != nil {
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
+			return customerrors.ErrEpisodeNotFound
 		}
 		return fmt.Errorf("coll.Remove: %w", err)
 	}
@@ -70,7 +70,7 @@ func (r *Repository) GetEpisodeByID(ctx context.Context, episodeID string) (*mod
 	})
 	if err != nil {
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return nil, customerrors.ErrRecordNotFound
+			return nil, customerrors.ErrEpisodeNotFound
 		}
 		return nil, fmt.Errorf("coll.Get: %w", err)
 	}
@@ -125,7 +125,7 @@ func (r *Repository) UpdateEpisodeByID(ctx context.Context, episode *models.Epis
 		return fmt.Errorf("scope.Query: %w", err)
 	}
 	if !result.Next() {
-		return customerrors.ErrRecordNotFound
+		return customerrors.ErrEpisodeNotFound
 	}
 	return nil
 }
@@ -145,7 +145,7 @@ func (r *Repository) UpdateEpisodeOrder(ctx context.Context, episode *models.Epi
 		return fmt.Errorf("scope.Query: %w", err)
 	}
 	if !result.Next() {
-		return customerrors.ErrRecordNotFound
+		return customerrors.ErrEpisodeNotFound
 	}
 	return nil
 }

@@ -43,7 +43,7 @@ func (r *Repository) DeleteMovieByID(ctx context.Context, id string) error {
 	})
 	if err != nil {
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
+			return customerrors.ErrMovieNotFound
 		}
 		return fmt.Errorf("coll.Remove: %w", err)
 	}
@@ -56,7 +56,7 @@ func (r *Repository) GetMovieByID(ctx context.Context, id string) (*models.Movie
 	})
 	if err != nil {
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return nil, customerrors.ErrRecordNotFound
+			return nil, customerrors.ErrMovieNotFound
 		}
 		return nil, fmt.Errorf("coll.Get: %w", err)
 	}
@@ -147,7 +147,7 @@ func (r *Repository) UpdateMovieByID(ctx context.Context, movie *models.Movie) e
 		return fmt.Errorf("scope.Query: %w", err)
 	}
 	if !result.Next() {
-		return customerrors.ErrRecordNotFound
+		return customerrors.ErrMovieNotFound
 	}
 	return nil
 }
