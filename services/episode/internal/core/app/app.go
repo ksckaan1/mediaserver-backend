@@ -97,6 +97,23 @@ func (a *App) GetEpisodeByID(ctx context.Context, req *episodepb.GetEpisodeByIDR
 	if err != nil {
 		return nil, fmt.Errorf("repository.GetEpisodeByID: %w", err)
 	}
+	var mediaInfo *episodepb.Media
+	if episode.MediaID != "" {
+		resp, err := a.mediaClient.GetMediaByID(ctx, &mediapb.GetMediaByIDRequest{MediaId: episode.MediaID})
+		if err != nil {
+			return nil, fmt.Errorf("mediaClient.GetMediaByID: %w", err)
+		}
+		mediaInfo = &episodepb.Media{
+			Id:        resp.Id,
+			CreatedAt: resp.CreatedAt,
+			UpdatedAt: resp.UpdatedAt,
+			Title:     resp.Title,
+			Path:      resp.Path,
+			Type:      episodepb.MediaType(resp.Type),
+			MimeType:  resp.MimeType,
+			Size:      resp.Size,
+		}
+	}
 	return &episodepb.Episode{
 		Id:          episode.ID,
 		CreatedAt:   timestamppb.New(episode.CreatedAt),
@@ -104,8 +121,8 @@ func (a *App) GetEpisodeByID(ctx context.Context, req *episodepb.GetEpisodeByIDR
 		Title:       episode.Title,
 		Description: episode.Description,
 		SeasonId:    episode.SeasonID,
-		MediaId:     episode.MediaID,
 		Order:       int32(episode.Order),
+		MediaInfo:   mediaInfo,
 	}, nil
 }
 
@@ -123,7 +140,6 @@ func (a *App) ListEpisodesBySeasonID(ctx context.Context, req *episodepb.ListEpi
 				Title:       e.Title,
 				Description: e.Description,
 				SeasonId:    e.SeasonID,
-				MediaId:     e.MediaID,
 				Order:       int32(e.Order),
 			}
 		}),
