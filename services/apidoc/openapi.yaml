@@ -397,6 +397,236 @@ paths:
         "204":
           description: OK
 
+  /season:
+    post:
+      summary: Create Season
+      tags:
+        - public/season
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                series_id:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  season_id:
+                    type: string
+
+    get:
+      summary: List All Seasons By Series ID
+      tags:
+        - public/season
+      parameters:
+        - name: series_id
+          in: query
+          required: true
+          description: Series ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/season"
+  /season/{season_id}:
+    get:
+      summary: Get Season By ID
+      tags:
+        - public/season
+      parameters:
+        - name: season_id
+          in: path
+          required: true
+          description: Season ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/season"
+    put:
+      summary: Update Season By ID
+      tags:
+        - public/season
+      parameters:
+        - name: season_id
+          in: path
+          required: true
+          description: Season ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+      responses:
+        "204":
+          description: OK
+    delete:
+      summary: Delete Season By ID
+      tags:
+        - public/season
+      parameters:
+        - name: season_id
+          in: path
+          required: true
+          description: Season ID
+          schema:
+            type: string
+      responses:
+        "204":
+          description: OK
+
+  /episode:
+    post:
+      summary: Create Episode
+      tags:
+        - public/episode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                season_id:
+                  type: string
+                media_id:
+                  type: string
+                  description: Enter The Media ID or leave empty
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  episode_id:
+                    type: string
+    get:
+      summary: Get All Episodes By Season ID
+      tags:
+        - public/episode
+      parameters:
+        - name: season_id
+          in: query
+          required: true
+          description: Season ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/episode"
+
+  /episode/{episode_id}:
+    get:
+      summary: Get Episode By ID
+      tags:
+        - public/episode
+      parameters:
+        - name: episode_id
+          in: path
+          required: true
+          description: Episode ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/episode"
+
+    put:
+      summary: Update Episode By ID
+      tags:
+        - public/episode
+      parameters:
+        - name: episode_id
+          in: path
+          required: true
+          description: Episode ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                media_id:
+                  type: string
+                  description: Enter The Media ID or leave empty
+      responses:
+        "204":
+          description: OK
+
+    delete:
+      summary: Delete Episode By ID
+      tags:
+        - public/episode
+      parameters:
+        - name: episode_id
+          in: path
+          required: true
+          description: Episode ID
+          schema:
+            type: string
+      responses:
+        "204":
+          description: OK
+
 components:
   schemas:
     media:
@@ -475,6 +705,49 @@ components:
           nullable: true
           $ref: "#/components/schemas/tmdb"
 
+    season:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        title:
+          type: string
+        description:
+          type: string
+        order:
+          type: integer
+        series_id:
+          type: string
+
+    episode:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        title:
+          type: string
+        description:
+          type: string
+        order:
+          type: integer
+        season_id:
+          type: string
+        media_info:
+          nullable: true
+          $ref: "#/components/schemas/media"
+
 tags:
   - name: public/media
     x-displayName: Media
@@ -482,6 +755,10 @@ tags:
     x-displayName: Movie
   - name: public/series
     x-displayName: Series
+  - name: public/season
+    x-displayName: Season
+  - name: public/episode
+    x-displayName: Episode
 
 x-tagGroups:
   - name: PUBLIC
@@ -489,3 +766,5 @@ x-tagGroups:
       - public/media
       - public/movie
       - public/series
+      - public/season
+      - public/episode

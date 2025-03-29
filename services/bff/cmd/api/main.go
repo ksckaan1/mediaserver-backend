@@ -54,6 +54,22 @@ func main() {
 	}
 	v1.Mount("/series", seriesApp)
 
+	seasonApp, err := initSeasonRoutes(cfg.Data)
+	if err != nil {
+		lg.Fatal(ctx, "initSeasonRoutes",
+			"error", err,
+		)
+	}
+	v1.Mount("/season", seasonApp)
+
+	episodeApp, err := initEpisodeRoutes(cfg.Data)
+	if err != nil {
+		lg.Fatal(ctx, "initEpisodeRoutes",
+			"error", err,
+		)
+	}
+	v1.Mount("/episode", episodeApp)
+
 	app.Hooks().OnListen(func(data fiber.ListenData) error {
 		lg.Info(ctx, "server is running",
 			"host", data.Host,
