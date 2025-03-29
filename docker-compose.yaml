@@ -5,6 +5,38 @@ x-logging: &default-logging
     max-file: "3"
 
 services:
+  apidoc:
+    container_name: apidoc
+    build:
+      context: .
+      dockerfile: .docker/apidoc.Dockerfile
+    networks:
+      - app
+    ports:
+      - "9189:8080"
+    environment:
+      ADDR: ":8080"
+      PAGE_TITLE: "API Documentation"
+    restart: unless-stopped
+    logging: *default-logging
+
+  bff_service:
+    container_name: bff
+    build:
+      context: .
+      dockerfile: .docker/bff_service.Dockerfile
+    networks:
+      - app
+    ports:
+      - "9190:8080"
+    environment:
+      ADDR: ":8080"
+      MEDIA_SERVICE_ADDR: ${MEDIA_SERVICE_ADDR}
+      MOVIE_SERVICE_ADDR: ${MOVIE_SERVICE_ADDR}
+      SERIES_SERVICE_ADDR: ${SERIES_SERVICE_ADDR}
+    restart: unless-stopped
+    logging: *default-logging
+
   media_service:
     container_name: media_service
     build:
