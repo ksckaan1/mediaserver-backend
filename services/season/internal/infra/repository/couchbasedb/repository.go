@@ -42,7 +42,7 @@ func (r *Repository) DeleteSeasonByID(ctx context.Context, id string) error {
 	})
 	if err != nil {
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
+			return customerrors.ErrSeasonNotFound
 		}
 		return fmt.Errorf("coll.Remove: %w", err)
 	}
@@ -55,7 +55,7 @@ func (r *Repository) GetSeasonByID(ctx context.Context, id string) (*models.Seas
 	})
 	if err != nil {
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return nil, customerrors.ErrRecordNotFound
+			return nil, customerrors.ErrSeasonNotFound
 		}
 		return nil, fmt.Errorf("coll.Get: %w", err)
 	}
@@ -110,7 +110,7 @@ func (r *Repository) UpdateSeasonByID(ctx context.Context, season *models.Season
 		return fmt.Errorf("scope.Query: %w", err)
 	}
 	if !result.Next() {
-		return customerrors.ErrRecordNotFound
+		return customerrors.ErrSeasonNotFound
 	}
 	return nil
 }
@@ -130,7 +130,7 @@ func (r *Repository) UpdateSeasonOrderByID(ctx context.Context, season *models.S
 		return fmt.Errorf("scope.Query: %w", err)
 	}
 	if !result.Next() {
-		return customerrors.ErrRecordNotFound
+		return customerrors.ErrSeasonNotFound
 	}
 	return nil
 }
