@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bff-service/internal/core/app/episode"
 	"bff-service/internal/core/app/media"
 	"bff-service/internal/core/app/movie"
+	"bff-service/internal/core/app/season"
 	"bff-service/internal/core/app/series"
 	"fmt"
 	"shared/service"
@@ -49,5 +51,33 @@ func initSeriesRoutes(cfg *service.ServiceConfig) (*fiber.App, error) {
 	app.Get("/", h(series.NewListSeries(seriesClient)))
 	app.Put("/:series_id", h(series.NewUpdateSeriesByID(seriesClient)))
 	app.Delete("/:series_id", h(series.NewDeleteSeriesByID(seriesClient)))
+	return app, nil
+}
+
+func initSeasonRoutes(cfg *service.ServiceConfig) (*fiber.App, error) {
+	seasonClient, err := NewSeasonServiceClient(cfg.SeasonServiceAddr)
+	if err != nil {
+		return nil, fmt.Errorf("NewSeasonServiceClient: %w", err)
+	}
+	app := fiber.New()
+	app.Post("/", h(season.NewCreateSeason(seasonClient)))
+	app.Get("/:season_id", h(season.NewGetSeasonByID(seasonClient)))
+	app.Get("/", h(season.NewListSeasons(seasonClient)))
+	app.Put("/:season_id", h(season.NewUpdateSeasonByID(seasonClient)))
+	app.Delete("/:season_id", h(season.NewDeleteSeasonByID(seasonClient)))
+	return app, nil
+}
+
+func initEpisodeRoutes(cfg *service.ServiceConfig) (*fiber.App, error) {
+	episodeClient, err := NewEpisodeServiceClient(cfg.EpisodeServiceAddr)
+	if err != nil {
+		return nil, fmt.Errorf("NewEpisodeServiceClient: %w", err)
+	}
+	app := fiber.New()
+	app.Post("/", h(episode.NewCreateEpisode(episodeClient)))
+	app.Get("/:episode_id", h(episode.NewGetEpisodeByID(episodeClient)))
+	app.Get("/", h(episode.NewListEpisodes(episodeClient)))
+	app.Put("/:episode_id", h(episode.NewUpdateEpisodeByID(episodeClient)))
+	app.Delete("/:episode_id", h(episode.NewDeleteEpisodeByID(episodeClient)))
 	return app, nil
 }
