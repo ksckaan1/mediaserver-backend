@@ -68,7 +68,7 @@ func (r *Repository) GetSeasonByID(ctx context.Context, id string) (*models.Seas
 }
 
 const (
-	listSeasonsQuery = `SELECT * FROM seasons WHERE series_id = $1 ORDER BY 'order' ASC;`
+	listSeasonsQuery = "SELECT * FROM seasons WHERE series_id = $1 ORDER BY `order` ASC;"
 )
 
 type listResult struct {
@@ -115,7 +115,7 @@ func (r *Repository) UpdateSeasonByID(ctx context.Context, season *models.Season
 	return nil
 }
 
-const updateOrderQuery = `UPDATE seasons SET order = $order, updated_at = $updated_at WHERE id = $id RETURNING *;`
+const updateOrderQuery = "UPDATE seasons SET `order` = $order, updated_at = $updated_at WHERE id = $id RETURNING *;"
 
 func (r *Repository) UpdateSeasonOrderByID(ctx context.Context, season *models.Season) error {
 	result, err := r.scope.Query(updateOrderQuery, &gocb.QueryOptions{
