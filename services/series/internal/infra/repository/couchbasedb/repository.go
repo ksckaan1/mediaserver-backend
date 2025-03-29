@@ -43,7 +43,7 @@ func (r *Repository) DeleteSeriesByID(ctx context.Context, id string) error {
 	})
 	if err != nil {
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return customerrors.ErrRecordNotFound
+			return customerrors.ErrSeriesNotFound
 		}
 		return fmt.Errorf("r.coll.Remove: %w", err)
 	}
@@ -56,7 +56,7 @@ func (r *Repository) GetSeriesByID(ctx context.Context, id string) (*models.Seri
 	})
 	if err != nil {
 		if errors.Is(err, gocb.ErrDocumentNotFound) {
-			return nil, customerrors.ErrRecordNotFound
+			return nil, customerrors.ErrSeriesNotFound
 		}
 		return nil, fmt.Errorf("r.coll.Get: %w", err)
 	}
@@ -146,7 +146,7 @@ func (r *Repository) UpdateSeriesByID(ctx context.Context, series *models.Series
 		return fmt.Errorf("r.scope.Query: %w", err)
 	}
 	if !cursor.Next() {
-		return customerrors.ErrRecordNotFound
+		return customerrors.ErrSeriesNotFound
 	}
 	return nil
 }
