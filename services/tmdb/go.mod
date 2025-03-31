@@ -4,6 +4,7 @@ go 1.24.1
 
 require (
 	github.com/couchbase/gocb/v2 v2.9.4
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.58.0
 	google.golang.org/protobuf v1.36.6
 )
 
@@ -17,6 +18,7 @@ require (
 	github.com/couchbase/gocbcoreps v0.1.3 // indirect
 	github.com/couchbase/goprotostellar v1.0.2 // indirect
 	github.com/couchbaselabs/gocbconnstr/v2 v2.0.0-20240607131231-fb385523de28 // indirect
+	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/snappy v1.0.0 // indirect

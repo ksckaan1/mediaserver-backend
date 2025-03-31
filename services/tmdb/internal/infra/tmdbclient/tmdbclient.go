@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 	"tmdb_service/internal/core/customerrors"
+
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 type TMDBClient struct {
@@ -18,7 +20,8 @@ func New(apiKey string) (*TMDBClient, error) {
 	return &TMDBClient{
 		apiKey: apiKey,
 		client: &http.Client{
-			Timeout: 5 * time.Second,
+			Timeout:   5 * time.Second,
+			Transport: otelhttp.NewTransport(http.DefaultTransport),
 		},
 	}, nil
 }
