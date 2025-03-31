@@ -15,6 +15,7 @@ services:
     ports:
       - "9189:8080"
     environment:
+      SERVICE_NAME: apidoc
       ADDR: ":8080"
       PAGE_TITLE: "API Documentation"
     restart: unless-stopped
@@ -30,10 +31,12 @@ services:
     ports:
       - "9190:8080"
     environment:
+      SERVICE_NAME: bff
       ADDR: ":8080"
       MEDIA_SERVICE_ADDR: ${MEDIA_SERVICE_ADDR}
       MOVIE_SERVICE_ADDR: ${MOVIE_SERVICE_ADDR}
       SERIES_SERVICE_ADDR: ${SERIES_SERVICE_ADDR}
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
 
@@ -47,6 +50,7 @@ services:
     ports:
       - "9191:8080"
     environment:
+      SERVICE_NAME: media
       ADDR: ":8080"
       COUCHBASE_HOST: ${COUCHBASE_HOST}
       COUCHBASE_USER: ${COUCHBASE_USER}
@@ -59,6 +63,7 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       S3_USE_SSL: ${S3_USE_SSL}
       ID_GENERATOR_NODE: 1
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
     depends_on:
@@ -74,12 +79,14 @@ services:
     ports:
       - "9192:8080"
     environment:
+      SERVICE_NAME: tmdb
       ADDR: ":8080"
       TMDB_API_KEY: ${TMDB_API_KEY}
       COUCHBASE_HOST: ${COUCHBASE_HOST}
       COUCHBASE_USER: ${COUCHBASE_USER}
       COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
       COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
     depends_on:
@@ -95,6 +102,7 @@ services:
     ports:
       - "9193:8080"
     environment:
+      SERVICE_NAME: movie
       ADDR: ":8080"
       COUCHBASE_HOST: ${COUCHBASE_HOST}
       COUCHBASE_USER: ${COUCHBASE_USER}
@@ -103,6 +111,7 @@ services:
       MEDIA_SERVICE_ADDR: ${MEDIA_SERVICE_ADDR}
       TMDB_SERVICE_ADDR: ${TMDB_SERVICE_ADDR}
       ID_GENERATOR_NODE: 1
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
     depends_on:
@@ -118,6 +127,7 @@ services:
     ports:
       - "9194:8080"
     environment:
+      SERVICE_NAME: series
       ADDR: ":8080"
       COUCHBASE_HOST: ${COUCHBASE_HOST}
       COUCHBASE_USER: ${COUCHBASE_USER}
@@ -125,6 +135,7 @@ services:
       COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
       TMDB_SERVICE_ADDR: ${TMDB_SERVICE_ADDR}
       ID_GENERATOR_NODE: 1
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
     depends_on:
@@ -140,6 +151,7 @@ services:
     ports:
       - "9195:8080"
     environment:
+      SERVICE_NAME: season
       ADDR: ":8080"
       COUCHBASE_HOST: ${COUCHBASE_HOST}
       COUCHBASE_USER: ${COUCHBASE_USER}
@@ -148,6 +160,7 @@ services:
       SERIES_SERVICE_ADDR: ${SERIES_SERVICE_ADDR}
       EPISODE_SERVICE_ADDR: ${EPISODE_SERVICE_ADDR}
       ID_GENERATOR_NODE: 1
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
     depends_on:
@@ -163,6 +176,7 @@ services:
     ports:
       - "9196:8080"
     environment:
+      SERVICE_NAME: episode
       ADDR: ":8080"
       COUCHBASE_HOST: ${COUCHBASE_HOST}
       COUCHBASE_USER: ${COUCHBASE_USER}
@@ -171,6 +185,7 @@ services:
       MEDIA_SERVICE_ADDR: ${MEDIA_SERVICE_ADDR}
       SEASON_SERVICE_ADDR: ${SEASON_SERVICE_ADDR}
       ID_GENERATOR_NODE: 1
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
     depends_on:
@@ -247,6 +262,17 @@ services:
       couchbase:
         condition: service_healthy
 
+
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - app
+    logging: *default-logging
 volumes:
   minio_data:
   couchbase_data:
