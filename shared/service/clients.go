@@ -156,5 +156,6 @@ func (s *ServiceClients) initClient(addr, name string) (*grpc.ClientConn, error)
 	if err != nil {
 		return nil, fmt.Errorf("grpc.NewClient: %w", err)
 	}
+	conn.Connect()
 	return conn, nil
 }
