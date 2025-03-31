@@ -11,13 +11,13 @@ type Logger struct {
 	zlog *zerolog.Logger
 }
 
-func New() (*Logger, error) {
+func New() *Logger {
 	cw := zerolog.NewConsoleWriter()
 	mw := io.MultiWriter(cw)
 	zlog := zerolog.New(mw).With().Timestamp().CallerWithSkipFrameCount(3).Logger()
 	return &Logger{
 		zlog: &zlog,
-	}, nil
+	}
 }
 
 func (l *Logger) Trace(ctx context.Context, message string, fields ...any) {

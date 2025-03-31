@@ -32,7 +32,7 @@ func h[Req, Resp any](handler Handler[Req, Resp]) fiber.Handler {
 			})
 		}
 
-		resp, statusCode, err := handler.Handle(c.Context(), req)
+		resp, statusCode, err := handler.Handle(c.UserContext(), req)
 		if err != nil {
 			return c.Status(statusCode).JSON(fiber.Map{
 				"error": err.Error(),

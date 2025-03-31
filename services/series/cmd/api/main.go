@@ -11,15 +11,17 @@ import (
 
 func main() {
 	ctx := context.Background()
-	err := service.Run(ctx, initializer)
+
+	s := service.NewGRPC(initializer)
+	err := s.Run(ctx)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func initializer(ctx context.Context, s *service.Service[config.Config]) error {
+func initializer(ctx context.Context, s *service.GRPCService[config.Config]) error {
 	repository := couchbasedb.New(s.CBBucket)
-	appServer := app.New(repository, s.TMDBServiceClient, s.IDGenerator)
+	appServer := app.New(repository, s.ServiceClients.TMDBServiceClient, s.IDGenerator)
 	seriespb.RegisterSeriesServiceServer(s.GrpcServer, appServer)
 	return nil
 }

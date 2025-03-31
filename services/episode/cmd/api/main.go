@@ -11,15 +11,17 @@ import (
 
 func main() {
 	ctx := context.Background()
-	err := service.Run(ctx, initializer)
+
+	s := service.NewGRPC(initializer)
+	err := s.Run(ctx)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func initializer(ctx context.Context, s *service.Service[config.Config]) error {
+func initializer(ctx context.Context, s *service.GRPCService[config.Config]) error {
 	repo := couchbasedb.New(s.CBBucket)
-	appServer := app.New(repo, s.IDGenerator, s.MediaServiceClient, s.SeasonServiceClient)
+	appServer := app.New(repo, s.IDGenerator, s.ServiceClients.MediaServiceClient, s.ServiceClients.SeasonServiceClient)
 	episodepb.RegisterEpisodeServiceServer(s.GrpcServer, appServer)
 	return nil
 }

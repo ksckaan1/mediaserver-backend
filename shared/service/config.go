@@ -1,6 +1,8 @@
 package service
 
 type ServiceConfig struct {
+	ServiceName     string `env:"SERVICE_NAME" envDefault:"noname-service"`
+	TracerEndpoint  string `env:"TRACER_ENDPOINT"`
 	Addr            string `env:"ADDR" envDefault:":8080"`
 	IDGeneratorNode int64  `env:"ID_GENERATOR_NODE" envDefault:"1"`
 

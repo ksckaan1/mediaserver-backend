@@ -13,13 +13,15 @@ import (
 
 func main() {
 	ctx := context.Background()
-	err := service.Run(ctx, initializer)
+
+	s := service.NewGRPC(initializer)
+	err := s.Run(ctx)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func initializer(ctx context.Context, s *service.Service[config.Config]) error {
+func initializer(ctx context.Context, s *service.GRPCService[config.Config]) error {
 	storage, err := s3storage.New(s.Cfg, s.IDGenerator)
 	if err != nil {
 		return fmt.Errorf("s3storage.New: %w", err)
