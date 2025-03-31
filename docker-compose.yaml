@@ -47,8 +47,8 @@ services:
       dockerfile: .docker/media_service.Dockerfile
     networks:
       - app
-    ports:
-      - "9191:8080"
+    # ports:
+    #   - "9191:8080"
     environment:
       SERVICE_NAME: media
       ADDR: ":8080"
@@ -76,8 +76,8 @@ services:
       dockerfile: .docker/tmdb_service.Dockerfile
     networks:
       - app
-    ports:
-      - "9192:8080"
+    # ports:
+    #   - "9192:8080"
     environment:
       SERVICE_NAME: tmdb
       ADDR: ":8080"
@@ -99,8 +99,8 @@ services:
       dockerfile: .docker/movie_service.Dockerfile
     networks:
       - app
-    ports:
-      - "9193:8080"
+    # ports:
+    #   - "9193:8080"
     environment:
       SERVICE_NAME: movie
       ADDR: ":8080"
@@ -124,8 +124,8 @@ services:
       dockerfile: .docker/series_service.Dockerfile
     networks:
       - app
-    ports:
-      - "9194:8080"
+    # ports:
+    #   - "9194:8080"
     environment:
       SERVICE_NAME: series
       ADDR: ":8080"
@@ -148,8 +148,8 @@ services:
       dockerfile: .docker/season_service.Dockerfile
     networks:
       - app
-    ports:
-      - "9195:8080"
+    # ports:
+    #   - "9195:8080"
     environment:
       SERVICE_NAME: season
       ADDR: ":8080"
@@ -173,8 +173,8 @@ services:
       dockerfile: .docker/episode_service.Dockerfile
     networks:
       - app
-    ports:
-      - "9196:8080"
+    # ports:
+      # - "9196:8080"
     environment:
       SERVICE_NAME: episode
       ADDR: ":8080"
