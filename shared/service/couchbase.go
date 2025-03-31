@@ -8,7 +8,7 @@ import (
 	"github.com/couchbase/gocb/v2"
 )
 
-func (s *Service[CFG]) initCouchbaseBucket(ctx context.Context) error {
+func (s *GRPCService[CFG]) initCouchbaseBucket(ctx context.Context) error {
 	if s.ServiceCfg.CouchbaseHost == "" || s.ServiceCfg.CouchbaseUser == "" || s.ServiceCfg.CouchbasePassword == "" || s.ServiceCfg.CouchbaseBucket == "" {
 		return nil
 	}

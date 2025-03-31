@@ -9,106 +9,152 @@ import (
 	"shared/pb/seriespb"
 	"shared/pb/tmdbpb"
 
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func (s *Service[CFG]) initServiceClients() error {
-	err := s.initMediaClient()
+type ServiceClients struct {
+	MediaServiceClient   mediapb.MediaServiceClient
+	TMDBServiceClient    tmdbpb.TMDBServiceClient
+	MovieServiceClient   moviepb.MovieServiceClient
+	SeriesServiceClient  seriespb.SeriesServiceClient
+	SeasonServiceClient  seasonpb.SeasonServiceClient
+	EpisodeServiceClient episodepb.EpisodeServiceClient
+}
+
+func (s *ServiceClients) initServiceClients(cfg *ServiceConfig) error {
+	err := s.initMediaClient(cfg)
 	if err != nil {
 		return fmt.Errorf("initMediaClient: %w", err)
 	}
-	err = s.initTMDBClient()
+	err = s.initTMDBClient(cfg)
 	if err != nil {
 		return fmt.Errorf("initTMDBClient: %w", err)
 	}
-	err = s.initMovieClient()
+	err = s.initMovieClient(cfg)
 	if err != nil {
 		return fmt.Errorf("initMovieClient: %w", err)
 	}
-	err = s.initSeriesClient()
+	err = s.initSeriesClient(cfg)
 	if err != nil {
 		return fmt.Errorf("initSeriesClient: %w", err)
 	}
-	err = s.initSeasonClient()
+	err = s.initSeasonClient(cfg)
 	if err != nil {
 		return fmt.Errorf("initSeasonClient: %w", err)
 	}
-	err = s.initEpisodeClient()
+	err = s.initEpisodeClient(cfg)
 	if err != nil {
 		return fmt.Errorf("initEpisodeClient: %w", err)
 	}
 	return nil
 }
 
-func (s *Service[CFG]) initMediaClient() error {
-	if s.ServiceCfg.MediaServiceAddr == "" {
+func (s *ServiceClients) initMediaClient(cfg *ServiceConfig) error {
+	if cfg.MediaServiceAddr == "" {
 		return nil
 	}
-	conn, err := grpc.NewClient(s.ServiceCfg.MediaServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	conn, err := s.initClient(cfg.MediaServiceAddr, "media")
 	if err != nil {
-		return fmt.Errorf("grpc.NewClient: %w", err)
+		return fmt.Errorf("initClient: %w", err)
 	}
+
 	s.MediaServiceClient = mediapb.NewMediaServiceClient(conn)
 	return nil
 }
 
-func (s *Service[CFG]) initTMDBClient() error {
-	if s.ServiceCfg.TMDBServiceAddr == "" {
+func (s *ServiceClients) initTMDBClient(cfg *ServiceConfig) error {
+	if cfg.TMDBServiceAddr == "" {
 		return nil
 	}
-	conn, err := grpc.NewClient(s.ServiceCfg.TMDBServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	conn, err := s.initClient(cfg.TMDBServiceAddr, "tmdb")
 	if err != nil {
-		return fmt.Errorf("grpc.NewClient: %w", err)
+		return fmt.Errorf("initClient: %w", err)
 	}
+
 	s.TMDBServiceClient = tmdbpb.NewTMDBServiceClient(conn)
 	return nil
 }
 
-func (s *Service[CFG]) initMovieClient() error {
-	if s.ServiceCfg.MovieServiceAddr == "" {
+func (s *ServiceClients) initMovieClient(cfg *ServiceConfig) error {
+	if cfg.MovieServiceAddr == "" {
 		return nil
 	}
-	conn, err := grpc.NewClient(s.ServiceCfg.MovieServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	conn, err := s.initClient(cfg.MovieServiceAddr, "movie")
 	if err != nil {
-		return fmt.Errorf("grpc.NewClient: %w", err)
+		return fmt.Errorf("initClient: %w", err)
 	}
+
 	s.MovieServiceClient = moviepb.NewMovieServiceClient(conn)
 	return nil
 }
 
-func (s *Service[CFG]) initSeriesClient() error {
-	if s.ServiceCfg.SeriesServiceAddr == "" {
+func (s *ServiceClients) initSeriesClient(cfg *ServiceConfig) error {
+	if cfg.SeriesServiceAddr == "" {
 		return nil
 	}
-	conn, err := grpc.NewClient(s.ServiceCfg.SeriesServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	conn, err := s.initClient(cfg.SeriesServiceAddr, "series")
 	if err != nil {
-		return fmt.Errorf("grpc.NewClient: %w", err)
+		return fmt.Errorf("initClient: %w", err)
 	}
+
 	s.SeriesServiceClient = seriespb.NewSeriesServiceClient(conn)
 	return nil
 }
 
-func (s *Service[CFG]) initSeasonClient() error {
-	if s.ServiceCfg.SeasonServiceAddr == "" {
+func (s *ServiceClients) initSeasonClient(cfg *ServiceConfig) error {
+	if cfg.SeasonServiceAddr == "" {
 		return nil
 	}
-	conn, err := grpc.NewClient(s.ServiceCfg.SeasonServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	conn, err := s.initClient(cfg.SeasonServiceAddr, "season")
 	if err != nil {
-		return fmt.Errorf("grpc.NewClient: %w", err)
+		return fmt.Errorf("initClient: %w", err)
 	}
+
 	s.SeasonServiceClient = seasonpb.NewSeasonServiceClient(conn)
 	return nil
 }
 
-func (s *Service[CFG]) initEpisodeClient() error {
-	if s.ServiceCfg.EpisodeServiceAddr == "" {
+func (s *ServiceClients) initEpisodeClient(cfg *ServiceConfig) error {
+	if cfg.EpisodeServiceAddr == "" {
 		return nil
 	}
-	conn, err := grpc.NewClient(s.ServiceCfg.EpisodeServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	conn, err := s.initClient(cfg.EpisodeServiceAddr, "episode")
 	if err != nil {
-		return fmt.Errorf("grpc.NewClient: %w", err)
+		return fmt.Errorf("initClient: %w", err)
 	}
+
 	s.EpisodeServiceClient = episodepb.NewEpisodeServiceClient(conn)
 	return nil
+}
+
+func (s *ServiceClients) initClient(addr, name string) (*grpc.ClientConn, error) {
+	conn, err := grpc.NewClient(addr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor(
+			otelgrpc.WithSpanAttributes(
+				attribute.String("service.name", name+"_client"),
+			),
+			otelgrpc.WithSpanOptions(trace.WithSpanKind(trace.SpanKindClient)),
+		)),
+		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor(
+			otelgrpc.WithSpanAttributes(
+				attribute.String("service.name", name+"_client"),
+			),
+			otelgrpc.WithSpanOptions(trace.WithSpanKind(trace.SpanKindClient)),
+		)),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("grpc.NewClient: %w", err)
+	}
+	return conn, nil
 }
