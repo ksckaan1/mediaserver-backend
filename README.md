@@ -37,8 +37,17 @@ MOVIE_SERVICE_ADDR=movie_service:8080
 
 # API KEYS
 TMDB_API_KEY=<TMDB API KEY>
+
 # TRACER
 TRACER_ENDPOINT=jaeger:4318
+
+# S3
+S3_ENDPOINT=minio:9000
+S3_REGION=eu-central-1
+S3_BUCKET=media
+S3_ACCESS_KEY=minioadmin
+S3_SECRET_KEY=minioadmin
+S3_USE_SSL=false
 ```
 
 > [!IMPORTANT]  
