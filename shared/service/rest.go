@@ -12,6 +12,7 @@ import (
 
 	"github.com/gofiber/contrib/otelfiber"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 type RESTService[CFG any] struct {
@@ -28,10 +29,11 @@ type RESTService[CFG any] struct {
 }
 
 func NewREST[CFG any](initializer func(context.Context, *RESTService[CFG]) error) *RESTService[CFG] {
+	lg := logger.New()
 	return &RESTService[CFG]{
-		Logger:         logger.New(),
+		Logger:         lg,
 		initializer:    initializer,
-		ServiceClients: &ServiceClients{},
+		ServiceClients: newServiceClient(lg),
 	}
 }
 
@@ -66,6 +68,13 @@ func (s *RESTService[CFG]) Run(ctx context.Context) error {
 			DisableStartupMessage: true,
 		},
 	)
+
+	// add cors
+	s.Router.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "*",
+		AllowMethods: "*",
+	}))
 
 	if s.ServiceCfg.TracerEndpoint != "" {
 		s.Router.Use(otelfiber.Middleware())

@@ -36,10 +36,11 @@ type GRPCService[CFG any] struct {
 }
 
 func NewGRPC[CFG any](initializer func(context.Context, *GRPCService[CFG]) error) *GRPCService[CFG] {
+	lg := logger.New()
 	return &GRPCService[CFG]{
-		Logger:         logger.New(),
+		Logger:         lg,
 		initializer:    initializer,
-		ServiceClients: &ServiceClients{},
+		ServiceClients: newServiceClient(lg),
 	}
 }
 
