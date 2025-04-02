@@ -11,7 +11,6 @@ import (
 
 	"time"
 
-	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -118,16 +117,54 @@ func (a *App) ListMovies(ctx context.Context, request *moviepb.ListMoviesRequest
 	if err != nil {
 		return nil, fmt.Errorf("repo.ListMovies: %w", err)
 	}
-	return &moviepb.MovieList{
-		List: lo.Map(movies.List, func(m *models.Movie, _ int) *moviepb.Movie {
-			return &moviepb.Movie{
-				Id:          m.ID,
-				CreatedAt:   timestamppb.New(m.CreatedAt),
-				UpdatedAt:   timestamppb.New(m.UpdatedAt),
-				Title:       m.Title,
-				Description: m.Description,
+
+	resultList := make([]*moviepb.Movie, 0, len(movies.List))
+	for _, m := range movies.List {
+		var mediaInfo *moviepb.Media
+		if m.MediaID != "" {
+			result, err := a.mediaClient.GetMediaByID(ctx, &mediapb.GetMediaByIDRequest{
+				MediaId: m.MediaID,
+			})
+			if err != nil {
+				return nil, fmt.Errorf("mediaClient.GetMediaByID: %w", err)
 			}
-		}),
+			mediaInfo = &moviepb.Media{
+				Id:        result.Id,
+				CreatedAt: result.CreatedAt,
+				UpdatedAt: result.UpdatedAt,
+				Title:     result.Title,
+				Path:      result.Path,
+				Type:      moviepb.MediaType(result.Type),
+				MimeType:  result.MimeType,
+				Size:      result.Size,
+			}
+		}
+		var tmdbInfo *moviepb.TMDBInfo
+		if m.TMDBID != "" {
+			result, err := a.tmdbClient.GetTMDBInfo(ctx, &tmdbpb.GetTMDBInfoRequest{
+				Id: m.TMDBID,
+			})
+			if err != nil {
+				return nil, fmt.Errorf("tmdbClient.GetTMDBInfo: %w", err)
+			}
+			tmdbInfo = &moviepb.TMDBInfo{
+				Id:   result.Id,
+				Data: result.Data,
+			}
+		}
+		resultList = append(resultList, &moviepb.Movie{
+			Id:          m.ID,
+			CreatedAt:   timestamppb.New(m.CreatedAt),
+			UpdatedAt:   timestamppb.New(m.UpdatedAt),
+			Title:       m.Title,
+			Description: m.Description,
+			MediaInfo:   mediaInfo,
+			TmdbInfo:    tmdbInfo,
+		})
+	}
+
+	return &moviepb.MovieList{
+		List:   resultList,
 		Count:  movies.Count,
 		Limit:  movies.Limit,
 		Offset: movies.Offset,

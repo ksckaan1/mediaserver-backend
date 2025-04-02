@@ -131,18 +131,39 @@ func (a *App) ListEpisodesBySeasonID(ctx context.Context, req *episodepb.ListEpi
 	if err != nil {
 		return nil, fmt.Errorf("repository.ListEpisodesBySeasonID: %w", err)
 	}
-	return &episodepb.EpisodeList{
-		List: lo.Map(episodes, func(e *models.Episode, _ int) *episodepb.Episode {
-			return &episodepb.Episode{
-				Id:          e.ID,
-				CreatedAt:   timestamppb.New(e.CreatedAt),
-				UpdatedAt:   timestamppb.New(e.UpdatedAt),
-				Title:       e.Title,
-				Description: e.Description,
-				SeasonId:    e.SeasonID,
-				Order:       int32(e.Order),
+
+	resultList := make([]*episodepb.Episode, 0, len(episodes))
+	for _, episode := range episodes {
+		var mediaInfo *episodepb.Media
+		if episode.MediaID != "" {
+			resp, err := a.mediaClient.GetMediaByID(ctx, &mediapb.GetMediaByIDRequest{MediaId: episode.MediaID})
+			if err != nil {
+				return nil, fmt.Errorf("mediaClient.GetMediaByID: %w", err)
 			}
-		}),
+			mediaInfo = &episodepb.Media{
+				Id:        resp.Id,
+				CreatedAt: resp.CreatedAt,
+				UpdatedAt: resp.UpdatedAt,
+				Title:     resp.Title,
+				Path:      resp.Path,
+				Type:      episodepb.MediaType(resp.Type),
+				MimeType:  resp.MimeType,
+				Size:      resp.Size,
+			}
+		}
+		resultList = append(resultList, &episodepb.Episode{
+			Id:          episode.ID,
+			CreatedAt:   timestamppb.New(episode.CreatedAt),
+			UpdatedAt:   timestamppb.New(episode.UpdatedAt),
+			Title:       episode.Title,
+			Description: episode.Description,
+			SeasonId:    episode.SeasonID,
+			Order:       int32(episode.Order),
+			MediaInfo:   mediaInfo,
+		})
+	}
+	return &episodepb.EpisodeList{
+		List: resultList,
 	}, nil
 }
 
