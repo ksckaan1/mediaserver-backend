@@ -29,4 +29,14 @@ gen-proto:
 		--go-grpc_out=Mprotofiles/episode_service.proto=shared/pb/episodepb:. \
 		--proto_path=protofiles \
 		protofiles/episode_service.proto
+	protoc \
+		--go_out=Mprotofiles/user_service.proto=shared/pb/userpb:. \
+		--go-grpc_out=Mprotofiles/user_service.proto=shared/pb/userpb:. \
+		--proto_path=protofiles \
+		protofiles/user_service.proto
+	protoc \
+		--go_out=Mprotofiles/auth_service.proto=shared/pb/authpb:. \
+		--go-grpc_out=Mprotofiles/auth_service.proto=shared/pb/authpb:. \
+		--proto_path=protofiles \
+		protofiles/auth_service.proto
 	
