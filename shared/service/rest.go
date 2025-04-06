@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"shared/configer"
+	"shared/idgen"
 	"shared/logger"
 	"shared/ports"
 	"syscall"
@@ -16,9 +17,10 @@ import (
 )
 
 type RESTService[CFG any] struct {
-	Cfg        *CFG
-	ServiceCfg *ServiceConfig
-	Logger     ports.Logger
+	Cfg         *CFG
+	ServiceCfg  *ServiceConfig
+	Logger      ports.Logger
+	IDGenerator ports.IDGenerator
 
 	ServiceClients *ServiceClients
 
@@ -78,6 +80,11 @@ func (s *RESTService[CFG]) Run(ctx context.Context) error {
 
 	if s.ServiceCfg.TracerEndpoint != "" {
 		s.Router.Use(otelfiber.Middleware())
+	}
+
+	s.IDGenerator, err = idgen.New(s.ServiceCfg.IDGeneratorNode)
+	if err != nil {
+		return fmt.Errorf("idgen.New: %w", err)
 	}
 
 	s.Logger.Info(ctx, "service initializing")
