@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"reflect"
 	"strings"
 
 	validator "github.com/go-playground/validator/v10"
@@ -24,7 +25,6 @@ func h[Req, Resp any](handler Handler[Req, Resp]) fiber.Handler {
 			})
 		}
 
-		validate := validator.New()
 		err = validate.Struct(req)
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -77,4 +77,12 @@ func parseRequest(c *fiber.Ctx, req any) error {
 		return err
 	}
 	return nil
+}
+
+var validate = validator.New()
+
+func init() {
+	validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+		return field.Tag.Get("json")
+	})
 }

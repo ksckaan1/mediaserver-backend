@@ -1,0 +1,47 @@
+syntax = "proto3";
+package authpb;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "shared/pb/authpb;authpb";
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
+  rpc Logout(LogoutRequest) returns (google.protobuf.Empty);
+  rpc LogoutAll(LogoutAllRequest) returns (google.protobuf.Empty);
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+  string user_agent = 3;
+  string ip_address = 4;
+}
+
+message LoginResponse {
+  string session_id = 1;
+}
+
+message GetSessionRequest {
+  string session_id = 1;
+}
+
+message GetSessionResponse {
+  string session_id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  string user_id = 3;
+  string user_agent = 4;
+  string ip_address = 5;
+}
+
+message LogoutRequest {
+  string session_id = 1;
+}
+
+message LogoutAllRequest {
+  string user_id = 1;
+}
+
+

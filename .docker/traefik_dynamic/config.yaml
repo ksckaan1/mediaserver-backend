@@ -1,0 +1,35 @@
+http:
+  routers:
+    router-api:
+      rule: "PathPrefix(`/api`)"
+      entryPoints:
+        - websecure
+      service: service-bff
+      tls: {} # Bu satır, router'ın HTTPS üzerinden çalışmasını sağlar
+
+    router-doc:
+      rule: "PathPrefix(`/doc`)"
+      entryPoints:
+        - websecure
+      service: service-doc
+      tls: {}
+
+  middlewares:
+    strip-api:
+      stripPrefix:
+        prefixes:
+          - "/api"
+    strip-doc:
+      stripPrefix:
+        prefixes:
+          - "/doc"
+
+  services:
+    service-bff:
+      loadBalancer:
+        servers:
+          - url: "http://bff_service:8080/api"
+    service-doc:
+      loadBalancer:
+        servers:
+          - url: "http://apidoc:8080"

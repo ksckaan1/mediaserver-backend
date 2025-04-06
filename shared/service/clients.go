@@ -3,12 +3,14 @@ package service
 import (
 	"context"
 	"fmt"
+	"shared/pb/authpb"
 	"shared/pb/episodepb"
 	"shared/pb/mediapb"
 	"shared/pb/moviepb"
 	"shared/pb/seasonpb"
 	"shared/pb/seriespb"
 	"shared/pb/tmdbpb"
+	"shared/pb/userpb"
 	"shared/ports"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
@@ -24,6 +26,8 @@ type ServiceClients struct {
 	SeriesServiceClient  seriespb.SeriesServiceClient
 	SeasonServiceClient  seasonpb.SeasonServiceClient
 	EpisodeServiceClient episodepb.EpisodeServiceClient
+	UserServiceClient    userpb.UserServiceClient
+	AuthServiceClient    authpb.AuthServiceClient
 	logger               ports.Logger
 }
 
@@ -57,6 +61,14 @@ func (s *ServiceClients) initServiceClients(cfg *ServiceConfig) error {
 	err = s.initEpisodeClient(cfg)
 	if err != nil {
 		return fmt.Errorf("initEpisodeClient: %w", err)
+	}
+	err = s.initUserClient(cfg)
+	if err != nil {
+		return fmt.Errorf("initUserClient: %w", err)
+	}
+	err = s.initAuthService(cfg)
+	if err != nil {
+		return fmt.Errorf("initAuthService: %w", err)
 	}
 	return nil
 }
@@ -159,6 +171,40 @@ func (s *ServiceClients) initEpisodeClient(cfg *ServiceConfig) error {
 	s.EpisodeServiceClient = episodepb.NewEpisodeServiceClient(conn)
 
 	s.logger.Info(context.Background(), "episode service client initialized")
+
+	return nil
+}
+
+func (s *ServiceClients) initUserClient(cfg *ServiceConfig) error {
+	if cfg.UserServiceAddr == "" {
+		return nil
+	}
+
+	conn, err := s.initClient(cfg.UserServiceAddr)
+	if err != nil {
+		return fmt.Errorf("initClient: %w", err)
+	}
+
+	s.UserServiceClient = userpb.NewUserServiceClient(conn)
+
+	s.logger.Info(context.Background(), "user service client initialized")
+
+	return nil
+}
+
+func (s *ServiceClients) initAuthService(cfg *ServiceConfig) error {
+	if cfg.AuthServiceAddr == "" {
+		return nil
+	}
+
+	conn, err := s.initClient(cfg.AuthServiceAddr)
+	if err != nil {
+		return fmt.Errorf("initClient: %w", err)
+	}
+
+	s.AuthServiceClient = authpb.NewAuthServiceClient(conn)
+
+	s.logger.Info(context.Background(), "auth service client initialized")
 
 	return nil
 }

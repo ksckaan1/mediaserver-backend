@@ -19,4 +19,6 @@ type ServiceConfig struct {
 	SeriesServiceAddr  string `env:"SERIES_SERVICE_ADDR"`
 	SeasonServiceAddr  string `env:"SEASON_SERVICE_ADDR"`
 	EpisodeServiceAddr string `env:"EPISODE_SERVICE_ADDR"`
+	UserServiceAddr    string `env:"USER_SERVICE_ADDR"`
+	AuthServiceAddr    string `env:"AUTH_SERVICE_ADDR"`
 }
