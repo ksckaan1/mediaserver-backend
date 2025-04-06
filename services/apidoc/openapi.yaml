@@ -3,12 +3,115 @@ info:
   title: Media Server
   version: v0.0.0
 servers:
-  - url: http://localhost:9190/api/v1
+  - url: https://localhost/api/v1
     description: Local Development server
 paths:
+  /auth/login:
+    post:
+      summary: Login
+      tags:
+        - public/auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  format: password
+                  example: asdf1234
+      responses:
+        "204":
+          description: OK
+
+  /auth/logout:
+    get:
+      summary: Logout
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: all
+          in: query
+          required: false
+          description: Logout all sessions
+          schema:
+            type: boolean
+      tags:
+        - public/auth
+      responses:
+        "204":
+          description: OK
+
+  /user/register:
+    post:
+      summary: Register User
+      tags:
+        - public/user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Username must be unique and between 3 to 15 characters
+                password:
+                  type: string
+                  format: password
+                  description: Password must be between 8 to 32 characters
+                confirm_password:
+                  type: string
+                  format: password
+                  description: Password must be between 8 to 32 characters
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+
+  /user/profile:
+    get:
+      summary: Get User Profile
+      security:
+        - cookieAuth: []
+      tags:
+        - public/user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+                  username:
+                    type: string
+
   /media/:
     post:
       summary: Upload Media
+      security:
+        - cookieAuth: []
       tags:
         - public/media
       requestBody:
@@ -35,6 +138,8 @@ paths:
                     type: string
     get:
       summary: List Medias
+      security:
+        - cookieAuth: []
       tags:
         - public/media
       parameters:
@@ -161,7 +266,7 @@ paths:
                   movie_id:
                     type: string
     get:
-      summary: List All Movies
+      summary: List Movies
       tags:
         - public/movie
       parameters:
@@ -628,6 +733,12 @@ paths:
           description: OK
 
 components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session_id
+
   schemas:
     media:
       type: object
@@ -759,10 +870,16 @@ tags:
     x-displayName: Season
   - name: public/episode
     x-displayName: Episode
+  - name: public/user
+    x-displayName: User
+  - name: public/auth
+    x-displayName: Auth
 
 x-tagGroups:
   - name: PUBLIC
     tags:
+      - public/auth
+      - public/user
       - public/media
       - public/movie
       - public/series
