@@ -1,16 +1,20 @@
 package main
 
 import (
+	"bff-service/internal/core/app/auth"
 	"bff-service/internal/core/app/episode"
 	"bff-service/internal/core/app/media"
 	"bff-service/internal/core/app/movie"
 	"bff-service/internal/core/app/season"
 	"bff-service/internal/core/app/series"
+	"bff-service/internal/core/app/user"
+	"shared/pb/authpb"
 	"shared/pb/episodepb"
 	"shared/pb/mediapb"
 	"shared/pb/moviepb"
 	"shared/pb/seasonpb"
 	"shared/pb/seriespb"
+	"shared/pb/userpb"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -63,4 +67,21 @@ func initEpisodeRoutes(episodeClient episodepb.EpisodeServiceClient) *fiber.App 
 	app.Put("/:episode_id", h(episode.NewUpdateEpisodeByID(episodeClient)))
 	app.Delete("/:episode_id", h(episode.NewDeleteEpisodeByID(episodeClient)))
 	return app
+}
+
+func initUserRoutes(userClient userpb.UserServiceClient, authMW fiber.Handler) *fiber.App {
+	app := fiber.New()
+	app.Post("/register", h(user.NewRegister(userClient)))
+	app.Use(authMW)
+	app.Get("/profile", h(user.NewProfile(userClient)))
+	return app
+}
+
+func initAuthRoutes(authClient authpb.AuthServiceClient) (*fiber.App, fiber.Handler) {
+	app := fiber.New()
+	mw := auth.NewMiddleware(authClient).Handle
+
+	app.Post("/login", auth.NewLogin(authClient).Handle)
+	app.Get("/logout", mw, auth.NewLogout(authClient).Logout)
+	return app, mw
 }
