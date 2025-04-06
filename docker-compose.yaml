@@ -5,6 +5,24 @@ x-logging: &default-logging
     max-file: "3"
 
 services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    command:
+      - "--providers.file.directory=/etc/traefik/dynamic" 
+      - "--providers.file.watch=true"                    
+      - "--entrypoints.web.address=:80"                  
+      - "--entrypoints.websecure.address=:443"          
+      - "--api.insecure=true"                            
+    ports:
+      - "80:80"      
+      - "443:443"   
+      - "8080:8080"   # Traefik dashboard
+    volumes:
+      - ".docker/traefik_dynamic:/etc/traefik/dynamic"
+    networks:
+      - app
+
   apidoc:
     container_name: apidoc
     build:
