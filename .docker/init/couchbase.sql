@@ -35,3 +35,18 @@ CREATE COLLECTION IF NOT EXISTS `media_server`.episode_service.episodes;
 CREATE PRIMARY INDEX IF NOT EXISTS ON `media_server`.episode_service.episodes;
 CREATE INDEX IF NOT EXISTS idx_id ON `media_server`.episode_service.episodes(id);
 CREATE INDEX IF NOT EXISTS idx_season_id ON `media_server`.episode_service.episodes(season_id);
+
+-- User Service
+CREATE SCOPE IF NOT EXISTS `media_server`.user_service;
+CREATE COLLECTION IF NOT EXISTS `media_server`.user_service.users;
+CREATE PRIMARY INDEX IF NOT EXISTS ON `media_server`.user_service.users;
+CREATE INDEX IF NOT EXISTS idx_id ON `media_server`.user_service.users(id);
+CREATE INDEX IF NOT EXISTS idx_username ON `media_server`.user_service.users(username);
+
+-- Auth Service
+CREATE SCOPE IF NOT EXISTS `media_server`.auth_service;
+CREATE COLLECTION IF NOT EXISTS `media_server`.auth_service.sessions;
+CREATE PRIMARY INDEX IF NOT EXISTS ON `media_server`.auth_service.sessions;
+CREATE INDEX IF NOT EXISTS idx_id ON `media_server`.auth_service.sessions(session_id);
+CREATE INDEX IF NOT EXISTS idx_user_id ON `media_server`.auth_service.sessions(user_id);
+
