@@ -109,25 +109,13 @@ paths:
 
   /media/:
     post:
-      summary: Upload Media
+      summary: Create Media
       security:
         - cookieAuth: []
       tags:
         - public/media
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                media:
-                  type: string
-                  format: binary
       responses:
-        "200":
+        "201":
           description: OK
           content:
             application/json:
@@ -136,6 +124,9 @@ paths:
                 properties:
                   media_id:
                     type: string
+                  presigned_url:
+                    type: string
+                    format: uri
     get:
       summary: List Medias
       security:
@@ -145,14 +136,14 @@ paths:
       parameters:
         - name: limit
           in: query
-          required: true
+          required: false
           description: Number of listed items
           schema:
             type: integer
             example: 10
         - name: offset
           in: query
-          required: true
+          required: false
           description: Number of items to skip
           schema:
             type: integer
@@ -255,6 +246,10 @@ paths:
                 media_id:
                   type: string
                   description: Enter The Media ID or leave empty
+                tags:
+                  type: array
+                  items:
+                    type: string
       responses:
         "201":
           description: OK
@@ -272,14 +267,14 @@ paths:
       parameters:
         - name: limit
           in: query
-          required: true
+          required: false
           description: Number of listed items
           schema:
             type: integer
             example: 10
         - name: offset
           in: query
-          required: true
+          required: false
           description: Number of items to skip
           schema:
             type: integer
@@ -353,6 +348,10 @@ paths:
                 media_id:
                   type: string
                   description: Enter The Media ID or leave empty
+                tags:
+                  type: array
+                  items:
+                    type: string
       responses:
         "204":
           description: OK
@@ -390,6 +389,10 @@ paths:
                 tmdb_id:
                   type: string
                   description: Enter The Movie Database ID like 'movie:1234', 'series:1234' or leave empty
+                tags:
+                  type: array
+                  items:
+                    type: string
       responses:
         "201":
           description: OK
@@ -405,14 +408,14 @@ paths:
       parameters:
         - name: limit
           in: query
-          required: true
+          required: false
           description: Number of items per page
           schema:
             type: integer
             example: 10
         - name: offset
           in: query
-          required: true
+          required: false
           description: Number of items to skip
           schema:
             type: integer
@@ -483,6 +486,10 @@ paths:
                 tmdb_id:
                   type: string
                   description: Enter The Movie Database ID like 'movie:1234', 'series:1234' or leave empty
+                tags:
+                  type: array
+                  items:
+                    type: string
       responses:
         "204":
           description: OK
@@ -797,6 +804,10 @@ components:
         media_info:
           nullable: true
           $ref: "#/components/schemas/media"
+        tags:
+          type: array
+          items:
+            type: string
     series:
       type: object
       properties:
@@ -815,6 +826,10 @@ components:
         tmdb_info:
           nullable: true
           $ref: "#/components/schemas/tmdb"
+        tags:
+          type: array
+          items:
+            type: string
 
     season:
       type: object

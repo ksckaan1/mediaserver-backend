@@ -3,13 +3,14 @@ package models
 import "time"
 
 type Movie struct {
-	ID          string    `bson:"_id" json:"id"`
-	CreatedAt   time.Time `bson:"created_at,omitempty" json:"created_at"`
-	UpdatedAt   time.Time `bson:"updated_at" json:"updated_at"`
-	Title       string    `bson:"title" json:"title"`
-	Description string    `bson:"description" json:"description"`
-	MediaID     string    `bson:"media_id" json:"media_id"`
-	TMDBID      string    `bson:"tmdb_id" json:"tmdb_id"`
+	ID          string    `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	MediaID     string    `json:"media_id"`
+	TMDBID      string    `json:"tmdb_id"`
+	Tags        []string  `json:"tags"`
 }
 
 type MovieList struct {
@@ -17,9 +18,4 @@ type MovieList struct {
 	Count  int64    `json:"count"`
 	Limit  int64    `json:"limit"`
 	Offset int64    `json:"offset"`
-}
-
-type MovieSearch struct {
-	ID    string `bson:"_id" json:"id"`
-	Title string `bson:"title" json:"title"`
 }

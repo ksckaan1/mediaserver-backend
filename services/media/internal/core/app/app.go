@@ -3,20 +3,17 @@ package app
 import (
 	"context"
 	"fmt"
-	"io"
 	"media_service/internal/core/models"
 	"media_service/internal/port"
-	"os"
-	"shared/enums/mediatype"
 	"shared/pb/mediapb"
 	"shared/ports"
 
-	"github.com/h2non/filetype"
 	"github.com/samber/lo"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+var _ mediapb.MediaServiceServer = (*App)(nil)
 
 type App struct {
 	mediapb.UnimplementedMediaServiceServer
@@ -33,74 +30,17 @@ func New(repo Repository, storage port.Storage, idGen ports.IDGenerator) *App {
 	}
 }
 
-func (a *App) UploadMedia(stream grpc.ClientStreamingServer[mediapb.UploadMediaRequest, mediapb.UploadMediaResponse]) error {
-	resp, err := stream.Recv()
-	if err != nil {
-		return fmt.Errorf("stream.Recv: %w", err)
-	}
-	object, err := os.CreateTemp("", "media_file")
-	if err != nil {
-		return fmt.Errorf("os.CreateTemp: %w", err)
-	}
-	defer os.Remove(object.Name())
-	defer object.Close()
-	fileSize := 0
-
-	for {
-		chunk, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		n, err := object.Write(chunk.Content)
-		if err != nil {
-			return fmt.Errorf("object.Write: %w", err)
-		}
-		fileSize += n
-	}
-
+func (a *App) CreateMedia(ctx context.Context, req *mediapb.CreateMediaRequest) (*mediapb.CreateMediaResponse, error) {
 	id := a.idGen.NewID()
-	ctx := stream.Context()
-
-	_, err = object.Seek(0, 0)
+	presignedURL, formData, err := a.storage.CreatePresignedURL(ctx, id)
 	if err != nil {
-		return fmt.Errorf("object.Seek: %w", err)
+		return nil, fmt.Errorf("storage.CreatePresignedURL: %w", err)
 	}
-
-	fileType, err := filetype.MatchReader(object)
-	if err != nil {
-		return fmt.Errorf("filetype.MatchReader: %w", err)
-	}
-
-	_, err = object.Seek(0, 0)
-	if err != nil {
-		return fmt.Errorf("object.Seek: %w", err)
-	}
-
-	filePath, err := a.storage.Save(ctx, &port.Object{
-		Content:   object,
-		Size:      int64(fileSize),
-		MimeType:  fileType.MIME.Value,
-		Extension: fileType.Extension,
-	})
-	if err != nil {
-		return fmt.Errorf("storage.Save: %w", err)
-	}
-
-	err = a.repo.CreateMedia(ctx, &models.Media{
-		ID:       id,
-		Title:    resp.Title,
-		Path:     filePath,
-		Type:     mediatype.Image,
-		MimeType: fileType.MIME.Value,
-		Size:     int64(fileSize),
-	})
-	if err != nil {
-		return fmt.Errorf("repo.CreateMedia: %w", err)
-	}
-
-	return stream.SendAndClose(&mediapb.UploadMediaResponse{
-		MediaId: id,
-	})
+	return &mediapb.CreateMediaResponse{
+		MediaId:      id,
+		PresignedUrl: presignedURL,
+		FormData:     formData,
+	}, nil
 }
 
 func (a *App) GetMediaByID(ctx context.Context, req *mediapb.GetMediaByIDRequest) (*mediapb.Media, error) {

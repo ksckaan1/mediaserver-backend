@@ -20,11 +20,12 @@ func NewUpdateMovieByID(movieClient moviepb.MovieServiceClient) *UpdateMovieByID
 }
 
 type UpdateMovieByIDRequest struct {
-	MovieID     string `params:"movie_id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	TmdbId      string `json:"tmdb_id"`
-	MediaId     string `json:"media_id"`
+	MovieID     string   `params:"movie_id"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	TmdbId      string   `json:"tmdb_id"`
+	MediaId     string   `json:"media_id"`
+	Tags        []string `json:"tags"`
 }
 
 func (h *UpdateMovieByID) Handle(ctx context.Context, req *UpdateMovieByIDRequest) (*any, int, error) {
@@ -34,6 +35,7 @@ func (h *UpdateMovieByID) Handle(ctx context.Context, req *UpdateMovieByIDReques
 		Description: req.Description,
 		TmdbId:      req.TmdbId,
 		MediaId:     req.MediaId,
+		Tags:        req.Tags,
 	})
 	if err != nil {
 		if strings.Contains(err.Error(), "movie not found") {

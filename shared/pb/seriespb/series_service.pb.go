@@ -29,6 +29,7 @@ type CreateSeriesRequest struct {
 	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
 	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	TmdbId        string                 `protobuf:"bytes,3,opt,name=tmdb_id,json=tmdbId,proto3" json:"tmdb_id,omitempty"`
+	Tags          []string               `protobuf:"bytes,4,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -82,6 +83,13 @@ func (x *CreateSeriesRequest) GetTmdbId() string {
 		return x.TmdbId
 	}
 	return ""
+}
+
+func (x *CreateSeriesRequest) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
 }
 
 type CreateSeriesResponse struct {
@@ -180,6 +188,7 @@ type Series struct {
 	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
 	Description   string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
 	TmdbInfo      *TMDBInfo              `protobuf:"bytes,6,opt,name=tmdb_info,json=tmdbInfo,proto3" json:"tmdb_info,omitempty"`
+	Tags          []string               `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -252,6 +261,13 @@ func (x *Series) GetDescription() string {
 func (x *Series) GetTmdbInfo() *TMDBInfo {
 	if x != nil {
 		return x.TmdbInfo
+	}
+	return nil
+}
+
+func (x *Series) GetTags() []string {
+	if x != nil {
+		return x.Tags
 	}
 	return nil
 }
@@ -434,6 +450,7 @@ type UpdateSeriesByIDRequest struct {
 	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	TmdbId        string                 `protobuf:"bytes,4,opt,name=tmdb_id,json=tmdbId,proto3" json:"tmdb_id,omitempty"`
+	Tags          []string               `protobuf:"bytes,5,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -496,6 +513,13 @@ func (x *UpdateSeriesByIDRequest) GetTmdbId() string {
 	return ""
 }
 
+func (x *UpdateSeriesByIDRequest) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
 type DeleteSeriesByIDRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SeriesId      string                 `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
@@ -544,15 +568,16 @@ var File_series_service_proto protoreflect.FileDescriptor
 
 const file_series_service_proto_rawDesc = "" +
 	"\n" +
-	"\x14series_service.proto\x12\bseriespb\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1bgoogle/protobuf/empty.proto\"f\n" +
+	"\x14series_service.proto\x12\bseriespb\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1bgoogle/protobuf/empty.proto\"z\n" +
 	"\x13CreateSeriesRequest\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x17\n" +
-	"\atmdb_id\x18\x03 \x01(\tR\x06tmdbId\"3\n" +
+	"\atmdb_id\x18\x03 \x01(\tR\x06tmdbId\x12\x12\n" +
+	"\x04tags\x18\x04 \x03(\tR\x04tags\"3\n" +
 	"\x14CreateSeriesResponse\x12\x1b\n" +
 	"\tseries_id\x18\x01 \x01(\tR\bseriesId\"3\n" +
 	"\x14GetSeriesByIDRequest\x12\x1b\n" +
-	"\tseries_id\x18\x01 \x01(\tR\bseriesId\"\xf7\x01\n" +
+	"\tseries_id\x18\x01 \x01(\tR\bseriesId\"\x8b\x02\n" +
 	"\x06Series\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
 	"\n" +
@@ -561,7 +586,8 @@ const file_series_service_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x14\n" +
 	"\x05title\x18\x04 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x05 \x01(\tR\vdescription\x12/\n" +
-	"\ttmdb_info\x18\x06 \x01(\v2\x12.seriespb.TMDBInfoR\btmdbInfo\"G\n" +
+	"\ttmdb_info\x18\x06 \x01(\v2\x12.seriespb.TMDBInfoR\btmdbInfo\x12\x12\n" +
+	"\x04tags\x18\a \x03(\tR\x04tags\"G\n" +
 	"\bTMDBInfo\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12+\n" +
 	"\x04data\x18\x02 \x01(\v2\x17.google.protobuf.StructR\x04data\"A\n" +
@@ -573,12 +599,13 @@ const file_series_service_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x10.seriespb.SeriesR\x04list\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x03R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x03R\x06offset\"\x87\x01\n" +
+	"\x06offset\x18\x04 \x01(\x03R\x06offset\"\x9b\x01\n" +
 	"\x17UpdateSeriesByIDRequest\x12\x1b\n" +
 	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x17\n" +
-	"\atmdb_id\x18\x04 \x01(\tR\x06tmdbId\"6\n" +
+	"\atmdb_id\x18\x04 \x01(\tR\x06tmdbId\x12\x12\n" +
+	"\x04tags\x18\x05 \x03(\tR\x04tags\"6\n" +
 	"\x17DeleteSeriesByIDRequest\x12\x1b\n" +
 	"\tseries_id\x18\x01 \x01(\tR\bseriesId2\x80\x03\n" +
 	"\rSeriesService\x12M\n" +

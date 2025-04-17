@@ -6,6 +6,7 @@ import (
 	"media_service/config"
 	"media_service/internal/port"
 	"shared/ports"
+	"time"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -52,4 +53,24 @@ func (s *S3Stroage) Delete(ctx context.Context, filePath string) error {
 		return fmt.Errorf("minio.RemoveObject: %w", err)
 	}
 	return nil
+}
+
+func (s *S3Stroage) CreatePresignedURL(ctx context.Context, id string) (string, map[string]string, error) {
+	policy := minio.NewPostPolicy()
+	policy.SetBucket(s.bucketName)
+	policy.SetKey(fmt.Sprintf("%s-${filename}", id))
+	policy.SetExpires(time.Now().Add(1 * time.Hour))
+	policy.SetContentTypeStartsWith("video/")
+	policy.SetContentLengthRange(0, 1024*1024*1024) // 1GB
+	presignedURL, formData, err := s.minioClient.PresignedPostPolicy(ctx, policy)
+	if err != nil {
+		return "", nil, fmt.Errorf("minio.PresignedPostPolicy: %w", err)
+	}
+	fmt.Printf("curl ")
+	for k, v := range formData {
+		fmt.Printf("-F %s=%s ", k, v)
+	}
+	fmt.Printf("-F file=@/Users/ksckaan1/Movies/big-buck-bunny.mp4 ")
+	fmt.Printf("%s\n", presignedURL.String())
+	return presignedURL.String(), formData, nil
 }

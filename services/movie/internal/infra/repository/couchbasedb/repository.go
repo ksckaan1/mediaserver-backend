@@ -129,7 +129,7 @@ func (r *Repository) ListMovies(ctx context.Context, limit int64, offset int64) 
 	}, nil
 }
 
-const updateQuery = `UPDATE movies SET title = $title, description = $description, media_id = $media_id, tmdb_id = $tmdb_id, updated_at = $updated_at WHERE id = $id RETURNING *;`
+const updateQuery = `UPDATE movies SET title = $title, description = $description, media_id = $media_id, tmdb_id = $tmdb_id, tags = $tags, updated_at = $updated_at WHERE id = $id RETURNING *;`
 
 func (r *Repository) UpdateMovieByID(ctx context.Context, movie *models.Movie) error {
 	result, err := r.scope.Query(updateQuery, &gocb.QueryOptions{
@@ -139,6 +139,7 @@ func (r *Repository) UpdateMovieByID(ctx context.Context, movie *models.Movie) e
 			"description": movie.Description,
 			"media_id":    movie.MediaID,
 			"tmdb_id":     movie.TMDBID,
+			"tags":        movie.Tags,
 			"updated_at":  time.Now(),
 			"id":          movie.ID,
 		},

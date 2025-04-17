@@ -39,6 +39,7 @@ func (h *App) CreateSeries(ctx context.Context, req *seriespb.CreateSeriesReques
 		Title:       req.Title,
 		Description: req.Description,
 		TMDBID:      req.TmdbId,
+		Tags:        req.Tags,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("repo.CreateSeries: %w", err)
@@ -73,6 +74,7 @@ func (h *App) GetSeriesByID(ctx context.Context, req *seriespb.GetSeriesByIDRequ
 		Title:       series.Title,
 		Description: series.Description,
 		TmdbInfo:    tmdbInfo,
+		Tags:        series.Tags,
 	}, nil
 }
 
@@ -89,6 +91,7 @@ func (h *App) ListSeries(ctx context.Context, req *seriespb.ListSeriesRequest) (
 				UpdatedAt:   timestamppb.New(s.UpdatedAt),
 				Title:       s.Title,
 				Description: s.Description,
+				Tags:        s.Tags,
 			}
 		}),
 		Count:  series.Count,
@@ -107,6 +110,7 @@ func (h *App) UpdateSeriesByID(ctx context.Context, req *seriespb.UpdateSeriesBy
 		Title:       req.Title,
 		Description: req.Description,
 		TMDBID:      req.TmdbId,
+		Tags:        req.Tags,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("repo.UpdateSeriesByID: %w", err)

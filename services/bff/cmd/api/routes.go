@@ -21,7 +21,7 @@ import (
 
 func initMediaRoutes(mediaClient mediapb.MediaServiceClient) *fiber.App {
 	app := fiber.New()
-	app.Post("/", h(media.NewUploadMedia(mediaClient)))
+	app.Post("/", h(media.NewCreateMedia(mediaClient)))
 	app.Get("/:media_id", h(media.NewGetMediaByID(mediaClient)))
 	app.Get("/", h(media.NewListMedias(mediaClient)))
 	app.Put("/:media_id", h(media.NewUpdateMediaByID(mediaClient)))

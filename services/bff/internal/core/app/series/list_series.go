@@ -21,8 +21,8 @@ func NewListSeries(seriesClient seriespb.SeriesServiceClient) *ListSeries {
 }
 
 type ListSeriesRequest struct {
-	Limit  int64 `query:"limit"`
-	Offset int64 `query:"offset"`
+	Limit  *int64 `query:"limit"`
+	Offset int64  `query:"offset"`
 }
 
 type ListSeriesResponse struct {
@@ -33,8 +33,12 @@ type ListSeriesResponse struct {
 }
 
 func (h *ListSeries) Handle(ctx context.Context, req *ListSeriesRequest) (*ListSeriesResponse, int, error) {
+	var limit int64 = 10
+	if req.Limit != nil {
+		limit = *req.Limit
+	}
 	resp, err := h.seriesClient.ListSeries(ctx, &seriespb.ListSeriesRequest{
-		Limit:  req.Limit,
+		Limit:  limit,
 		Offset: req.Offset,
 	})
 	if err != nil {
@@ -56,6 +60,7 @@ func (h *ListSeries) Handle(ctx context.Context, req *ListSeriesRequest) (*ListS
 				Title:       s.Title,
 				Description: s.Description,
 				TmdbInfo:    tmdbInfo,
+				Tags:        s.Tags,
 			}
 		}),
 		Count:  resp.Count,

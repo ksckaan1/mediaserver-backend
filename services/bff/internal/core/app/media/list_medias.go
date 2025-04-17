@@ -22,8 +22,8 @@ func NewListMedias(mediaClient mediapb.MediaServiceClient) *ListMedias {
 }
 
 type ListMediasRequest struct {
-	Limit  int64 `query:"limit"`
-	Offset int64 `query:"offset"`
+	Limit  *int64 `query:"limit"`
+	Offset int64  `query:"offset"`
 }
 
 type ListMediasResponse struct {
@@ -34,8 +34,12 @@ type ListMediasResponse struct {
 }
 
 func (h *ListMedias) Handle(ctx context.Context, req *ListMediasRequest) (*ListMediasResponse, int, error) {
+	var limit int64 = 10
+	if req.Limit != nil {
+		limit = *req.Limit
+	}
 	resp, err := h.mediaClient.ListMedias(ctx, &mediapb.ListMediasRequest{
-		Limit:  req.Limit,
+		Limit:  limit,
 		Offset: req.Offset,
 	})
 	if err != nil {

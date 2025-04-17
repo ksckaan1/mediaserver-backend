@@ -20,7 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MediaService_UploadMedia_FullMethodName     = "/mediapb.MediaService/UploadMedia"
+	MediaService_CreateMedia_FullMethodName     = "/mediapb.MediaService/CreateMedia"
 	MediaService_GetMediaByID_FullMethodName    = "/mediapb.MediaService/GetMediaByID"
 	MediaService_ListMedias_FullMethodName      = "/mediapb.MediaService/ListMedias"
 	MediaService_UpdateMediaByID_FullMethodName = "/mediapb.MediaService/UpdateMediaByID"
@@ -31,7 +31,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MediaServiceClient interface {
-	UploadMedia(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadMediaRequest, UploadMediaResponse], error)
+	CreateMedia(ctx context.Context, in *CreateMediaRequest, opts ...grpc.CallOption) (*CreateMediaResponse, error)
 	GetMediaByID(ctx context.Context, in *GetMediaByIDRequest, opts ...grpc.CallOption) (*Media, error)
 	ListMedias(ctx context.Context, in *ListMediasRequest, opts ...grpc.CallOption) (*MediaList, error)
 	UpdateMediaByID(ctx context.Context, in *UpdateMediaByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -46,18 +46,15 @@ func NewMediaServiceClient(cc grpc.ClientConnInterface) MediaServiceClient {
 	return &mediaServiceClient{cc}
 }
 
-func (c *mediaServiceClient) UploadMedia(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadMediaRequest, UploadMediaResponse], error) {
+func (c *mediaServiceClient) CreateMedia(ctx context.Context, in *CreateMediaRequest, opts ...grpc.CallOption) (*CreateMediaResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &MediaService_ServiceDesc.Streams[0], MediaService_UploadMedia_FullMethodName, cOpts...)
+	out := new(CreateMediaResponse)
+	err := c.cc.Invoke(ctx, MediaService_CreateMedia_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[UploadMediaRequest, UploadMediaResponse]{ClientStream: stream}
-	return x, nil
+	return out, nil
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type MediaService_UploadMediaClient = grpc.ClientStreamingClient[UploadMediaRequest, UploadMediaResponse]
 
 func (c *mediaServiceClient) GetMediaByID(ctx context.Context, in *GetMediaByIDRequest, opts ...grpc.CallOption) (*Media, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -103,7 +100,7 @@ func (c *mediaServiceClient) DeleteMediaByID(ctx context.Context, in *DeleteMedi
 // All implementations must embed UnimplementedMediaServiceServer
 // for forward compatibility.
 type MediaServiceServer interface {
-	UploadMedia(grpc.ClientStreamingServer[UploadMediaRequest, UploadMediaResponse]) error
+	CreateMedia(context.Context, *CreateMediaRequest) (*CreateMediaResponse, error)
 	GetMediaByID(context.Context, *GetMediaByIDRequest) (*Media, error)
 	ListMedias(context.Context, *ListMediasRequest) (*MediaList, error)
 	UpdateMediaByID(context.Context, *UpdateMediaByIDRequest) (*emptypb.Empty, error)
@@ -118,8 +115,8 @@ type MediaServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedMediaServiceServer struct{}
 
-func (UnimplementedMediaServiceServer) UploadMedia(grpc.ClientStreamingServer[UploadMediaRequest, UploadMediaResponse]) error {
-	return status.Errorf(codes.Unimplemented, "method UploadMedia not implemented")
+func (UnimplementedMediaServiceServer) CreateMedia(context.Context, *CreateMediaRequest) (*CreateMediaResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateMedia not implemented")
 }
 func (UnimplementedMediaServiceServer) GetMediaByID(context.Context, *GetMediaByIDRequest) (*Media, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMediaByID not implemented")
@@ -154,12 +151,23 @@ func RegisterMediaServiceServer(s grpc.ServiceRegistrar, srv MediaServiceServer)
 	s.RegisterService(&MediaService_ServiceDesc, srv)
 }
 
-func _MediaService_UploadMedia_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MediaServiceServer).UploadMedia(&grpc.GenericServerStream[UploadMediaRequest, UploadMediaResponse]{ServerStream: stream})
+func _MediaService_CreateMedia_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateMediaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MediaServiceServer).CreateMedia(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MediaService_CreateMedia_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MediaServiceServer).CreateMedia(ctx, req.(*CreateMediaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type MediaService_UploadMediaServer = grpc.ClientStreamingServer[UploadMediaRequest, UploadMediaResponse]
 
 func _MediaService_GetMediaByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMediaByIDRequest)
@@ -241,6 +249,10 @@ var MediaService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*MediaServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "CreateMedia",
+			Handler:    _MediaService_CreateMedia_Handler,
+		},
+		{
 			MethodName: "GetMediaByID",
 			Handler:    _MediaService_GetMediaByID_Handler,
 		},
@@ -257,12 +269,6 @@ var MediaService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MediaService_DeleteMediaByID_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "UploadMedia",
-			Handler:       _MediaService_UploadMedia_Handler,
-			ClientStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "protofiles/media_service.proto",
 }

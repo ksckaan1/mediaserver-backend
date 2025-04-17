@@ -48,5 +48,6 @@ func (h *GetSeriesByID) Handle(ctx context.Context, req *GetSeriesByIDRequest) (
 		Title:       resp.Title,
 		Description: resp.Description,
 		TmdbInfo:    tmdbInfo,
+		Tags:        resp.Tags,
 	}, http.StatusOK, nil
 }

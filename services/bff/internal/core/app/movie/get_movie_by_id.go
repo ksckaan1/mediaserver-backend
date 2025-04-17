@@ -33,6 +33,7 @@ type GetMovieByIDResponse struct {
 	Description string        `json:"description"`
 	MediaInfo   *models.Media `json:"media_info"`
 	TmdbInfo    *models.TMDB  `json:"tmdb_info"`
+	Tags        []string      `json:"tags"`
 }
 
 func (h *GetMovieByID) Handle(ctx context.Context, req *GetMovieByIDRequest) (*models.Movie, int, error) {
@@ -79,5 +80,6 @@ func (h *GetMovieByID) Handle(ctx context.Context, req *GetMovieByIDRequest) (*m
 		Description: resp.Description,
 		MediaInfo:   mediaInfo,
 		TmdbInfo:    tmdbInfo,
+		Tags:        resp.Tags,
 	}, http.StatusOK, nil
 }

@@ -20,6 +20,7 @@ message CreateMovieRequest {
   string description = 2;
   string tmdb_id = 3;
   string media_id = 4;
+  repeated string tags = 5;
 }
 
 message CreateMovieResponse {
@@ -38,6 +39,7 @@ message Movie {
   string description = 5;
   Media media_info = 6;
   TMDBInfo tmdb_info = 7;
+  repeated string tags = 8;
 }
 
 message ListMoviesRequest {
@@ -58,6 +60,7 @@ message UpdateMovieByIDRequest {
   string description = 3;
   string tmdb_id = 4;
   string media_id = 5;
+  repeated string tags = 6;
 }
 
 message DeleteMovieByIDRequest {

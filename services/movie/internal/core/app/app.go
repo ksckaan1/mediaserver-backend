@@ -55,6 +55,7 @@ func (a *App) CreateMovie(ctx context.Context, request *moviepb.CreateMovieReque
 		Description: request.Description,
 		MediaID:     request.MediaId,
 		TMDBID:      request.TmdbId,
+		Tags:        request.Tags,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("repo.CreateMovie: %w", err)
@@ -109,6 +110,7 @@ func (a *App) GetMovieByID(ctx context.Context, request *moviepb.GetMovieByIDReq
 		Description: movie.Description,
 		MediaInfo:   mediaInfo,
 		TmdbInfo:    tmdbInfo,
+		Tags:        movie.Tags,
 	}, nil
 }
 
@@ -160,6 +162,7 @@ func (a *App) ListMovies(ctx context.Context, request *moviepb.ListMoviesRequest
 			Description: m.Description,
 			MediaInfo:   mediaInfo,
 			TmdbInfo:    tmdbInfo,
+			Tags:        m.Tags,
 		})
 	}
 
@@ -186,6 +189,7 @@ func (a *App) UpdateMovieByID(ctx context.Context, request *moviepb.UpdateMovieB
 		Description: request.Description,
 		MediaID:     request.MediaId,
 		TMDBID:      request.TmdbId,
+		Tags:        request.Tags,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("repo.UpdateMovieByID: %w", err)

@@ -18,9 +18,10 @@ func NewCreateSeries(seriesClient seriespb.SeriesServiceClient) *CreateSeries {
 }
 
 type CreateSeriesRequest struct {
-	Title       string `json:"title" validate:"required"`
-	Description string `json:"description"`
-	TmdbId      string `json:"tmdb_id"`
+	Title       string   `json:"title" validate:"required"`
+	Description string   `json:"description"`
+	TmdbId      string   `json:"tmdb_id"`
+	Tags        []string `json:"tags"`
 }
 
 type CreateSeriesResponse struct {
@@ -32,6 +33,7 @@ func (h *CreateSeries) Handle(ctx context.Context, req *CreateSeriesRequest) (*C
 		Title:       req.Title,
 		Description: req.Description,
 		TmdbId:      req.TmdbId,
+		Tags:        req.Tags,
 	})
 	if err != nil {
 		return nil, http.StatusInternalServerError, fmt.Errorf("seriesClient.CreateSeries: %w", err)

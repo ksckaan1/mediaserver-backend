@@ -20,10 +20,11 @@ func NewCreateMovie(movieClient moviepb.MovieServiceClient) *CreateMovie {
 }
 
 type CreateMovieRequest struct {
-	Title       string `json:"title" validate:"required"`
-	Description string `json:"description"`
-	TmdbId      string `json:"tmdb_id"`
-	MediaId     string `json:"media_id"`
+	Title       string   `json:"title" validate:"required"`
+	Description string   `json:"description"`
+	TmdbId      string   `json:"tmdb_id"`
+	MediaId     string   `json:"media_id"`
+	Tags        []string `json:"tags"`
 }
 
 type CreateMovieResponse struct {
@@ -36,6 +37,7 @@ func (h *CreateMovie) Handle(ctx context.Context, req *CreateMovieRequest) (*Cre
 		Description: req.Description,
 		TmdbId:      req.TmdbId,
 		MediaId:     req.MediaId,
+		Tags:        req.Tags,
 	})
 	if err != nil {
 		if strings.Contains(err.Error(), "media not found") {

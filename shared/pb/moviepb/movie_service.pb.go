@@ -82,6 +82,7 @@ type CreateMovieRequest struct {
 	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	TmdbId        string                 `protobuf:"bytes,3,opt,name=tmdb_id,json=tmdbId,proto3" json:"tmdb_id,omitempty"`
 	MediaId       string                 `protobuf:"bytes,4,opt,name=media_id,json=mediaId,proto3" json:"media_id,omitempty"`
+	Tags          []string               `protobuf:"bytes,5,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -142,6 +143,13 @@ func (x *CreateMovieRequest) GetMediaId() string {
 		return x.MediaId
 	}
 	return ""
+}
+
+func (x *CreateMovieRequest) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
 }
 
 type CreateMovieResponse struct {
@@ -241,6 +249,7 @@ type Movie struct {
 	Description   string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
 	MediaInfo     *Media                 `protobuf:"bytes,6,opt,name=media_info,json=mediaInfo,proto3" json:"media_info,omitempty"`
 	TmdbInfo      *TMDBInfo              `protobuf:"bytes,7,opt,name=tmdb_info,json=tmdbInfo,proto3" json:"tmdb_info,omitempty"`
+	Tags          []string               `protobuf:"bytes,8,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -320,6 +329,13 @@ func (x *Movie) GetMediaInfo() *Media {
 func (x *Movie) GetTmdbInfo() *TMDBInfo {
 	if x != nil {
 		return x.TmdbInfo
+	}
+	return nil
+}
+
+func (x *Movie) GetTags() []string {
+	if x != nil {
+		return x.Tags
 	}
 	return nil
 }
@@ -451,6 +467,7 @@ type UpdateMovieByIDRequest struct {
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	TmdbId        string                 `protobuf:"bytes,4,opt,name=tmdb_id,json=tmdbId,proto3" json:"tmdb_id,omitempty"`
 	MediaId       string                 `protobuf:"bytes,5,opt,name=media_id,json=mediaId,proto3" json:"media_id,omitempty"`
+	Tags          []string               `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -518,6 +535,13 @@ func (x *UpdateMovieByIDRequest) GetMediaId() string {
 		return x.MediaId
 	}
 	return ""
+}
+
+func (x *UpdateMovieByIDRequest) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
 }
 
 type DeleteMovieByIDRequest struct {
@@ -720,16 +744,17 @@ var File_movie_service_proto protoreflect.FileDescriptor
 
 const file_movie_service_proto_rawDesc = "" +
 	"\n" +
-	"\x13movie_service.proto\x12\amoviepb\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cgoogle/protobuf/struct.proto\"\x80\x01\n" +
+	"\x13movie_service.proto\x12\amoviepb\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cgoogle/protobuf/struct.proto\"\x94\x01\n" +
 	"\x12CreateMovieRequest\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x17\n" +
 	"\atmdb_id\x18\x03 \x01(\tR\x06tmdbId\x12\x19\n" +
-	"\bmedia_id\x18\x04 \x01(\tR\amediaId\"0\n" +
+	"\bmedia_id\x18\x04 \x01(\tR\amediaId\x12\x12\n" +
+	"\x04tags\x18\x05 \x03(\tR\x04tags\"0\n" +
 	"\x13CreateMovieResponse\x12\x19\n" +
 	"\bmovie_id\x18\x01 \x01(\tR\amovieId\"0\n" +
 	"\x13GetMovieByIDRequest\x12\x19\n" +
-	"\bmovie_id\x18\x01 \x01(\tR\amovieId\"\xa4\x02\n" +
+	"\bmovie_id\x18\x01 \x01(\tR\amovieId\"\xb8\x02\n" +
 	"\x05Movie\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
 	"\n" +
@@ -740,7 +765,8 @@ const file_movie_service_proto_rawDesc = "" +
 	"\vdescription\x18\x05 \x01(\tR\vdescription\x12-\n" +
 	"\n" +
 	"media_info\x18\x06 \x01(\v2\x0e.moviepb.MediaR\tmediaInfo\x12.\n" +
-	"\ttmdb_info\x18\a \x01(\v2\x11.moviepb.TMDBInfoR\btmdbInfo\"A\n" +
+	"\ttmdb_info\x18\a \x01(\v2\x11.moviepb.TMDBInfoR\btmdbInfo\x12\x12\n" +
+	"\x04tags\x18\b \x03(\tR\x04tags\"A\n" +
 	"\x11ListMoviesRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x03R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x03R\x06offset\"s\n" +
@@ -748,13 +774,14 @@ const file_movie_service_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x0e.moviepb.MovieR\x04list\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x03R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x03R\x06offset\"\x9f\x01\n" +
+	"\x06offset\x18\x04 \x01(\x03R\x06offset\"\xb3\x01\n" +
 	"\x16UpdateMovieByIDRequest\x12\x19\n" +
 	"\bmovie_id\x18\x01 \x01(\tR\amovieId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x17\n" +
 	"\atmdb_id\x18\x04 \x01(\tR\x06tmdbId\x12\x19\n" +
-	"\bmedia_id\x18\x05 \x01(\tR\amediaId\"3\n" +
+	"\bmedia_id\x18\x05 \x01(\tR\amediaId\x12\x12\n" +
+	"\x04tags\x18\x06 \x03(\tR\x04tags\"3\n" +
 	"\x16DeleteMovieByIDRequest\x12\x19\n" +
 	"\bmovie_id\x18\x01 \x01(\tR\amovieId\"G\n" +
 	"\bTMDBInfo\x12\x0e\n" +

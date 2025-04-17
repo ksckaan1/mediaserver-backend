@@ -9,6 +9,7 @@ type Series struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	TMDBID      string    `json:"tmdb_id"`
+	Tags        []string  `json:"tags"`
 }
 
 type SeriesList struct {

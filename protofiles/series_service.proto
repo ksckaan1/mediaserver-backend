@@ -19,6 +19,7 @@ message CreateSeriesRequest {
   string title = 1;
   string description = 2;
   string tmdb_id = 3;
+  repeated string tags = 4;
 }
 
 message CreateSeriesResponse {
@@ -36,6 +37,7 @@ message Series {
   string title = 4;
   string description = 5;
   TMDBInfo tmdb_info = 6;
+  repeated string tags = 7;
 }
 
 message TMDBInfo {
@@ -60,6 +62,7 @@ message UpdateSeriesByIDRequest {
   string title = 2;
   string description = 3;
   string tmdb_id = 4;
+  repeated string tags = 5;
 }
 
 message DeleteSeriesByIDRequest {

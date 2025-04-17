@@ -10,4 +10,5 @@ type Movie struct {
 	Description string    `json:"description"`
 	MediaInfo   *Media    `json:"media_info"`
 	TmdbInfo    *TMDB     `json:"tmdb_info"`
+	Tags        []string  `json:"tags"`
 }

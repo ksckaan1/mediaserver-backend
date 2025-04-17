@@ -20,10 +20,11 @@ func NewUpdateSeriesByID(seriesClient seriespb.SeriesServiceClient) *UpdateSerie
 }
 
 type UpdateSeriesByIDRequest struct {
-	SeriesID    string `params:"series_id"`
-	Title       string `json:"title" validate:"required"`
-	Description string `json:"description"`
-	TmdbId      string `json:"tmdb_id"`
+	SeriesID    string   `params:"series_id"`
+	Title       string   `json:"title" validate:"required"`
+	Description string   `json:"description"`
+	TmdbId      string   `json:"tmdb_id"`
+	Tags        []string `json:"tags"`
 }
 
 func (h *UpdateSeriesByID) Handle(ctx context.Context, req *UpdateSeriesByIDRequest) (*any, int, error) {
@@ -32,6 +33,7 @@ func (h *UpdateSeriesByID) Handle(ctx context.Context, req *UpdateSeriesByIDRequ
 		Title:       req.Title,
 		Description: req.Description,
 		TmdbId:      req.TmdbId,
+		Tags:        req.Tags,
 	})
 	if err != nil {
 		if strings.Contains(err.Error(), "series not found") {

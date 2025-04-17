@@ -22,8 +22,8 @@ func NewListMovies(movieClient moviepb.MovieServiceClient) *ListMovies {
 }
 
 type ListMoviesRequest struct {
-	Limit  int64 `query:"limit"`
-	Offset int64 `query:"offset"`
+	Limit  *int64 `query:"limit"`
+	Offset int64  `query:"offset"`
 }
 
 type ListMoviesResponse struct {
@@ -34,8 +34,12 @@ type ListMoviesResponse struct {
 }
 
 func (h *ListMovies) Handle(ctx context.Context, req *ListMoviesRequest) (*ListMoviesResponse, int, error) {
+	var limit int64 = 10
+	if req.Limit != nil {
+		limit = *req.Limit
+	}
 	resp, err := h.movieClient.ListMovies(ctx, &moviepb.ListMoviesRequest{
-		Limit:  req.Limit,
+		Limit:  limit,
 		Offset: req.Offset,
 	})
 	if err != nil {
@@ -74,10 +78,11 @@ func (h *ListMovies) Handle(ctx context.Context, req *ListMoviesRequest) (*ListM
 				Description: movie.Description,
 				MediaInfo:   mediaInfo,
 				TmdbInfo:    tmdbInfo,
+				Tags:        movie.Tags,
 			}
 		}),
 		Count:  resp.Count,
-		Limit:  req.Limit,
-		Offset: req.Offset,
+		Limit:  resp.Limit,
+		Offset: resp.Offset,
 	}, http.StatusOK, nil
 }
