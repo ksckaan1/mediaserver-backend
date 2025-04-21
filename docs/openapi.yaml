@@ -3,14 +3,16 @@ info:
   title: Media Server
   version: v0.0.0
 servers:
+  - url: http://localhost/api/v1
+    description: Local HTTP Development server
   - url: https://localhost/api/v1
-    description: Local Development server
+    description: Local HTTPS Development server
 paths:
   /auth/login:
     post:
       summary: Login
       tags:
-        - public/auth
+        - auth
       requestBody:
         required: true
         content:
@@ -42,7 +44,7 @@ paths:
           schema:
             type: boolean
       tags:
-        - public/auth
+        - auth
       responses:
         "204":
           description: OK
@@ -51,7 +53,7 @@ paths:
     post:
       summary: Register User
       tags:
-        - public/user
+        - user
       requestBody:
         required: true
         content:
@@ -87,7 +89,7 @@ paths:
       security:
         - cookieAuth: []
       tags:
-        - public/user
+        - user
       responses:
         "200":
           description: OK
@@ -113,7 +115,7 @@ paths:
       security:
         - cookieAuth: []
       tags:
-        - public/media
+        - media
       responses:
         "201":
           description: OK
@@ -132,7 +134,7 @@ paths:
       security:
         - cookieAuth: []
       tags:
-        - public/media
+        - media
       parameters:
         - name: limit
           in: query
@@ -171,7 +173,7 @@ paths:
     get:
       summary: Get Media By ID
       tags:
-        - public/media
+        - media
       parameters:
         - name: media_id
           in: path
@@ -189,7 +191,7 @@ paths:
     put:
       summary: Update Media By ID
       tags:
-        - public/media
+        - media
       parameters:
         - name: media_id
           in: path
@@ -212,7 +214,7 @@ paths:
     delete:
       summary: Delete Media By ID
       tags:
-        - public/media
+        - media
       parameters:
         - name: media_id
           in: path
@@ -228,7 +230,7 @@ paths:
     post:
       summary: Create Movie
       tags:
-        - public/movie
+        - movie
       requestBody:
         required: true
         content:
@@ -263,8 +265,65 @@ paths:
     get:
       summary: List Movies
       tags:
-        - public/movie
+        - movie
       parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Number of listed items
+          schema:
+            type: integer
+            example: 10
+        - name: offset
+          in: query
+          required: false
+          description: Number of items to skip
+          schema:
+            type: integer
+            example: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: integer
+                    example: 10
+                  offset:
+                    type: integer
+                    example: 0
+                  count:
+                    type: integer
+                    example: 100
+                    description: Total number of items
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/movie"
+  /movie/search:
+    get:
+      summary: Search Movies
+      tags:
+        - movie
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Search query
+          schema:
+            type: string
+        - name: query_by
+          in: query
+          required: true
+          description: Search by
+          schema:
+            type: string
+            enum:
+              - title
+              - tags
         - name: limit
           in: query
           required: false
@@ -305,7 +364,7 @@ paths:
     get:
       summary: Get Movie By ID
       tags:
-        - public/movie
+        - movie
       parameters:
         - name: movie_id
           in: path
@@ -323,7 +382,7 @@ paths:
     put:
       summary: Update Movie By ID
       tags:
-        - public/movie
+        - movie
       parameters:
         - name: movie_id
           in: path
@@ -358,7 +417,7 @@ paths:
     delete:
       summary: Delete Movie By ID
       tags:
-        - public/movie
+        - movie
       parameters:
         - name: movie_id
           in: path
@@ -374,7 +433,7 @@ paths:
     post:
       summary: Create Series
       tags:
-        - public/series
+        - series
       requestBody:
         required: true
         content:
@@ -421,7 +480,7 @@ paths:
             type: integer
             example: 0
       tags:
-        - public/series
+        - series
       responses:
         "200":
           description: OK
@@ -440,12 +499,68 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/series"
-
+  /series/search:
+    get:
+      summary: Search Series
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Search query
+          schema:
+            type: string
+        - name: query_by
+          in: query
+          required: true
+          description: Search by
+          schema:
+            type: string
+            enum:
+              - title
+              - tags
+        - name: limit
+          in: query
+          required: false
+          description: Number of listed items
+          schema:
+            type: integer
+            example: 10
+        - name: offset
+          in: query
+          required: false
+          description: Number of items to skip
+          schema:
+            type: integer
+            example: 0
+      tags:
+        - series
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: integer
+                    example: 10
+                  offset:
+                    type: integer
+                    example: 0
+                  count:
+                    type: integer
+                    example: 100
+                    description: Total number of items
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/series"
   /series/{series_id}:
     get:
       summary: Get Series By ID
       tags:
-        - public/series
+        - series
       parameters:
         - name: series_id
           in: path
@@ -464,7 +579,7 @@ paths:
     put:
       summary: Update Series By ID
       tags:
-        - public/series
+        - series
       parameters:
         - name: series_id
           in: path
@@ -497,7 +612,7 @@ paths:
     delete:
       summary: Delete Series By ID
       tags:
-        - public/series
+        - series
       parameters:
         - name: series_id
           in: path
@@ -513,7 +628,7 @@ paths:
     post:
       summary: Create Season
       tags:
-        - public/season
+        - season
       requestBody:
         required: true
         content:
@@ -541,7 +656,7 @@ paths:
     get:
       summary: List All Seasons By Series ID
       tags:
-        - public/season
+        - season
       parameters:
         - name: series_id
           in: query
@@ -565,7 +680,7 @@ paths:
     get:
       summary: Get Season By ID
       tags:
-        - public/season
+        - season
       parameters:
         - name: season_id
           in: path
@@ -583,7 +698,7 @@ paths:
     put:
       summary: Update Season By ID
       tags:
-        - public/season
+        - season
       parameters:
         - name: season_id
           in: path
@@ -608,7 +723,7 @@ paths:
     delete:
       summary: Delete Season By ID
       tags:
-        - public/season
+        - season
       parameters:
         - name: season_id
           in: path
@@ -624,7 +739,7 @@ paths:
     post:
       summary: Create Episode
       tags:
-        - public/episode
+        - episode
       requestBody:
         required: true
         content:
@@ -654,7 +769,7 @@ paths:
     get:
       summary: Get All Episodes By Season ID
       tags:
-        - public/episode
+        - episode
       parameters:
         - name: season_id
           in: query
@@ -679,7 +794,7 @@ paths:
     get:
       summary: Get Episode By ID
       tags:
-        - public/episode
+        - episode
       parameters:
         - name: episode_id
           in: path
@@ -698,7 +813,7 @@ paths:
     put:
       summary: Update Episode By ID
       tags:
-        - public/episode
+        - episode
       parameters:
         - name: episode_id
           in: path
@@ -727,7 +842,7 @@ paths:
     delete:
       summary: Delete Episode By ID
       tags:
-        - public/episode
+        - episode
       parameters:
         - name: episode_id
           in: path
@@ -875,28 +990,28 @@ components:
           $ref: "#/components/schemas/media"
 
 tags:
-  - name: public/media
-    x-displayName: Media
-  - name: public/movie
-    x-displayName: Movie
-  - name: public/series
-    x-displayName: Series
-  - name: public/season
-    x-displayName: Season
-  - name: public/episode
-    x-displayName: Episode
-  - name: public/user
-    x-displayName: User
-  - name: public/auth
+  - name: auth
     x-displayName: Auth
+  - name: user
+    x-displayName: User
+  - name: media
+    x-displayName: Media
+  - name: movie
+    x-displayName: Movie
+  - name: series
+    x-displayName: Series
+  - name: season
+    x-displayName: Season
+  - name: episode
+    x-displayName: Episode
 
 x-tagGroups:
-  - name: PUBLIC
+  - name: GROUPS
     tags:
-      - public/auth
-      - public/user
-      - public/media
-      - public/movie
-      - public/series
-      - public/season
-      - public/episode
+      - auth
+      - user
+      - media
+      - movie
+      - series
+      - season
+      - episode
