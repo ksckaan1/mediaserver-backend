@@ -2,18 +2,30 @@
 
 Backend for Movie and Series Management
 
+## API Documentation
+
+http://localhost/doc
+
+## Prerequisites
+
+- Docker
+- Docker Compose
+
 ## Services
-- API Documentation http://localhost:9189
-- BFF (API Gateway - Backend For Frontend) http://localhost:9190
+- API Documentation
+- BFF
+    - Auth
+    - User
+    - Media
+    - TMDB
     - Movie
     - Series
     - Season
     - Episode
-    - Media
-    - TMDB
-- MinIO http://localhost:9001
-- Couchbase http://localhost:8091
-- Jaeger http://localhost:16686
+- MinIO
+- Couchbase
+- Jaeger
+- TypeSense
 
 ## Environment Variables
 
@@ -33,7 +45,8 @@ SERIES_SERVICE_ADDR=series_service:8080
 EPISODE_SERVICE_ADDR=episode_service:8080
 SEASON_SERVICE_ADDR=season_service:8080
 MOVIE_SERVICE_ADDR=movie_service:8080
-
+USER_SERVICE_ADDR=user_service:8080
+AUTH_SERVICE_ADDR=auth_service:8080
 
 # API KEYS
 TMDB_API_KEY=<TMDB API KEY>
@@ -48,6 +61,10 @@ S3_BUCKET=media
 S3_ACCESS_KEY=minioadmin
 S3_SECRET_KEY=minioadmin
 S3_USE_SSL=false
+
+# TYPESENSE
+TYPESENSE_URL=http://typesense:8108
+TYPESENSE_API_KEY=xyz
 ```
 
 > [!IMPORTANT]  
