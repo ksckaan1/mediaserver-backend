@@ -155,6 +155,8 @@ services:
       TMDB_SERVICE_ADDR: ${TMDB_SERVICE_ADDR}
       ID_GENERATOR_NODE: 1
       TRACER_ENDPOINT: ${TRACER_ENDPOINT}
+      TYPESENSE_URL: ${TYPESENSE_URL}
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY}
     restart: unless-stopped
     logging: *default-logging
     depends_on:

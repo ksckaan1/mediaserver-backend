@@ -43,6 +43,7 @@ func initMovieRoutes(movieClient moviepb.MovieServiceClient) *fiber.App {
 func initSeriesRoutes(seriesClient seriespb.SeriesServiceClient) *fiber.App {
 	app := fiber.New()
 	app.Post("/", h(series.NewCreateSeries(seriesClient)))
+	app.Get("/search", h(series.NewSearchSeries(seriesClient)))
 	app.Get("/:series_id", h(series.NewGetSeriesByID(seriesClient)))
 	app.Get("/", h(series.NewListSeries(seriesClient)))
 	app.Put("/:series_id", h(series.NewUpdateSeriesByID(seriesClient)))

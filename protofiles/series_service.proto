@@ -11,6 +11,7 @@ service SeriesService {
   rpc CreateSeries(CreateSeriesRequest) returns (CreateSeriesResponse);
   rpc GetSeriesByID(GetSeriesByIDRequest) returns (Series);
   rpc ListSeries(ListSeriesRequest) returns (SeriesList);
+  rpc SearchSeries(SearchSeriesRequest) returns (SeriesList);
   rpc UpdateSeriesByID(UpdateSeriesByIDRequest) returns (google.protobuf.Empty);
   rpc DeleteSeriesByID(DeleteSeriesByIDRequest) returns (google.protobuf.Empty);
 }
@@ -53,6 +54,13 @@ message ListSeriesRequest {
 message SeriesList {
   repeated Series list = 1;
   int64 count = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
+
+message SearchSeriesRequest {
+  string query = 1;
+  string query_by = 2;
   int64 limit = 3;
   int64 offset = 4;
 }

@@ -7,42 +7,71 @@ import (
 	"shared/pb/seriespb"
 	"shared/pb/tmdbpb"
 	"shared/ports"
+	"time"
 
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+var _ seriespb.SeriesServiceServer = (*App)(nil)
+
 type App struct {
 	seriespb.UnimplementedSeriesServiceServer
 	tmdbClient  tmdbpb.TMDBServiceClient
 	repo        Repository
 	idGenerator ports.IDGenerator
+	searcher    Searcher
 }
 
-func New(repo Repository, tmdbClient tmdbpb.TMDBServiceClient, idGenerator ports.IDGenerator) *App {
+func New(repo Repository, tmdbClient tmdbpb.TMDBServiceClient, idGenerator ports.IDGenerator, searcher Searcher) *App {
 	return &App{
 		tmdbClient:  tmdbClient,
 		repo:        repo,
 		idGenerator: idGenerator,
+		searcher:    searcher,
 	}
 }
 
 func (h *App) CreateSeries(ctx context.Context, req *seriespb.CreateSeriesRequest) (*seriespb.CreateSeriesResponse, error) {
-	err := h.validateTMDBInfo(ctx, req.TmdbId)
+	tmdbInfo, err := h.validateTMDBInfo(ctx, req.TmdbId)
 	if err != nil {
 		return nil, fmt.Errorf("validateTMDBInfo: %w", err)
 	}
 	id := h.idGenerator.NewID()
-	err = h.repo.CreateSeries(ctx, &models.Series{
+	now := time.Now()
+	series := &models.Series{
 		ID:          id,
+		CreatedAt:   now,
+		UpdatedAt:   now,
 		Title:       req.Title,
 		Description: req.Description,
 		TMDBID:      req.TmdbId,
 		Tags:        req.Tags,
-	})
+	}
+	err = h.repo.CreateSeries(ctx, series)
 	if err != nil {
 		return nil, fmt.Errorf("repo.CreateSeries: %w", err)
+	}
+
+	var searchTMDBInfo *seriespb.TMDBInfo
+	if tmdbInfo != nil {
+		searchTMDBInfo = &seriespb.TMDBInfo{
+			Id:   tmdbInfo.Id,
+			Data: tmdbInfo.Data,
+		}
+	}
+	err = h.searcher.AddDocument(ctx, "series", &seriespb.Series{
+		Id:          id,
+		CreatedAt:   timestamppb.New(series.CreatedAt),
+		UpdatedAt:   timestamppb.New(series.UpdatedAt),
+		Title:       series.Title,
+		Description: series.Description,
+		TmdbInfo:    searchTMDBInfo,
+		Tags:        series.Tags,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("searcher.AddDocument: %w", err)
 	}
 	return &seriespb.CreateSeriesResponse{
 		SeriesId: id,
@@ -100,20 +129,66 @@ func (h *App) ListSeries(ctx context.Context, req *seriespb.ListSeriesRequest) (
 	}, nil
 }
 
+func (h *App) SearchSeries(ctx context.Context, req *seriespb.SearchSeriesRequest) (*seriespb.SeriesList, error) {
+	var series []*seriespb.Series
+	count, err := h.searcher.Search(ctx,
+		"series",
+		req.Query,
+		req.QueryBy,
+		int(req.Limit),
+		int(req.Offset),
+		false,
+		&series,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("searcher.Search: %w", err)
+	}
+	return &seriespb.SeriesList{
+		List:   series,
+		Count:  int64(count),
+		Limit:  int64(req.Limit),
+		Offset: int64(req.Offset),
+	}, nil
+}
+
 func (h *App) UpdateSeriesByID(ctx context.Context, req *seriespb.UpdateSeriesByIDRequest) (*emptypb.Empty, error) {
-	err := h.validateTMDBInfo(ctx, req.TmdbId)
+	series, err := h.repo.GetSeriesByID(ctx, req.SeriesId)
+	if err != nil {
+		return nil, fmt.Errorf("repo.GetSeriesByID: %w", err)
+	}
+	tmdbInfo, err := h.validateTMDBInfo(ctx, req.TmdbId)
 	if err != nil {
 		return nil, fmt.Errorf("validateTMDBInfo: %w", err)
 	}
-	err = h.repo.UpdateSeriesByID(ctx, &models.Series{
-		ID:          req.SeriesId,
-		Title:       req.Title,
-		Description: req.Description,
-		TMDBID:      req.TmdbId,
-		Tags:        req.Tags,
-	})
+
+	series.UpdatedAt = time.Now()
+	series.Title = req.Title
+	series.Description = req.Description
+	series.TMDBID = req.TmdbId
+	series.Tags = req.Tags
+
+	err = h.repo.UpdateSeriesByID(ctx, series)
 	if err != nil {
 		return nil, fmt.Errorf("repo.UpdateSeriesByID: %w", err)
+	}
+	var searchTMDBInfo *seriespb.TMDBInfo
+	if tmdbInfo != nil {
+		searchTMDBInfo = &seriespb.TMDBInfo{
+			Id:   tmdbInfo.Id,
+			Data: tmdbInfo.Data,
+		}
+	}
+	err = h.searcher.UpdateDocument(ctx, "series", req.SeriesId, &seriespb.Series{
+		Id:          series.ID,
+		CreatedAt:   timestamppb.New(series.CreatedAt),
+		UpdatedAt:   timestamppb.New(series.UpdatedAt),
+		Title:       series.Title,
+		Description: series.Description,
+		TmdbInfo:    searchTMDBInfo,
+		Tags:        series.Tags,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("searcher.Update: %w", err)
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -122,6 +197,10 @@ func (h *App) DeleteSeriesByID(ctx context.Context, req *seriespb.DeleteSeriesBy
 	err := h.repo.DeleteSeriesByID(ctx, req.SeriesId)
 	if err != nil {
 		return nil, fmt.Errorf("repo.DeleteSeriesByID: %w", err)
+	}
+	err = h.searcher.DeleteDocument(ctx, "series", req.SeriesId)
+	if err != nil {
+		return nil, fmt.Errorf("searcher.Delete: %w", err)
 	}
 	return &emptypb.Empty{}, nil
 }

@@ -444,6 +444,74 @@ func (x *SeriesList) GetOffset() int64 {
 	return 0
 }
 
+type SearchSeriesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	QueryBy       string                 `protobuf:"bytes,2,opt,name=query_by,json=queryBy,proto3" json:"query_by,omitempty"`
+	Limit         int64                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int64                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchSeriesRequest) Reset() {
+	*x = SearchSeriesRequest{}
+	mi := &file_series_service_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchSeriesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchSeriesRequest) ProtoMessage() {}
+
+func (x *SearchSeriesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_series_service_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchSeriesRequest.ProtoReflect.Descriptor instead.
+func (*SearchSeriesRequest) Descriptor() ([]byte, []int) {
+	return file_series_service_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *SearchSeriesRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+func (x *SearchSeriesRequest) GetQueryBy() string {
+	if x != nil {
+		return x.QueryBy
+	}
+	return ""
+}
+
+func (x *SearchSeriesRequest) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *SearchSeriesRequest) GetOffset() int64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
 type UpdateSeriesByIDRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SeriesId      string                 `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
@@ -457,7 +525,7 @@ type UpdateSeriesByIDRequest struct {
 
 func (x *UpdateSeriesByIDRequest) Reset() {
 	*x = UpdateSeriesByIDRequest{}
-	mi := &file_series_service_proto_msgTypes[7]
+	mi := &file_series_service_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -469,7 +537,7 @@ func (x *UpdateSeriesByIDRequest) String() string {
 func (*UpdateSeriesByIDRequest) ProtoMessage() {}
 
 func (x *UpdateSeriesByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_series_service_proto_msgTypes[7]
+	mi := &file_series_service_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -482,7 +550,7 @@ func (x *UpdateSeriesByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSeriesByIDRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSeriesByIDRequest) Descriptor() ([]byte, []int) {
-	return file_series_service_proto_rawDescGZIP(), []int{7}
+	return file_series_service_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UpdateSeriesByIDRequest) GetSeriesId() string {
@@ -529,7 +597,7 @@ type DeleteSeriesByIDRequest struct {
 
 func (x *DeleteSeriesByIDRequest) Reset() {
 	*x = DeleteSeriesByIDRequest{}
-	mi := &file_series_service_proto_msgTypes[8]
+	mi := &file_series_service_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -541,7 +609,7 @@ func (x *DeleteSeriesByIDRequest) String() string {
 func (*DeleteSeriesByIDRequest) ProtoMessage() {}
 
 func (x *DeleteSeriesByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_series_service_proto_msgTypes[8]
+	mi := &file_series_service_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -554,7 +622,7 @@ func (x *DeleteSeriesByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSeriesByIDRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSeriesByIDRequest) Descriptor() ([]byte, []int) {
-	return file_series_service_proto_rawDescGZIP(), []int{8}
+	return file_series_service_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteSeriesByIDRequest) GetSeriesId() string {
@@ -599,6 +667,11 @@ const file_series_service_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x10.seriespb.SeriesR\x04list\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x03R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x04 \x01(\x03R\x06offset\"t\n" +
+	"\x13SearchSeriesRequest\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\x12\x19\n" +
+	"\bquery_by\x18\x02 \x01(\tR\aqueryBy\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x03R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x04 \x01(\x03R\x06offset\"\x9b\x01\n" +
 	"\x17UpdateSeriesByIDRequest\x12\x1b\n" +
 	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12\x14\n" +
@@ -607,12 +680,13 @@ const file_series_service_proto_rawDesc = "" +
 	"\atmdb_id\x18\x04 \x01(\tR\x06tmdbId\x12\x12\n" +
 	"\x04tags\x18\x05 \x03(\tR\x04tags\"6\n" +
 	"\x17DeleteSeriesByIDRequest\x12\x1b\n" +
-	"\tseries_id\x18\x01 \x01(\tR\bseriesId2\x80\x03\n" +
+	"\tseries_id\x18\x01 \x01(\tR\bseriesId2\xc5\x03\n" +
 	"\rSeriesService\x12M\n" +
 	"\fCreateSeries\x12\x1d.seriespb.CreateSeriesRequest\x1a\x1e.seriespb.CreateSeriesResponse\x12A\n" +
 	"\rGetSeriesByID\x12\x1e.seriespb.GetSeriesByIDRequest\x1a\x10.seriespb.Series\x12?\n" +
 	"\n" +
-	"ListSeries\x12\x1b.seriespb.ListSeriesRequest\x1a\x14.seriespb.SeriesList\x12M\n" +
+	"ListSeries\x12\x1b.seriespb.ListSeriesRequest\x1a\x14.seriespb.SeriesList\x12C\n" +
+	"\fSearchSeries\x12\x1d.seriespb.SearchSeriesRequest\x1a\x14.seriespb.SeriesList\x12M\n" +
 	"\x10UpdateSeriesByID\x12!.seriespb.UpdateSeriesByIDRequest\x1a\x16.google.protobuf.Empty\x12M\n" +
 	"\x10DeleteSeriesByID\x12!.seriespb.DeleteSeriesByIDRequest\x1a\x16.google.protobuf.EmptyB\x1dZ\x1bshared/pb/seriespb;seriespbb\x06proto3"
 
@@ -628,7 +702,7 @@ func file_series_service_proto_rawDescGZIP() []byte {
 	return file_series_service_proto_rawDescData
 }
 
-var file_series_service_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_series_service_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_series_service_proto_goTypes = []any{
 	(*CreateSeriesRequest)(nil),     // 0: seriespb.CreateSeriesRequest
 	(*CreateSeriesResponse)(nil),    // 1: seriespb.CreateSeriesResponse
@@ -637,30 +711,33 @@ var file_series_service_proto_goTypes = []any{
 	(*TMDBInfo)(nil),                // 4: seriespb.TMDBInfo
 	(*ListSeriesRequest)(nil),       // 5: seriespb.ListSeriesRequest
 	(*SeriesList)(nil),              // 6: seriespb.SeriesList
-	(*UpdateSeriesByIDRequest)(nil), // 7: seriespb.UpdateSeriesByIDRequest
-	(*DeleteSeriesByIDRequest)(nil), // 8: seriespb.DeleteSeriesByIDRequest
-	(*timestamppb.Timestamp)(nil),   // 9: google.protobuf.Timestamp
-	(*structpb.Struct)(nil),         // 10: google.protobuf.Struct
-	(*emptypb.Empty)(nil),           // 11: google.protobuf.Empty
+	(*SearchSeriesRequest)(nil),     // 7: seriespb.SearchSeriesRequest
+	(*UpdateSeriesByIDRequest)(nil), // 8: seriespb.UpdateSeriesByIDRequest
+	(*DeleteSeriesByIDRequest)(nil), // 9: seriespb.DeleteSeriesByIDRequest
+	(*timestamppb.Timestamp)(nil),   // 10: google.protobuf.Timestamp
+	(*structpb.Struct)(nil),         // 11: google.protobuf.Struct
+	(*emptypb.Empty)(nil),           // 12: google.protobuf.Empty
 }
 var file_series_service_proto_depIdxs = []int32{
-	9,  // 0: seriespb.Series.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 1: seriespb.Series.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 0: seriespb.Series.created_at:type_name -> google.protobuf.Timestamp
+	10, // 1: seriespb.Series.updated_at:type_name -> google.protobuf.Timestamp
 	4,  // 2: seriespb.Series.tmdb_info:type_name -> seriespb.TMDBInfo
-	10, // 3: seriespb.TMDBInfo.data:type_name -> google.protobuf.Struct
+	11, // 3: seriespb.TMDBInfo.data:type_name -> google.protobuf.Struct
 	3,  // 4: seriespb.SeriesList.list:type_name -> seriespb.Series
 	0,  // 5: seriespb.SeriesService.CreateSeries:input_type -> seriespb.CreateSeriesRequest
 	2,  // 6: seriespb.SeriesService.GetSeriesByID:input_type -> seriespb.GetSeriesByIDRequest
 	5,  // 7: seriespb.SeriesService.ListSeries:input_type -> seriespb.ListSeriesRequest
-	7,  // 8: seriespb.SeriesService.UpdateSeriesByID:input_type -> seriespb.UpdateSeriesByIDRequest
-	8,  // 9: seriespb.SeriesService.DeleteSeriesByID:input_type -> seriespb.DeleteSeriesByIDRequest
-	1,  // 10: seriespb.SeriesService.CreateSeries:output_type -> seriespb.CreateSeriesResponse
-	3,  // 11: seriespb.SeriesService.GetSeriesByID:output_type -> seriespb.Series
-	6,  // 12: seriespb.SeriesService.ListSeries:output_type -> seriespb.SeriesList
-	11, // 13: seriespb.SeriesService.UpdateSeriesByID:output_type -> google.protobuf.Empty
-	11, // 14: seriespb.SeriesService.DeleteSeriesByID:output_type -> google.protobuf.Empty
-	10, // [10:15] is the sub-list for method output_type
-	5,  // [5:10] is the sub-list for method input_type
+	7,  // 8: seriespb.SeriesService.SearchSeries:input_type -> seriespb.SearchSeriesRequest
+	8,  // 9: seriespb.SeriesService.UpdateSeriesByID:input_type -> seriespb.UpdateSeriesByIDRequest
+	9,  // 10: seriespb.SeriesService.DeleteSeriesByID:input_type -> seriespb.DeleteSeriesByIDRequest
+	1,  // 11: seriespb.SeriesService.CreateSeries:output_type -> seriespb.CreateSeriesResponse
+	3,  // 12: seriespb.SeriesService.GetSeriesByID:output_type -> seriespb.Series
+	6,  // 13: seriespb.SeriesService.ListSeries:output_type -> seriespb.SeriesList
+	6,  // 14: seriespb.SeriesService.SearchSeries:output_type -> seriespb.SeriesList
+	12, // 15: seriespb.SeriesService.UpdateSeriesByID:output_type -> google.protobuf.Empty
+	12, // 16: seriespb.SeriesService.DeleteSeriesByID:output_type -> google.protobuf.Empty
+	11, // [11:17] is the sub-list for method output_type
+	5,  // [5:11] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
 	5,  // [5:5] is the sub-list for extension extendee
 	0,  // [0:5] is the sub-list for field type_name
@@ -677,7 +754,7 @@ func file_series_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_series_service_proto_rawDesc), len(file_series_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

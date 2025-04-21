@@ -23,6 +23,7 @@ const (
 	SeriesService_CreateSeries_FullMethodName     = "/seriespb.SeriesService/CreateSeries"
 	SeriesService_GetSeriesByID_FullMethodName    = "/seriespb.SeriesService/GetSeriesByID"
 	SeriesService_ListSeries_FullMethodName       = "/seriespb.SeriesService/ListSeries"
+	SeriesService_SearchSeries_FullMethodName     = "/seriespb.SeriesService/SearchSeries"
 	SeriesService_UpdateSeriesByID_FullMethodName = "/seriespb.SeriesService/UpdateSeriesByID"
 	SeriesService_DeleteSeriesByID_FullMethodName = "/seriespb.SeriesService/DeleteSeriesByID"
 )
@@ -34,6 +35,7 @@ type SeriesServiceClient interface {
 	CreateSeries(ctx context.Context, in *CreateSeriesRequest, opts ...grpc.CallOption) (*CreateSeriesResponse, error)
 	GetSeriesByID(ctx context.Context, in *GetSeriesByIDRequest, opts ...grpc.CallOption) (*Series, error)
 	ListSeries(ctx context.Context, in *ListSeriesRequest, opts ...grpc.CallOption) (*SeriesList, error)
+	SearchSeries(ctx context.Context, in *SearchSeriesRequest, opts ...grpc.CallOption) (*SeriesList, error)
 	UpdateSeriesByID(ctx context.Context, in *UpdateSeriesByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteSeriesByID(ctx context.Context, in *DeleteSeriesByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -76,6 +78,16 @@ func (c *seriesServiceClient) ListSeries(ctx context.Context, in *ListSeriesRequ
 	return out, nil
 }
 
+func (c *seriesServiceClient) SearchSeries(ctx context.Context, in *SearchSeriesRequest, opts ...grpc.CallOption) (*SeriesList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SeriesList)
+	err := c.cc.Invoke(ctx, SeriesService_SearchSeries_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *seriesServiceClient) UpdateSeriesByID(ctx context.Context, in *UpdateSeriesByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -103,6 +115,7 @@ type SeriesServiceServer interface {
 	CreateSeries(context.Context, *CreateSeriesRequest) (*CreateSeriesResponse, error)
 	GetSeriesByID(context.Context, *GetSeriesByIDRequest) (*Series, error)
 	ListSeries(context.Context, *ListSeriesRequest) (*SeriesList, error)
+	SearchSeries(context.Context, *SearchSeriesRequest) (*SeriesList, error)
 	UpdateSeriesByID(context.Context, *UpdateSeriesByIDRequest) (*emptypb.Empty, error)
 	DeleteSeriesByID(context.Context, *DeleteSeriesByIDRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSeriesServiceServer()
@@ -123,6 +136,9 @@ func (UnimplementedSeriesServiceServer) GetSeriesByID(context.Context, *GetSerie
 }
 func (UnimplementedSeriesServiceServer) ListSeries(context.Context, *ListSeriesRequest) (*SeriesList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSeries not implemented")
+}
+func (UnimplementedSeriesServiceServer) SearchSeries(context.Context, *SearchSeriesRequest) (*SeriesList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchSeries not implemented")
 }
 func (UnimplementedSeriesServiceServer) UpdateSeriesByID(context.Context, *UpdateSeriesByIDRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSeriesByID not implemented")
@@ -205,6 +221,24 @@ func _SeriesService_ListSeries_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SeriesService_SearchSeries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchSeriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeriesServiceServer).SearchSeries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeriesService_SearchSeries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeriesServiceServer).SearchSeries(ctx, req.(*SearchSeriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SeriesService_UpdateSeriesByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSeriesByIDRequest)
 	if err := dec(in); err != nil {
@@ -259,6 +293,10 @@ var SeriesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListSeries",
 			Handler:    _SeriesService_ListSeries_Handler,
+		},
+		{
+			MethodName: "SearchSeries",
+			Handler:    _SeriesService_SearchSeries_Handler,
 		},
 		{
 			MethodName: "UpdateSeriesByID",
