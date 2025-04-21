@@ -24,18 +24,13 @@ services:
       - app
 
   apidoc:
+    image: busybox:latest
     container_name: apidoc
-    build:
-      context: .
-      dockerfile: .docker/apidoc.Dockerfile
+    volumes:
+      - ./docs/:/web
     networks:
       - app
-    ports:
-      - "9189:8080"
-    environment:
-      SERVICE_NAME: apidoc
-      ADDR: ":8080"
-      PAGE_TITLE: "API Documentation"
+    command: sh -c "cd /web && httpd -f -p 8080"
     restart: unless-stopped
     logging: *default-logging
 
