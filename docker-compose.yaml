@@ -338,6 +338,20 @@ services:
     networks:
       - app
     logging: *default-logging
+
+  typesense:
+    image: typesense/typesense:28.0
+    container_name: typesense
+    restart: on-failure
+    ports:
+      - "8108:8108"
+    volumes:
+      - ./tmp/data/typesense/:/data
+    command: '--data-dir /data --api-key=${TYPESENSE_API_KEY} --enable-cors'
+    networks:
+      - app
+    logging: *default-logging
+      
 volumes:
   minio_data:
   couchbase_data:
