@@ -32,6 +32,7 @@ func initMediaRoutes(mediaClient mediapb.MediaServiceClient) *fiber.App {
 func initMovieRoutes(movieClient moviepb.MovieServiceClient) *fiber.App {
 	app := fiber.New()
 	app.Post("/", h(movie.NewCreateMovie(movieClient)))
+	app.Get("/search", h(movie.NewSearchMovie(movieClient)))
 	app.Get("/:movie_id", h(movie.NewGetMovieByID(movieClient)))
 	app.Get("/", h(movie.NewListMovies(movieClient)))
 	app.Put("/:movie_id", h(movie.NewUpdateMovieByID(movieClient)))

@@ -460,6 +460,74 @@ func (x *MovieList) GetOffset() int64 {
 	return 0
 }
 
+type SearchMovieRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	QueryBy       string                 `protobuf:"bytes,2,opt,name=query_by,json=queryBy,proto3" json:"query_by,omitempty"`
+	Limit         int64                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int64                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchMovieRequest) Reset() {
+	*x = SearchMovieRequest{}
+	mi := &file_movie_service_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchMovieRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchMovieRequest) ProtoMessage() {}
+
+func (x *SearchMovieRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_movie_service_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchMovieRequest.ProtoReflect.Descriptor instead.
+func (*SearchMovieRequest) Descriptor() ([]byte, []int) {
+	return file_movie_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *SearchMovieRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+func (x *SearchMovieRequest) GetQueryBy() string {
+	if x != nil {
+		return x.QueryBy
+	}
+	return ""
+}
+
+func (x *SearchMovieRequest) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *SearchMovieRequest) GetOffset() int64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
 type UpdateMovieByIDRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	MovieId       string                 `protobuf:"bytes,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
@@ -474,7 +542,7 @@ type UpdateMovieByIDRequest struct {
 
 func (x *UpdateMovieByIDRequest) Reset() {
 	*x = UpdateMovieByIDRequest{}
-	mi := &file_movie_service_proto_msgTypes[6]
+	mi := &file_movie_service_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -486,7 +554,7 @@ func (x *UpdateMovieByIDRequest) String() string {
 func (*UpdateMovieByIDRequest) ProtoMessage() {}
 
 func (x *UpdateMovieByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_movie_service_proto_msgTypes[6]
+	mi := &file_movie_service_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -499,7 +567,7 @@ func (x *UpdateMovieByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMovieByIDRequest.ProtoReflect.Descriptor instead.
 func (*UpdateMovieByIDRequest) Descriptor() ([]byte, []int) {
-	return file_movie_service_proto_rawDescGZIP(), []int{6}
+	return file_movie_service_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateMovieByIDRequest) GetMovieId() string {
@@ -553,7 +621,7 @@ type DeleteMovieByIDRequest struct {
 
 func (x *DeleteMovieByIDRequest) Reset() {
 	*x = DeleteMovieByIDRequest{}
-	mi := &file_movie_service_proto_msgTypes[7]
+	mi := &file_movie_service_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -565,7 +633,7 @@ func (x *DeleteMovieByIDRequest) String() string {
 func (*DeleteMovieByIDRequest) ProtoMessage() {}
 
 func (x *DeleteMovieByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_movie_service_proto_msgTypes[7]
+	mi := &file_movie_service_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -578,7 +646,7 @@ func (x *DeleteMovieByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMovieByIDRequest.ProtoReflect.Descriptor instead.
 func (*DeleteMovieByIDRequest) Descriptor() ([]byte, []int) {
-	return file_movie_service_proto_rawDescGZIP(), []int{7}
+	return file_movie_service_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteMovieByIDRequest) GetMovieId() string {
@@ -598,7 +666,7 @@ type TMDBInfo struct {
 
 func (x *TMDBInfo) Reset() {
 	*x = TMDBInfo{}
-	mi := &file_movie_service_proto_msgTypes[8]
+	mi := &file_movie_service_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -610,7 +678,7 @@ func (x *TMDBInfo) String() string {
 func (*TMDBInfo) ProtoMessage() {}
 
 func (x *TMDBInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_movie_service_proto_msgTypes[8]
+	mi := &file_movie_service_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -623,7 +691,7 @@ func (x *TMDBInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TMDBInfo.ProtoReflect.Descriptor instead.
 func (*TMDBInfo) Descriptor() ([]byte, []int) {
-	return file_movie_service_proto_rawDescGZIP(), []int{8}
+	return file_movie_service_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *TMDBInfo) GetId() string {
@@ -656,7 +724,7 @@ type Media struct {
 
 func (x *Media) Reset() {
 	*x = Media{}
-	mi := &file_movie_service_proto_msgTypes[9]
+	mi := &file_movie_service_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -668,7 +736,7 @@ func (x *Media) String() string {
 func (*Media) ProtoMessage() {}
 
 func (x *Media) ProtoReflect() protoreflect.Message {
-	mi := &file_movie_service_proto_msgTypes[9]
+	mi := &file_movie_service_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -681,7 +749,7 @@ func (x *Media) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Media.ProtoReflect.Descriptor instead.
 func (*Media) Descriptor() ([]byte, []int) {
-	return file_movie_service_proto_rawDescGZIP(), []int{9}
+	return file_movie_service_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *Media) GetId() string {
@@ -774,6 +842,11 @@ const file_movie_service_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x0e.moviepb.MovieR\x04list\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x03R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x04 \x01(\x03R\x06offset\"s\n" +
+	"\x12SearchMovieRequest\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\x12\x19\n" +
+	"\bquery_by\x18\x02 \x01(\tR\aqueryBy\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x03R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x04 \x01(\x03R\x06offset\"\xb3\x01\n" +
 	"\x16UpdateMovieByIDRequest\x12\x19\n" +
 	"\bmovie_id\x18\x01 \x01(\tR\amovieId\x12\x14\n" +
@@ -802,12 +875,13 @@ const file_movie_service_proto_rawDesc = "" +
 	"\aUNKNOWN\x10\x00\x12\t\n" +
 	"\x05IMAGE\x10\x01\x12\t\n" +
 	"\x05VIDEO\x10\x02\x12\t\n" +
-	"\x05AUDIO\x10\x032\xec\x02\n" +
+	"\x05AUDIO\x10\x032\xac\x03\n" +
 	"\fMovieService\x12H\n" +
 	"\vCreateMovie\x12\x1b.moviepb.CreateMovieRequest\x1a\x1c.moviepb.CreateMovieResponse\x12<\n" +
 	"\fGetMovieByID\x12\x1c.moviepb.GetMovieByIDRequest\x1a\x0e.moviepb.Movie\x12<\n" +
 	"\n" +
-	"ListMovies\x12\x1a.moviepb.ListMoviesRequest\x1a\x12.moviepb.MovieList\x12J\n" +
+	"ListMovies\x12\x1a.moviepb.ListMoviesRequest\x1a\x12.moviepb.MovieList\x12>\n" +
+	"\vSearchMovie\x12\x1b.moviepb.SearchMovieRequest\x1a\x12.moviepb.MovieList\x12J\n" +
 	"\x0fUpdateMovieByID\x12\x1f.moviepb.UpdateMovieByIDRequest\x1a\x16.google.protobuf.Empty\x12J\n" +
 	"\x0fDeleteMovieByID\x12\x1f.moviepb.DeleteMovieByIDRequest\x1a\x16.google.protobuf.EmptyB\x1bZ\x19shared/pb/moviepb;moviepbb\x06proto3"
 
@@ -824,7 +898,7 @@ func file_movie_service_proto_rawDescGZIP() []byte {
 }
 
 var file_movie_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_movie_service_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_movie_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_movie_service_proto_goTypes = []any{
 	(MediaType)(0),                 // 0: moviepb.MediaType
 	(*CreateMovieRequest)(nil),     // 1: moviepb.CreateMovieRequest
@@ -833,36 +907,39 @@ var file_movie_service_proto_goTypes = []any{
 	(*Movie)(nil),                  // 4: moviepb.Movie
 	(*ListMoviesRequest)(nil),      // 5: moviepb.ListMoviesRequest
 	(*MovieList)(nil),              // 6: moviepb.MovieList
-	(*UpdateMovieByIDRequest)(nil), // 7: moviepb.UpdateMovieByIDRequest
-	(*DeleteMovieByIDRequest)(nil), // 8: moviepb.DeleteMovieByIDRequest
-	(*TMDBInfo)(nil),               // 9: moviepb.TMDBInfo
-	(*Media)(nil),                  // 10: moviepb.Media
-	(*timestamppb.Timestamp)(nil),  // 11: google.protobuf.Timestamp
-	(*structpb.Struct)(nil),        // 12: google.protobuf.Struct
-	(*emptypb.Empty)(nil),          // 13: google.protobuf.Empty
+	(*SearchMovieRequest)(nil),     // 7: moviepb.SearchMovieRequest
+	(*UpdateMovieByIDRequest)(nil), // 8: moviepb.UpdateMovieByIDRequest
+	(*DeleteMovieByIDRequest)(nil), // 9: moviepb.DeleteMovieByIDRequest
+	(*TMDBInfo)(nil),               // 10: moviepb.TMDBInfo
+	(*Media)(nil),                  // 11: moviepb.Media
+	(*timestamppb.Timestamp)(nil),  // 12: google.protobuf.Timestamp
+	(*structpb.Struct)(nil),        // 13: google.protobuf.Struct
+	(*emptypb.Empty)(nil),          // 14: google.protobuf.Empty
 }
 var file_movie_service_proto_depIdxs = []int32{
-	11, // 0: moviepb.Movie.created_at:type_name -> google.protobuf.Timestamp
-	11, // 1: moviepb.Movie.updated_at:type_name -> google.protobuf.Timestamp
-	10, // 2: moviepb.Movie.media_info:type_name -> moviepb.Media
-	9,  // 3: moviepb.Movie.tmdb_info:type_name -> moviepb.TMDBInfo
+	12, // 0: moviepb.Movie.created_at:type_name -> google.protobuf.Timestamp
+	12, // 1: moviepb.Movie.updated_at:type_name -> google.protobuf.Timestamp
+	11, // 2: moviepb.Movie.media_info:type_name -> moviepb.Media
+	10, // 3: moviepb.Movie.tmdb_info:type_name -> moviepb.TMDBInfo
 	4,  // 4: moviepb.MovieList.list:type_name -> moviepb.Movie
-	12, // 5: moviepb.TMDBInfo.data:type_name -> google.protobuf.Struct
-	11, // 6: moviepb.Media.created_at:type_name -> google.protobuf.Timestamp
-	11, // 7: moviepb.Media.updated_at:type_name -> google.protobuf.Timestamp
+	13, // 5: moviepb.TMDBInfo.data:type_name -> google.protobuf.Struct
+	12, // 6: moviepb.Media.created_at:type_name -> google.protobuf.Timestamp
+	12, // 7: moviepb.Media.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 8: moviepb.Media.type:type_name -> moviepb.MediaType
 	1,  // 9: moviepb.MovieService.CreateMovie:input_type -> moviepb.CreateMovieRequest
 	3,  // 10: moviepb.MovieService.GetMovieByID:input_type -> moviepb.GetMovieByIDRequest
 	5,  // 11: moviepb.MovieService.ListMovies:input_type -> moviepb.ListMoviesRequest
-	7,  // 12: moviepb.MovieService.UpdateMovieByID:input_type -> moviepb.UpdateMovieByIDRequest
-	8,  // 13: moviepb.MovieService.DeleteMovieByID:input_type -> moviepb.DeleteMovieByIDRequest
-	2,  // 14: moviepb.MovieService.CreateMovie:output_type -> moviepb.CreateMovieResponse
-	4,  // 15: moviepb.MovieService.GetMovieByID:output_type -> moviepb.Movie
-	6,  // 16: moviepb.MovieService.ListMovies:output_type -> moviepb.MovieList
-	13, // 17: moviepb.MovieService.UpdateMovieByID:output_type -> google.protobuf.Empty
-	13, // 18: moviepb.MovieService.DeleteMovieByID:output_type -> google.protobuf.Empty
-	14, // [14:19] is the sub-list for method output_type
-	9,  // [9:14] is the sub-list for method input_type
+	7,  // 12: moviepb.MovieService.SearchMovie:input_type -> moviepb.SearchMovieRequest
+	8,  // 13: moviepb.MovieService.UpdateMovieByID:input_type -> moviepb.UpdateMovieByIDRequest
+	9,  // 14: moviepb.MovieService.DeleteMovieByID:input_type -> moviepb.DeleteMovieByIDRequest
+	2,  // 15: moviepb.MovieService.CreateMovie:output_type -> moviepb.CreateMovieResponse
+	4,  // 16: moviepb.MovieService.GetMovieByID:output_type -> moviepb.Movie
+	6,  // 17: moviepb.MovieService.ListMovies:output_type -> moviepb.MovieList
+	6,  // 18: moviepb.MovieService.SearchMovie:output_type -> moviepb.MovieList
+	14, // 19: moviepb.MovieService.UpdateMovieByID:output_type -> google.protobuf.Empty
+	14, // 20: moviepb.MovieService.DeleteMovieByID:output_type -> google.protobuf.Empty
+	15, // [15:21] is the sub-list for method output_type
+	9,  // [9:15] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name
@@ -879,7 +956,7 @@ func file_movie_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_movie_service_proto_rawDesc), len(file_movie_service_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   10,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

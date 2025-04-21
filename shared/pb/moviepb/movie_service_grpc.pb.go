@@ -23,6 +23,7 @@ const (
 	MovieService_CreateMovie_FullMethodName     = "/moviepb.MovieService/CreateMovie"
 	MovieService_GetMovieByID_FullMethodName    = "/moviepb.MovieService/GetMovieByID"
 	MovieService_ListMovies_FullMethodName      = "/moviepb.MovieService/ListMovies"
+	MovieService_SearchMovie_FullMethodName     = "/moviepb.MovieService/SearchMovie"
 	MovieService_UpdateMovieByID_FullMethodName = "/moviepb.MovieService/UpdateMovieByID"
 	MovieService_DeleteMovieByID_FullMethodName = "/moviepb.MovieService/DeleteMovieByID"
 )
@@ -34,6 +35,7 @@ type MovieServiceClient interface {
 	CreateMovie(ctx context.Context, in *CreateMovieRequest, opts ...grpc.CallOption) (*CreateMovieResponse, error)
 	GetMovieByID(ctx context.Context, in *GetMovieByIDRequest, opts ...grpc.CallOption) (*Movie, error)
 	ListMovies(ctx context.Context, in *ListMoviesRequest, opts ...grpc.CallOption) (*MovieList, error)
+	SearchMovie(ctx context.Context, in *SearchMovieRequest, opts ...grpc.CallOption) (*MovieList, error)
 	UpdateMovieByID(ctx context.Context, in *UpdateMovieByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteMovieByID(ctx context.Context, in *DeleteMovieByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -76,6 +78,16 @@ func (c *movieServiceClient) ListMovies(ctx context.Context, in *ListMoviesReque
 	return out, nil
 }
 
+func (c *movieServiceClient) SearchMovie(ctx context.Context, in *SearchMovieRequest, opts ...grpc.CallOption) (*MovieList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MovieList)
+	err := c.cc.Invoke(ctx, MovieService_SearchMovie_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *movieServiceClient) UpdateMovieByID(ctx context.Context, in *UpdateMovieByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -103,6 +115,7 @@ type MovieServiceServer interface {
 	CreateMovie(context.Context, *CreateMovieRequest) (*CreateMovieResponse, error)
 	GetMovieByID(context.Context, *GetMovieByIDRequest) (*Movie, error)
 	ListMovies(context.Context, *ListMoviesRequest) (*MovieList, error)
+	SearchMovie(context.Context, *SearchMovieRequest) (*MovieList, error)
 	UpdateMovieByID(context.Context, *UpdateMovieByIDRequest) (*emptypb.Empty, error)
 	DeleteMovieByID(context.Context, *DeleteMovieByIDRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMovieServiceServer()
@@ -123,6 +136,9 @@ func (UnimplementedMovieServiceServer) GetMovieByID(context.Context, *GetMovieBy
 }
 func (UnimplementedMovieServiceServer) ListMovies(context.Context, *ListMoviesRequest) (*MovieList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListMovies not implemented")
+}
+func (UnimplementedMovieServiceServer) SearchMovie(context.Context, *SearchMovieRequest) (*MovieList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchMovie not implemented")
 }
 func (UnimplementedMovieServiceServer) UpdateMovieByID(context.Context, *UpdateMovieByIDRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMovieByID not implemented")
@@ -205,6 +221,24 @@ func _MovieService_ListMovies_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MovieService_SearchMovie_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchMovieRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MovieServiceServer).SearchMovie(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MovieService_SearchMovie_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MovieServiceServer).SearchMovie(ctx, req.(*SearchMovieRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MovieService_UpdateMovieByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateMovieByIDRequest)
 	if err := dec(in); err != nil {
@@ -259,6 +293,10 @@ var MovieService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMovies",
 			Handler:    _MovieService_ListMovies_Handler,
+		},
+		{
+			MethodName: "SearchMovie",
+			Handler:    _MovieService_SearchMovie_Handler,
 		},
 		{
 			MethodName: "UpdateMovieByID",

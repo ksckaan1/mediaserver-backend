@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"movie_service/internal/core/customerrors"
 	"movie_service/internal/core/models"
-	"time"
 
 	"github.com/couchbase/gocb/v2"
 	"github.com/samber/lo"
@@ -25,9 +24,6 @@ func New(bucket *gocb.Bucket) *Repository {
 }
 
 func (r *Repository) CreateMovie(ctx context.Context, movie *models.Movie) error {
-	now := time.Now()
-	movie.CreatedAt = now
-	movie.UpdatedAt = now
 	_, err := r.coll.Insert(movie.ID, movie, &gocb.InsertOptions{
 		Context: ctx,
 	})
@@ -140,7 +136,7 @@ func (r *Repository) UpdateMovieByID(ctx context.Context, movie *models.Movie) e
 			"media_id":    movie.MediaID,
 			"tmdb_id":     movie.TMDBID,
 			"tags":        movie.Tags,
-			"updated_at":  time.Now(),
+			"updated_at":  movie.UpdatedAt,
 			"id":          movie.ID,
 		},
 	})
