@@ -1,18 +1,34 @@
 http:
   routers:
-    router-api:
+    router-api-http:
+      rule: "PathPrefix(`/api`)"
+      entryPoints:
+        - web
+      service: service-bff
+    router-api-https:
       rule: "PathPrefix(`/api`)"
       entryPoints:
         - websecure
       service: service-bff
-      tls: {}
+      tls:
+        certResolver: "my-resolver"
 
-    router-doc:
+    router-doc-http:
+      rule: "PathPrefix(`/doc`)"
+      entryPoints:
+        - web
+      service: service-doc
+      middlewares:
+        - strip-doc
+    router-doc-https:
       rule: "PathPrefix(`/doc`)"
       entryPoints:
         - websecure
       service: service-doc
-      tls: {}
+      middlewares:
+        - strip-doc
+      tls:
+        certResolver: "my-resolver"
 
   middlewares:
     strip-api:

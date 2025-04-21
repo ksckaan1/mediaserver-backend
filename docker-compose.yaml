@@ -9,17 +9,15 @@ services:
     image: traefik:latest
     container_name: traefik
     command:
-      - "--providers.file.directory=/etc/traefik/dynamic" 
-      - "--providers.file.watch=true"                    
-      - "--entrypoints.web.address=:80"                  
-      - "--entrypoints.websecure.address=:443"          
-      - "--api.insecure=true"                            
+      - "--configFile=/etc/traefik/traefik.yaml"                            
     ports:
       - "80:80"      
       - "443:443"   
-      - "8080:8080"   # Traefik dashboard
+      - "8080:8080"
     volumes:
-      - ".docker/traefik_dynamic:/etc/traefik/dynamic"
+      - ".docker/traefik/traefik.yaml:/etc/traefik/traefik.yaml"
+      - ".docker/traefik/dynamic:/etc/traefik/dynamic"
+      - ".docker/traefik/acme.json:/etc/traefik/acme.json"
     networks:
       - app
 
@@ -41,8 +39,6 @@ services:
       dockerfile: .docker/bff_service.Dockerfile
     networks:
       - app
-    ports:
-      - "9190:8080"
     environment:
       SERVICE_NAME: bff
       ADDR: ":8080"
@@ -64,8 +60,6 @@ services:
       dockerfile: .docker/media_service.Dockerfile
     networks:
       - app
-    # ports:
-    #   - "9191:8080"
     environment:
       SERVICE_NAME: media
       ADDR: ":8080"
@@ -83,8 +77,6 @@ services:
       TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
-    depends_on:
-      - cbq
 
   tmdb_service:
     container_name: tmdb_service
@@ -93,8 +85,6 @@ services:
       dockerfile: .docker/tmdb_service.Dockerfile
     networks:
       - app
-    # ports:
-    #   - "9192:8080"
     environment:
       SERVICE_NAME: tmdb
       ADDR: ":8080"
@@ -106,8 +96,6 @@ services:
       TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
-    depends_on:
-      - cbq
 
   movie_service:
     container_name: movie_service
@@ -116,8 +104,6 @@ services:
       dockerfile: .docker/movie_service.Dockerfile
     networks:
       - app
-    # ports:
-    #   - "9193:8080"
     environment:
       SERVICE_NAME: movie
       ADDR: ":8080"
@@ -133,8 +119,6 @@ services:
       TYPESENSE_API_KEY: ${TYPESENSE_API_KEY}
     restart: unless-stopped
     logging: *default-logging
-    depends_on:
-      - cbq
 
   series_service:
     container_name: series_service
@@ -143,8 +127,6 @@ services:
       dockerfile: .docker/series_service.Dockerfile
     networks:
       - app
-    # ports:
-    #   - "9194:8080"
     environment:
       SERVICE_NAME: series
       ADDR: ":8080"
@@ -159,8 +141,6 @@ services:
       TYPESENSE_API_KEY: ${TYPESENSE_API_KEY}
     restart: unless-stopped
     logging: *default-logging
-    depends_on:
-      - cbq
 
   season_service:
     container_name: season_service
@@ -169,8 +149,6 @@ services:
       dockerfile: .docker/season_service.Dockerfile
     networks:
       - app
-    # ports:
-    #   - "9195:8080"
     environment:
       SERVICE_NAME: season
       ADDR: ":8080"
@@ -184,8 +162,6 @@ services:
       TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
-    depends_on:
-      - cbq
 
   episode_service:
     container_name: episode_service
@@ -194,8 +170,6 @@ services:
       dockerfile: .docker/episode_service.Dockerfile
     networks:
       - app
-    # ports:
-      # - "9196:8080"
     environment:
       SERVICE_NAME: episode
       ADDR: ":8080"
@@ -209,8 +183,6 @@ services:
       TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
-    depends_on:
-      - cbq
 
   user_service:
     container_name: user_service
@@ -219,8 +191,6 @@ services:
       dockerfile: .docker/user_service.Dockerfile
     networks:
       - app
-    # ports:
-    #   - "9197:8080"
     environment:
       SERVICE_NAME: user
       ADDR: ":8080"
@@ -232,8 +202,6 @@ services:
       TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
-    depends_on:
-      - cbq
 
   auth_service:
     container_name: auth_service
@@ -242,8 +210,6 @@ services:
       dockerfile: .docker/auth_service.Dockerfile
     networks:
       - app
-    # ports:
-    #   - "9198:8080"
     environment:
       SERVICE_NAME: auth
       ADDR: ":8080"
@@ -256,8 +222,6 @@ services:
       TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
-    depends_on:
-      - cbq
 
   minio:
     container_name: minio
@@ -318,19 +282,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
-  cbq:
-    container_name: cbq
-    image: sequoiatools/cbq:latest
-    networks:
-      - app
-    command: -u ${COUCHBASE_USER} -p ${COUCHBASE_PASSWORD} -e ${COUCHBASE_HOST} -f /init/couchbase.sql
-    volumes:
-      - ./.docker/init/couchbase.sql:/init/couchbase.sql
-    depends_on:
-      couchbase:
-        condition: service_healthy
-
 
   jaeger:
     container_name: jaeger

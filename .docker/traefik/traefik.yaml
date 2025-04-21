@@ -1,0 +1,20 @@
+providers:
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+entrypoints:
+  web:
+    address: :80
+  websecure:
+    address: :443
+
+api:
+  insecure: true
+
+certificatesResolvers:
+  my-resolver:
+    acme:
+      email: "me@kaanksc.com"
+      storage: "/etc/traefik/acme.json"
+      tlsChallenge: {}
