@@ -49,7 +49,7 @@ paths:
         "204":
           description: OK
 
-  /user/register:
+  /users/register:
     post:
       summary: Register User
       tags:
@@ -82,7 +82,7 @@ paths:
                 properties:
                   user_id:
                     type: string
-  /user/profile:
+  /users/profile:
     get:
       summary: Get User Profile
       security:
@@ -109,7 +109,47 @@ paths:
                     type: string
                   user_type:
                     $ref: "#/components/schemas/user_type"
-  /user/{id}/password:
+  /users/:
+    get:
+      summary: List Users
+      security:
+        - cookieAuth: []
+      tags:
+        - user
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Number of users to return
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          in: query
+          required: false
+          description: Number of users to skip
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/user"
+                  count:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+  /users/{id}/password:
     put:
       summary: Update User Password
       security:
@@ -145,7 +185,7 @@ paths:
       responses:
         "204":
           description: OK
-  /user/{id}/user-type:
+  /users/{id}/user-type:
     put:
       summary: Update User Type
       description: |
@@ -174,7 +214,7 @@ paths:
         "204":
           description: OK
 
-  /media/:
+  /medias/:
     post:
       summary: Create Media
       description: |
@@ -235,7 +275,7 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/media"
-  /media/{media_id}:
+  /medias/{media_id}:
     get:
       summary: Get Media By ID
       security:
@@ -302,7 +342,7 @@ paths:
         "204":
           description: OK
 
-  /movie:
+  /movies:
     post:
       summary: Create Movie
       description: |
@@ -385,7 +425,7 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/movie"
-  /movie/search:
+  /movies/search:
     get:
       summary: Search Movies
       security:
@@ -444,7 +484,7 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/movie"
-  /movie/{movie_id}:
+  /movies/{movie_id}:
     get:
       summary: Get Movie By ID
       security:
@@ -736,7 +776,7 @@ paths:
         "204":
           description: OK
 
-  /season:
+  /seasons:
     post:
       summary: Create Season
       description: |
@@ -794,7 +834,7 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/season"
-  /season/{season_id}:
+  /seasons/{season_id}:
     get:
       summary: Get Season By ID
       security:
@@ -863,7 +903,7 @@ paths:
         "204":
           description: OK
 
-  /episode:
+  /episodes:
     post:
       summary: Create Episode
       description: |
@@ -923,7 +963,7 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/episode"
-  /episode/{episode_id}:
+  /episodes/{episode_id}:
     get:
       summary: Get Episode By ID
       security:
@@ -1017,6 +1057,21 @@ components:
       enum:
         - admin
         - viewer
+    user:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        username:
+          type: string
+        user_type:
+          $ref: "#/components/schemas/user_type"
     media:
       type: object
       properties:
