@@ -12,4 +12,5 @@ type Repository interface {
 	GetUserByUsername(ctx context.Context, username string) (*models.User, error)
 	ListUsers(ctx context.Context, limit, offset int64) (*models.UserList, error)
 	UpdateUserPassword(ctx context.Context, user *models.User) error
+	UpdateUserType(ctx context.Context, user *models.User) error
 }
