@@ -172,6 +172,8 @@ paths:
   /media/{media_id}:
     get:
       summary: Get Media By ID
+      security:
+        - cookieAuth: []
       tags:
         - media
       parameters:
@@ -190,6 +192,8 @@ paths:
                 $ref: "#/components/schemas/media"
     put:
       summary: Update Media By ID
+      security:
+        - cookieAuth: []
       tags:
         - media
       parameters:
@@ -213,6 +217,8 @@ paths:
           description: OK
     delete:
       summary: Delete Media By ID
+      security:
+        - cookieAuth: []
       tags:
         - media
       parameters:
@@ -229,6 +235,8 @@ paths:
   /movie:
     post:
       summary: Create Movie
+      security:
+        - cookieAuth: []
       tags:
         - movie
       requestBody:
@@ -264,6 +272,8 @@ paths:
                     type: string
     get:
       summary: List Movies
+      security:
+        - cookieAuth: []
       tags:
         - movie
       parameters:
@@ -306,6 +316,8 @@ paths:
   /movie/search:
     get:
       summary: Search Movies
+      security:
+        - cookieAuth: []
       tags:
         - movie
       parameters:
@@ -363,6 +375,8 @@ paths:
   /movie/{movie_id}:
     get:
       summary: Get Movie By ID
+      security:
+        - cookieAuth: []
       tags:
         - movie
       parameters:
@@ -381,6 +395,8 @@ paths:
                 $ref: "#/components/schemas/movie"
     put:
       summary: Update Movie By ID
+      security:
+        - cookieAuth: []
       tags:
         - movie
       parameters:
@@ -416,6 +432,8 @@ paths:
           description: OK
     delete:
       summary: Delete Movie By ID
+      security:
+        - cookieAuth: []
       tags:
         - movie
       parameters:
@@ -432,6 +450,8 @@ paths:
   /series:
     post:
       summary: Create Series
+      security:
+        - cookieAuth: []
       tags:
         - series
       requestBody:
@@ -464,6 +484,8 @@ paths:
                     type: string
     get:
       summary: List Series
+      security:
+        - cookieAuth: []
       parameters:
         - name: limit
           in: query
@@ -502,6 +524,8 @@ paths:
   /series/search:
     get:
       summary: Search Series
+      security:
+        - cookieAuth: []
       parameters:
         - name: query
           in: query
@@ -559,6 +583,8 @@ paths:
   /series/{series_id}:
     get:
       summary: Get Series By ID
+      security:
+        - cookieAuth: []
       tags:
         - series
       parameters:
@@ -578,6 +604,8 @@ paths:
 
     put:
       summary: Update Series By ID
+      security:
+        - cookieAuth: []
       tags:
         - series
       parameters:
@@ -611,6 +639,8 @@ paths:
 
     delete:
       summary: Delete Series By ID
+      security:
+        - cookieAuth: []
       tags:
         - series
       parameters:
@@ -627,6 +657,8 @@ paths:
   /season:
     post:
       summary: Create Season
+      security:
+        - cookieAuth: []
       tags:
         - season
       requestBody:
@@ -655,6 +687,8 @@ paths:
 
     get:
       summary: List All Seasons By Series ID
+      security:
+        - cookieAuth: []
       tags:
         - season
       parameters:
@@ -679,6 +713,8 @@ paths:
   /season/{season_id}:
     get:
       summary: Get Season By ID
+      security:
+        - cookieAuth: []
       tags:
         - season
       parameters:
@@ -697,6 +733,8 @@ paths:
                 $ref: "#/components/schemas/season"
     put:
       summary: Update Season By ID
+      security:
+        - cookieAuth: []
       tags:
         - season
       parameters:
@@ -722,6 +760,8 @@ paths:
           description: OK
     delete:
       summary: Delete Season By ID
+      security:
+        - cookieAuth: []
       tags:
         - season
       parameters:
@@ -738,6 +778,8 @@ paths:
   /episode:
     post:
       summary: Create Episode
+      security:
+        - cookieAuth: []
       tags:
         - episode
       requestBody:
@@ -768,6 +810,8 @@ paths:
                     type: string
     get:
       summary: Get All Episodes By Season ID
+      security:
+        - cookieAuth: []
       tags:
         - episode
       parameters:
@@ -793,6 +837,8 @@ paths:
   /episode/{episode_id}:
     get:
       summary: Get Episode By ID
+      security:
+        - cookieAuth: []
       tags:
         - episode
       parameters:
@@ -812,6 +858,8 @@ paths:
 
     put:
       summary: Update Episode By ID
+      security:
+        - cookieAuth: []
       tags:
         - episode
       parameters:
@@ -841,6 +889,8 @@ paths:
 
     delete:
       summary: Delete Episode By ID
+      security:
+        - cookieAuth: []
       tags:
         - episode
       parameters:
