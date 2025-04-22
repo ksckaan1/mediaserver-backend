@@ -75,7 +75,7 @@ func (a *App) CreateMovie(ctx context.Context, request *moviepb.CreateMovieReque
 			UpdatedAt: mediaInfo.UpdatedAt,
 			Title:     mediaInfo.Title,
 			Path:      mediaInfo.Path,
-			Type:      moviepb.MediaType(mediaInfo.Type),
+			Type:      mediaInfo.Type,
 			MimeType:  mediaInfo.MimeType,
 			Size:      mediaInfo.Size,
 		}
@@ -124,7 +124,7 @@ func (a *App) GetMovieByID(ctx context.Context, request *moviepb.GetMovieByIDReq
 			UpdatedAt: result.UpdatedAt,
 			Title:     result.Title,
 			Path:      result.Path,
-			Type:      moviepb.MediaType(result.Type),
+			Type:      result.Type,
 			MimeType:  result.MimeType,
 			Size:      result.Size,
 		}
@@ -176,7 +176,7 @@ func (a *App) ListMovies(ctx context.Context, request *moviepb.ListMoviesRequest
 				UpdatedAt: result.UpdatedAt,
 				Title:     result.Title,
 				Path:      result.Path,
-				Type:      moviepb.MediaType(result.Type),
+				Type:      result.Type,
 				MimeType:  result.MimeType,
 				Size:      result.Size,
 			}
@@ -269,7 +269,7 @@ func (a *App) UpdateMovieByID(ctx context.Context, request *moviepb.UpdateMovieB
 			UpdatedAt: mediaInfo.UpdatedAt,
 			Title:     mediaInfo.Title,
 			Path:      mediaInfo.Path,
-			Type:      moviepb.MediaType(mediaInfo.Type),
+			Type:      mediaInfo.Type,
 			MimeType:  mediaInfo.MimeType,
 			Size:      mediaInfo.Size,
 		}

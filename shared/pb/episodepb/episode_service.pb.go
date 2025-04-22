@@ -23,58 +23,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type MediaType int32
-
-const (
-	MediaType_UNKNOWN MediaType = 0
-	MediaType_IMAGE   MediaType = 1
-	MediaType_VIDEO   MediaType = 2
-	MediaType_AUDIO   MediaType = 3
-)
-
-// Enum value maps for MediaType.
-var (
-	MediaType_name = map[int32]string{
-		0: "UNKNOWN",
-		1: "IMAGE",
-		2: "VIDEO",
-		3: "AUDIO",
-	}
-	MediaType_value = map[string]int32{
-		"UNKNOWN": 0,
-		"IMAGE":   1,
-		"VIDEO":   2,
-		"AUDIO":   3,
-	}
-)
-
-func (x MediaType) Enum() *MediaType {
-	p := new(MediaType)
-	*p = x
-	return p
-}
-
-func (x MediaType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (MediaType) Descriptor() protoreflect.EnumDescriptor {
-	return file_episode_service_proto_enumTypes[0].Descriptor()
-}
-
-func (MediaType) Type() protoreflect.EnumType {
-	return &file_episode_service_proto_enumTypes[0]
-}
-
-func (x MediaType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use MediaType.Descriptor instead.
-func (MediaType) EnumDescriptor() ([]byte, []int) {
-	return file_episode_service_proto_rawDescGZIP(), []int{0}
-}
-
 type CreateEpisodeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SeasonId      string                 `protobuf:"bytes,1,opt,name=season_id,json=seasonId,proto3" json:"season_id,omitempty"`
@@ -634,7 +582,7 @@ type Media struct {
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
 	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
-	Type          MediaType              `protobuf:"varint,6,opt,name=type,proto3,enum=episodepb.MediaType" json:"type,omitempty"`
+	Type          string                 `protobuf:"bytes,6,opt,name=type,proto3" json:"type,omitempty"`
 	MimeType      string                 `protobuf:"bytes,7,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
 	Size          int64                  `protobuf:"varint,8,opt,name=size,proto3" json:"size,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -706,11 +654,11 @@ func (x *Media) GetPath() string {
 	return ""
 }
 
-func (x *Media) GetType() MediaType {
+func (x *Media) GetType() string {
 	if x != nil {
 		return x.Type
 	}
-	return MediaType_UNKNOWN
+	return ""
 }
 
 func (x *Media) GetMimeType() string {
@@ -773,7 +721,7 @@ const file_episode_service_proto_rawDesc = "" +
 	"\tseason_id\x18\x01 \x01(\tR\bseasonId\"9\n" +
 	"\x18DeleteEpisodeByIDRequest\x12\x1d\n" +
 	"\n" +
-	"episode_id\x18\x01 \x01(\tR\tepisodeId\"\x92\x02\n" +
+	"episode_id\x18\x01 \x01(\tR\tepisodeId\"\xfc\x01\n" +
 	"\x05Media\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
 	"\n" +
@@ -781,15 +729,10 @@ const file_episode_service_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x14\n" +
 	"\x05title\x18\x04 \x01(\tR\x05title\x12\x12\n" +
-	"\x04path\x18\x05 \x01(\tR\x04path\x12(\n" +
-	"\x04type\x18\x06 \x01(\x0e2\x14.episodepb.MediaTypeR\x04type\x12\x1b\n" +
+	"\x04path\x18\x05 \x01(\tR\x04path\x12\x12\n" +
+	"\x04type\x18\x06 \x01(\tR\x04type\x12\x1b\n" +
 	"\tmime_type\x18\a \x01(\tR\bmimeType\x12\x12\n" +
-	"\x04size\x18\b \x01(\x03R\x04size*9\n" +
-	"\tMediaType\x12\v\n" +
-	"\aUNKNOWN\x10\x00\x12\t\n" +
-	"\x05IMAGE\x10\x01\x12\t\n" +
-	"\x05VIDEO\x10\x02\x12\t\n" +
-	"\x05AUDIO\x10\x032\xf4\x04\n" +
+	"\x04size\x18\b \x01(\x03R\x04size2\xf4\x04\n" +
 	"\x0eEpisodeService\x12R\n" +
 	"\rCreateEpisode\x12\x1f.episodepb.CreateEpisodeRequest\x1a .episodepb.CreateEpisodeResponse\x12F\n" +
 	"\x0eGetEpisodeByID\x12 .episodepb.GetEpisodeByIDRequest\x1a\x12.episodepb.Episode\x12Z\n" +
@@ -811,51 +754,48 @@ func file_episode_service_proto_rawDescGZIP() []byte {
 	return file_episode_service_proto_rawDescData
 }
 
-var file_episode_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_episode_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_episode_service_proto_goTypes = []any{
-	(MediaType)(0),                             // 0: episodepb.MediaType
-	(*CreateEpisodeRequest)(nil),               // 1: episodepb.CreateEpisodeRequest
-	(*CreateEpisodeResponse)(nil),              // 2: episodepb.CreateEpisodeResponse
-	(*GetEpisodeByIDRequest)(nil),              // 3: episodepb.GetEpisodeByIDRequest
-	(*Episode)(nil),                            // 4: episodepb.Episode
-	(*ListEpisodesBySeasonIDRequest)(nil),      // 5: episodepb.ListEpisodesBySeasonIDRequest
-	(*EpisodeList)(nil),                        // 6: episodepb.EpisodeList
-	(*UpdateEpisodeByIDRequest)(nil),           // 7: episodepb.UpdateEpisodeByIDRequest
-	(*ReorderEpisodesBySeasonIDRequest)(nil),   // 8: episodepb.ReorderEpisodesBySeasonIDRequest
-	(*DeleteAllEpisodesBySeasonIDRequest)(nil), // 9: episodepb.DeleteAllEpisodesBySeasonIDRequest
-	(*DeleteEpisodeByIDRequest)(nil),           // 10: episodepb.DeleteEpisodeByIDRequest
-	(*Media)(nil),                              // 11: episodepb.Media
-	(*timestamppb.Timestamp)(nil),              // 12: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),                      // 13: google.protobuf.Empty
+	(*CreateEpisodeRequest)(nil),               // 0: episodepb.CreateEpisodeRequest
+	(*CreateEpisodeResponse)(nil),              // 1: episodepb.CreateEpisodeResponse
+	(*GetEpisodeByIDRequest)(nil),              // 2: episodepb.GetEpisodeByIDRequest
+	(*Episode)(nil),                            // 3: episodepb.Episode
+	(*ListEpisodesBySeasonIDRequest)(nil),      // 4: episodepb.ListEpisodesBySeasonIDRequest
+	(*EpisodeList)(nil),                        // 5: episodepb.EpisodeList
+	(*UpdateEpisodeByIDRequest)(nil),           // 6: episodepb.UpdateEpisodeByIDRequest
+	(*ReorderEpisodesBySeasonIDRequest)(nil),   // 7: episodepb.ReorderEpisodesBySeasonIDRequest
+	(*DeleteAllEpisodesBySeasonIDRequest)(nil), // 8: episodepb.DeleteAllEpisodesBySeasonIDRequest
+	(*DeleteEpisodeByIDRequest)(nil),           // 9: episodepb.DeleteEpisodeByIDRequest
+	(*Media)(nil),                              // 10: episodepb.Media
+	(*timestamppb.Timestamp)(nil),              // 11: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                      // 12: google.protobuf.Empty
 }
 var file_episode_service_proto_depIdxs = []int32{
-	12, // 0: episodepb.Episode.created_at:type_name -> google.protobuf.Timestamp
-	12, // 1: episodepb.Episode.updated_at:type_name -> google.protobuf.Timestamp
-	11, // 2: episodepb.Episode.media_info:type_name -> episodepb.Media
-	4,  // 3: episodepb.EpisodeList.list:type_name -> episodepb.Episode
-	12, // 4: episodepb.Media.created_at:type_name -> google.protobuf.Timestamp
-	12, // 5: episodepb.Media.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 6: episodepb.Media.type:type_name -> episodepb.MediaType
-	1,  // 7: episodepb.EpisodeService.CreateEpisode:input_type -> episodepb.CreateEpisodeRequest
-	3,  // 8: episodepb.EpisodeService.GetEpisodeByID:input_type -> episodepb.GetEpisodeByIDRequest
-	5,  // 9: episodepb.EpisodeService.ListEpisodesBySeasonID:input_type -> episodepb.ListEpisodesBySeasonIDRequest
-	7,  // 10: episodepb.EpisodeService.UpdateEpisodeByID:input_type -> episodepb.UpdateEpisodeByIDRequest
-	8,  // 11: episodepb.EpisodeService.ReorderEpisodesBySeasonID:input_type -> episodepb.ReorderEpisodesBySeasonIDRequest
-	10, // 12: episodepb.EpisodeService.DeleteEpisodeByID:input_type -> episodepb.DeleteEpisodeByIDRequest
-	9,  // 13: episodepb.EpisodeService.DeleteAllEpisodesBySeasonID:input_type -> episodepb.DeleteAllEpisodesBySeasonIDRequest
-	2,  // 14: episodepb.EpisodeService.CreateEpisode:output_type -> episodepb.CreateEpisodeResponse
-	4,  // 15: episodepb.EpisodeService.GetEpisodeByID:output_type -> episodepb.Episode
-	6,  // 16: episodepb.EpisodeService.ListEpisodesBySeasonID:output_type -> episodepb.EpisodeList
-	13, // 17: episodepb.EpisodeService.UpdateEpisodeByID:output_type -> google.protobuf.Empty
-	13, // 18: episodepb.EpisodeService.ReorderEpisodesBySeasonID:output_type -> google.protobuf.Empty
-	13, // 19: episodepb.EpisodeService.DeleteEpisodeByID:output_type -> google.protobuf.Empty
-	13, // 20: episodepb.EpisodeService.DeleteAllEpisodesBySeasonID:output_type -> google.protobuf.Empty
-	14, // [14:21] is the sub-list for method output_type
-	7,  // [7:14] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	11, // 0: episodepb.Episode.created_at:type_name -> google.protobuf.Timestamp
+	11, // 1: episodepb.Episode.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 2: episodepb.Episode.media_info:type_name -> episodepb.Media
+	3,  // 3: episodepb.EpisodeList.list:type_name -> episodepb.Episode
+	11, // 4: episodepb.Media.created_at:type_name -> google.protobuf.Timestamp
+	11, // 5: episodepb.Media.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 6: episodepb.EpisodeService.CreateEpisode:input_type -> episodepb.CreateEpisodeRequest
+	2,  // 7: episodepb.EpisodeService.GetEpisodeByID:input_type -> episodepb.GetEpisodeByIDRequest
+	4,  // 8: episodepb.EpisodeService.ListEpisodesBySeasonID:input_type -> episodepb.ListEpisodesBySeasonIDRequest
+	6,  // 9: episodepb.EpisodeService.UpdateEpisodeByID:input_type -> episodepb.UpdateEpisodeByIDRequest
+	7,  // 10: episodepb.EpisodeService.ReorderEpisodesBySeasonID:input_type -> episodepb.ReorderEpisodesBySeasonIDRequest
+	9,  // 11: episodepb.EpisodeService.DeleteEpisodeByID:input_type -> episodepb.DeleteEpisodeByIDRequest
+	8,  // 12: episodepb.EpisodeService.DeleteAllEpisodesBySeasonID:input_type -> episodepb.DeleteAllEpisodesBySeasonIDRequest
+	1,  // 13: episodepb.EpisodeService.CreateEpisode:output_type -> episodepb.CreateEpisodeResponse
+	3,  // 14: episodepb.EpisodeService.GetEpisodeByID:output_type -> episodepb.Episode
+	5,  // 15: episodepb.EpisodeService.ListEpisodesBySeasonID:output_type -> episodepb.EpisodeList
+	12, // 16: episodepb.EpisodeService.UpdateEpisodeByID:output_type -> google.protobuf.Empty
+	12, // 17: episodepb.EpisodeService.ReorderEpisodesBySeasonID:output_type -> google.protobuf.Empty
+	12, // 18: episodepb.EpisodeService.DeleteEpisodeByID:output_type -> google.protobuf.Empty
+	12, // 19: episodepb.EpisodeService.DeleteAllEpisodesBySeasonID:output_type -> google.protobuf.Empty
+	13, // [13:20] is the sub-list for method output_type
+	6,  // [6:13] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_episode_service_proto_init() }
@@ -868,14 +808,13 @@ func file_episode_service_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_episode_service_proto_rawDesc), len(file_episode_service_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_episode_service_proto_goTypes,
 		DependencyIndexes: file_episode_service_proto_depIdxs,
-		EnumInfos:         file_episode_service_proto_enumTypes,
 		MessageInfos:      file_episode_service_proto_msgTypes,
 	}.Build()
 	File_episode_service_proto = out.File

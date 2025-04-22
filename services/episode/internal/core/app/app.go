@@ -109,7 +109,7 @@ func (a *App) GetEpisodeByID(ctx context.Context, req *episodepb.GetEpisodeByIDR
 			UpdatedAt: resp.UpdatedAt,
 			Title:     resp.Title,
 			Path:      resp.Path,
-			Type:      episodepb.MediaType(resp.Type),
+			Type:      resp.Type,
 			MimeType:  resp.MimeType,
 			Size:      resp.Size,
 		}
@@ -146,7 +146,7 @@ func (a *App) ListEpisodesBySeasonID(ctx context.Context, req *episodepb.ListEpi
 				UpdatedAt: resp.UpdatedAt,
 				Title:     resp.Title,
 				Path:      resp.Path,
-				Type:      episodepb.MediaType(resp.Type),
+				Type:      resp.Type,
 				MimeType:  resp.MimeType,
 				Size:      resp.Size,
 			}

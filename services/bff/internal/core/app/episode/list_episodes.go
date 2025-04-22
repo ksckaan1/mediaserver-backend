@@ -46,7 +46,7 @@ func (h *ListEpisodes) Handle(ctx context.Context, req *ListEpisodesRequest) (*L
 					UpdatedAt: e.MediaInfo.UpdatedAt.AsTime(),
 					Title:     e.MediaInfo.Title,
 					Path:      e.MediaInfo.Path,
-					Type:      mediatype.FromNumber(int32(e.MediaInfo.Type)),
+					Type:      mediatype.FromString(e.MediaInfo.Type),
 					MimeType:  e.MediaInfo.MimeType,
 					Size:      e.MediaInfo.Size,
 				}

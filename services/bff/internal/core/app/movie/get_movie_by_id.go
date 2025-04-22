@@ -60,7 +60,7 @@ func (h *GetMovieByID) Handle(ctx context.Context, req *GetMovieByIDRequest) (*m
 			Path:      resp.MediaInfo.Path,
 			MimeType:  resp.MediaInfo.MimeType,
 			Size:      resp.MediaInfo.Size,
-			Type:      mediatype.FromNumber(int32(resp.MediaInfo.Type)),
+			Type:      mediatype.FromString(resp.MediaInfo.Type),
 		}
 	}
 

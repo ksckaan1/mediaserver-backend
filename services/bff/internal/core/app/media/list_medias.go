@@ -53,7 +53,7 @@ func (h *ListMedias) Handle(ctx context.Context, req *ListMediasRequest) (*ListM
 				UpdatedAt: m.UpdatedAt.AsTime(),
 				Title:     m.Title,
 				Path:      m.Path,
-				Type:      mediatype.FromNumber(int32(m.Type)),
+				Type:      mediatype.FromString(m.Type),
 				MimeType:  m.MimeType,
 				Size:      m.Size,
 			}

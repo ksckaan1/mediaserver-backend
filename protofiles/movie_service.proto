@@ -80,12 +80,6 @@ message TMDBInfo {
   google.protobuf.Struct data = 2;
 }
 
-enum MediaType {
-  UNKNOWN = 0;
-  IMAGE = 1;
-  VIDEO = 2;
-  AUDIO = 3;
-}
 
 message Media {
   string id = 1;
@@ -93,7 +87,7 @@ message Media {
   google.protobuf.Timestamp updated_at = 3;
   string title = 4;
   string path = 5;
-  MediaType type = 6;
+  string type = 6;
   string mime_type = 7;
   int64 size = 8;
 }

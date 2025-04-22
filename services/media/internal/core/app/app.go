@@ -54,7 +54,7 @@ func (a *App) GetMediaByID(ctx context.Context, req *mediapb.GetMediaByIDRequest
 		UpdatedAt: timestamppb.New(media.UpdatedAt),
 		Title:     media.Title,
 		Path:      media.Path,
-		Type:      mediapb.MediaType(media.Type.Number()),
+		Type:      media.Type.String(),
 		MimeType:  media.MimeType,
 		Size:      media.Size,
 	}, nil
@@ -73,7 +73,7 @@ func (a *App) ListMedias(ctx context.Context, req *mediapb.ListMediasRequest) (*
 				UpdatedAt: timestamppb.New(m.UpdatedAt),
 				Title:     m.Title,
 				Path:      m.Path,
-				Type:      mediapb.MediaType(m.Type.Number()),
+				Type:      m.Type.String(),
 				MimeType:  m.MimeType,
 				Size:      m.Size,
 			}

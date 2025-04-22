@@ -23,58 +23,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type MediaType int32
-
-const (
-	MediaType_UNKNOWN MediaType = 0
-	MediaType_IMAGE   MediaType = 1
-	MediaType_VIDEO   MediaType = 2
-	MediaType_AUDIO   MediaType = 3
-)
-
-// Enum value maps for MediaType.
-var (
-	MediaType_name = map[int32]string{
-		0: "UNKNOWN",
-		1: "IMAGE",
-		2: "VIDEO",
-		3: "AUDIO",
-	}
-	MediaType_value = map[string]int32{
-		"UNKNOWN": 0,
-		"IMAGE":   1,
-		"VIDEO":   2,
-		"AUDIO":   3,
-	}
-)
-
-func (x MediaType) Enum() *MediaType {
-	p := new(MediaType)
-	*p = x
-	return p
-}
-
-func (x MediaType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (MediaType) Descriptor() protoreflect.EnumDescriptor {
-	return file_protofiles_media_service_proto_enumTypes[0].Descriptor()
-}
-
-func (MediaType) Type() protoreflect.EnumType {
-	return &file_protofiles_media_service_proto_enumTypes[0]
-}
-
-func (x MediaType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use MediaType.Descriptor instead.
-func (MediaType) EnumDescriptor() ([]byte, []int) {
-	return file_protofiles_media_service_proto_rawDescGZIP(), []int{0}
-}
-
 type CreateMediaRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -222,7 +170,7 @@ type Media struct {
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
 	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
-	Type          MediaType              `protobuf:"varint,6,opt,name=type,proto3,enum=mediapb.MediaType" json:"type,omitempty"`
+	Type          string                 `protobuf:"bytes,6,opt,name=type,proto3" json:"type,omitempty"`
 	MimeType      string                 `protobuf:"bytes,7,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
 	Size          int64                  `protobuf:"varint,8,opt,name=size,proto3" json:"size,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -294,11 +242,11 @@ func (x *Media) GetPath() string {
 	return ""
 }
 
-func (x *Media) GetType() MediaType {
+func (x *Media) GetType() string {
 	if x != nil {
 		return x.Type
 	}
-	return MediaType_UNKNOWN
+	return ""
 }
 
 func (x *Media) GetMimeType() string {
@@ -545,7 +493,7 @@ const file_protofiles_media_service_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"0\n" +
 	"\x13GetMediaByIDRequest\x12\x19\n" +
-	"\bmedia_id\x18\x01 \x01(\tR\amediaId\"\x90\x02\n" +
+	"\bmedia_id\x18\x01 \x01(\tR\amediaId\"\xfc\x01\n" +
 	"\x05Media\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
 	"\n" +
@@ -553,8 +501,8 @@ const file_protofiles_media_service_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x14\n" +
 	"\x05title\x18\x04 \x01(\tR\x05title\x12\x12\n" +
-	"\x04path\x18\x05 \x01(\tR\x04path\x12&\n" +
-	"\x04type\x18\x06 \x01(\x0e2\x12.mediapb.MediaTypeR\x04type\x12\x1b\n" +
+	"\x04path\x18\x05 \x01(\tR\x04path\x12\x12\n" +
+	"\x04type\x18\x06 \x01(\tR\x04type\x12\x1b\n" +
 	"\tmime_type\x18\a \x01(\tR\bmimeType\x12\x12\n" +
 	"\x04size\x18\b \x01(\x03R\x04size\"A\n" +
 	"\x11ListMediasRequest\x12\x14\n" +
@@ -569,12 +517,7 @@ const file_protofiles_media_service_proto_rawDesc = "" +
 	"\bmedia_id\x18\x01 \x01(\tR\amediaId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\"3\n" +
 	"\x16DeleteMediaByIDRequest\x12\x19\n" +
-	"\bmedia_id\x18\x01 \x01(\tR\amediaId*9\n" +
-	"\tMediaType\x12\v\n" +
-	"\aUNKNOWN\x10\x00\x12\t\n" +
-	"\x05IMAGE\x10\x01\x12\t\n" +
-	"\x05VIDEO\x10\x02\x12\t\n" +
-	"\x05AUDIO\x10\x032\xec\x02\n" +
+	"\bmedia_id\x18\x01 \x01(\tR\amediaId2\xec\x02\n" +
 	"\fMediaService\x12H\n" +
 	"\vCreateMedia\x12\x1b.mediapb.CreateMediaRequest\x1a\x1c.mediapb.CreateMediaResponse\x12<\n" +
 	"\fGetMediaByID\x12\x1c.mediapb.GetMediaByIDRequest\x1a\x0e.mediapb.Media\x12<\n" +
@@ -595,43 +538,40 @@ func file_protofiles_media_service_proto_rawDescGZIP() []byte {
 	return file_protofiles_media_service_proto_rawDescData
 }
 
-var file_protofiles_media_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_protofiles_media_service_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_protofiles_media_service_proto_goTypes = []any{
-	(MediaType)(0),                 // 0: mediapb.MediaType
-	(*CreateMediaRequest)(nil),     // 1: mediapb.CreateMediaRequest
-	(*CreateMediaResponse)(nil),    // 2: mediapb.CreateMediaResponse
-	(*GetMediaByIDRequest)(nil),    // 3: mediapb.GetMediaByIDRequest
-	(*Media)(nil),                  // 4: mediapb.Media
-	(*ListMediasRequest)(nil),      // 5: mediapb.ListMediasRequest
-	(*MediaList)(nil),              // 6: mediapb.MediaList
-	(*UpdateMediaByIDRequest)(nil), // 7: mediapb.UpdateMediaByIDRequest
-	(*DeleteMediaByIDRequest)(nil), // 8: mediapb.DeleteMediaByIDRequest
-	nil,                            // 9: mediapb.CreateMediaResponse.FormDataEntry
-	(*timestamppb.Timestamp)(nil),  // 10: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),          // 11: google.protobuf.Empty
+	(*CreateMediaRequest)(nil),     // 0: mediapb.CreateMediaRequest
+	(*CreateMediaResponse)(nil),    // 1: mediapb.CreateMediaResponse
+	(*GetMediaByIDRequest)(nil),    // 2: mediapb.GetMediaByIDRequest
+	(*Media)(nil),                  // 3: mediapb.Media
+	(*ListMediasRequest)(nil),      // 4: mediapb.ListMediasRequest
+	(*MediaList)(nil),              // 5: mediapb.MediaList
+	(*UpdateMediaByIDRequest)(nil), // 6: mediapb.UpdateMediaByIDRequest
+	(*DeleteMediaByIDRequest)(nil), // 7: mediapb.DeleteMediaByIDRequest
+	nil,                            // 8: mediapb.CreateMediaResponse.FormDataEntry
+	(*timestamppb.Timestamp)(nil),  // 9: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),          // 10: google.protobuf.Empty
 }
 var file_protofiles_media_service_proto_depIdxs = []int32{
-	9,  // 0: mediapb.CreateMediaResponse.form_data:type_name -> mediapb.CreateMediaResponse.FormDataEntry
-	10, // 1: mediapb.Media.created_at:type_name -> google.protobuf.Timestamp
-	10, // 2: mediapb.Media.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: mediapb.Media.type:type_name -> mediapb.MediaType
-	4,  // 4: mediapb.MediaList.list:type_name -> mediapb.Media
-	1,  // 5: mediapb.MediaService.CreateMedia:input_type -> mediapb.CreateMediaRequest
-	3,  // 6: mediapb.MediaService.GetMediaByID:input_type -> mediapb.GetMediaByIDRequest
-	5,  // 7: mediapb.MediaService.ListMedias:input_type -> mediapb.ListMediasRequest
-	7,  // 8: mediapb.MediaService.UpdateMediaByID:input_type -> mediapb.UpdateMediaByIDRequest
-	8,  // 9: mediapb.MediaService.DeleteMediaByID:input_type -> mediapb.DeleteMediaByIDRequest
-	2,  // 10: mediapb.MediaService.CreateMedia:output_type -> mediapb.CreateMediaResponse
-	4,  // 11: mediapb.MediaService.GetMediaByID:output_type -> mediapb.Media
-	6,  // 12: mediapb.MediaService.ListMedias:output_type -> mediapb.MediaList
-	11, // 13: mediapb.MediaService.UpdateMediaByID:output_type -> google.protobuf.Empty
-	11, // 14: mediapb.MediaService.DeleteMediaByID:output_type -> google.protobuf.Empty
-	10, // [10:15] is the sub-list for method output_type
-	5,  // [5:10] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	8,  // 0: mediapb.CreateMediaResponse.form_data:type_name -> mediapb.CreateMediaResponse.FormDataEntry
+	9,  // 1: mediapb.Media.created_at:type_name -> google.protobuf.Timestamp
+	9,  // 2: mediapb.Media.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 3: mediapb.MediaList.list:type_name -> mediapb.Media
+	0,  // 4: mediapb.MediaService.CreateMedia:input_type -> mediapb.CreateMediaRequest
+	2,  // 5: mediapb.MediaService.GetMediaByID:input_type -> mediapb.GetMediaByIDRequest
+	4,  // 6: mediapb.MediaService.ListMedias:input_type -> mediapb.ListMediasRequest
+	6,  // 7: mediapb.MediaService.UpdateMediaByID:input_type -> mediapb.UpdateMediaByIDRequest
+	7,  // 8: mediapb.MediaService.DeleteMediaByID:input_type -> mediapb.DeleteMediaByIDRequest
+	1,  // 9: mediapb.MediaService.CreateMedia:output_type -> mediapb.CreateMediaResponse
+	3,  // 10: mediapb.MediaService.GetMediaByID:output_type -> mediapb.Media
+	5,  // 11: mediapb.MediaService.ListMedias:output_type -> mediapb.MediaList
+	10, // 12: mediapb.MediaService.UpdateMediaByID:output_type -> google.protobuf.Empty
+	10, // 13: mediapb.MediaService.DeleteMediaByID:output_type -> google.protobuf.Empty
+	9,  // [9:14] is the sub-list for method output_type
+	4,  // [4:9] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_protofiles_media_service_proto_init() }
@@ -644,14 +584,13 @@ func file_protofiles_media_service_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protofiles_media_service_proto_rawDesc), len(file_protofiles_media_service_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_protofiles_media_service_proto_goTypes,
 		DependencyIndexes: file_protofiles_media_service_proto_depIdxs,
-		EnumInfos:         file_protofiles_media_service_proto_enumTypes,
 		MessageInfos:      file_protofiles_media_service_proto_msgTypes,
 	}.Build()
 	File_protofiles_media_service_proto = out.File

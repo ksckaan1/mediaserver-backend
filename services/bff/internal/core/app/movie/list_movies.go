@@ -58,7 +58,7 @@ func (h *ListMovies) Handle(ctx context.Context, req *ListMoviesRequest) (*ListM
 					Path:      movie.MediaInfo.Path,
 					MimeType:  movie.MediaInfo.MimeType,
 					Size:      movie.MediaInfo.Size,
-					Type:      mediatype.FromNumber(int32(movie.MediaInfo.Type)),
+					Type:      mediatype.FromString(movie.MediaInfo.Type),
 				}
 			}
 

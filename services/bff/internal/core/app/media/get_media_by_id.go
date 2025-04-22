@@ -41,7 +41,7 @@ func (h *GetMediaByID) Handle(ctx context.Context, req *GetMediaByIDRequest) (*m
 		UpdatedAt: resp.UpdatedAt.AsTime(),
 		Title:     resp.Title,
 		Path:      resp.Path,
-		Type:      mediatype.FromNumber(int32(resp.Type)),
+		Type:      mediatype.FromString(resp.Type),
 		MimeType:  resp.MimeType,
 		Size:      resp.Size,
 	}, http.StatusOK, nil

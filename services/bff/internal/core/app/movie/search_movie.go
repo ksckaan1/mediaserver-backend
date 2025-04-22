@@ -62,7 +62,7 @@ func (h *SearchMovie) Handle(ctx context.Context, req *SearchMovieRequest) (*Sea
 					Path:      movie.MediaInfo.Path,
 					MimeType:  movie.MediaInfo.MimeType,
 					Size:      movie.MediaInfo.Size,
-					Type:      mediatype.FromNumber(int32(movie.MediaInfo.Type)),
+					Type:      mediatype.FromString(movie.MediaInfo.Type),
 				}
 			}
 
