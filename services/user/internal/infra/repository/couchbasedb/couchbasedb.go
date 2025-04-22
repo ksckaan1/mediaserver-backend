@@ -5,12 +5,15 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"user_service/internal/core/app"
 	"user_service/internal/core/customerrors"
 	"user_service/internal/core/models"
 
 	"github.com/couchbase/gocb/v2"
 	"github.com/samber/lo"
 )
+
+var _ app.Repository = (*Repository)(nil)
 
 type Repository struct {
 	coll  *gocb.Collection
@@ -163,6 +166,24 @@ func (r *Repository) UpdateUserPassword(ctx context.Context, user *models.User) 
 		NamedParameters: map[string]any{
 			"password": user.Password,
 			"id":       user.ID,
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("scope.Query: %w", err)
+	}
+	if !result.Next() {
+		return customerrors.ErrUserNotFound
+	}
+	return nil
+}
+
+const updateUserTypeQuery = "UPDATE users SET `user_type` = $user_type WHERE id = $id RETURNING *;"
+
+func (r *Repository) UpdateUserType(ctx context.Context, user *models.User) error {
+	result, err := r.scope.Query(updateUserTypeQuery, &gocb.QueryOptions{
+		NamedParameters: map[string]any{
+			"user_type": user.UserType.String(),
+			"id":        user.ID,
 		},
 	})
 	if err != nil {

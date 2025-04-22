@@ -12,6 +12,7 @@ service UserService {
   rpc GetUserByID(GetUserByIDRequest) returns (User);
   rpc GetUserByUsername(GetUserByUsernameRequest) returns (User);
   rpc UpdateUserPassword(UpdateUserPasswordRequest) returns (google.protobuf.Empty);
+  rpc UpdateUserType(UpdateUserTypeRequest) returns (google.protobuf.Empty);
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
 }
 
@@ -21,11 +22,13 @@ message User {
   google.protobuf.Timestamp updated_at = 3;
   string username = 4;
   string password = 5;
+  string user_type = 6;
 }
 
 message CreateUserRequest {
   string username = 1;
   string password = 2;
+  string user_type = 3;
 }
 
 message CreateUserResponse {
@@ -55,6 +58,11 @@ message GetUserByUsernameRequest {
 message UpdateUserPasswordRequest {
   string id = 1;
   string password = 2;
+}
+
+message UpdateUserTypeRequest {
+  string id = 1;
+  string user_type = 2;
 }
 
 message DeleteUserRequest {

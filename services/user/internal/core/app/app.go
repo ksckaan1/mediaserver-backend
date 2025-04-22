@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"shared/enums/usertype"
 	"shared/pb/userpb"
 	"shared/ports"
 	"user_service/internal/core/customerrors"
@@ -46,10 +47,17 @@ func (a *App) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) (*u
 		return nil, fmt.Errorf("password.HashPassword: %w", err)
 	}
 
+	userType := usertype.FromString(req.UserType)
+
+	if !userType.IsValid() {
+		return nil, customerrors.ErrInvalidUserType
+	}
+
 	user := &models.User{
 		ID:       id,
 		Username: req.Username,
 		Password: hashedPassword,
+		UserType: userType,
 	}
 
 	err = a.repository.CreateUser(ctx, user)
@@ -81,6 +89,7 @@ func (a *App) GetUserByID(ctx context.Context, req *userpb.GetUserByIDRequest) (
 		CreatedAt: timestamppb.New(user.CreatedAt),
 		UpdatedAt: timestamppb.New(user.UpdatedAt),
 		Password:  user.Password,
+		UserType:  user.UserType.String(),
 	}, nil
 }
 
@@ -95,6 +104,7 @@ func (a *App) GetUserByUsername(ctx context.Context, req *userpb.GetUserByUserna
 		CreatedAt: timestamppb.New(user.CreatedAt),
 		UpdatedAt: timestamppb.New(user.UpdatedAt),
 		Password:  user.Password,
+		UserType:  user.UserType.String(),
 	}, nil
 }
 
@@ -111,6 +121,7 @@ func (a *App) ListUsers(ctx context.Context, req *userpb.ListUsersRequest) (*use
 				CreatedAt: timestamppb.New(user.CreatedAt),
 				UpdatedAt: timestamppb.New(user.UpdatedAt),
 				Password:  user.Password,
+				UserType:  user.UserType.String(),
 			}
 		}),
 		Count:  userList.Count,
@@ -130,6 +141,21 @@ func (a *App) UpdateUserPassword(ctx context.Context, req *userpb.UpdateUserPass
 	})
 	if err != nil {
 		return nil, fmt.Errorf("repository.UpdateUserPassword: %w", err)
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (a *App) UpdateUserType(ctx context.Context, req *userpb.UpdateUserTypeRequest) (*emptypb.Empty, error) {
+	userType := usertype.FromString(req.UserType)
+	if !userType.IsValid() {
+		return nil, customerrors.ErrInvalidUserType
+	}
+	err := a.repository.UpdateUserType(ctx, &models.User{
+		ID:       req.Id,
+		UserType: userType,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("repository.UpdateUserType: %w", err)
 	}
 	return &emptypb.Empty{}, nil
 }

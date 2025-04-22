@@ -7,6 +7,7 @@ servers:
     description: Local HTTP Development server
   - url: https://localhost/api/v1
     description: Local HTTPS Development server
+
 paths:
   /auth/login:
     post:
@@ -30,7 +31,6 @@ paths:
       responses:
         "204":
           description: OK
-
   /auth/logout:
     get:
       summary: Logout
@@ -82,7 +82,6 @@ paths:
                 properties:
                   user_id:
                     type: string
-
   /user/profile:
     get:
       summary: Get User Profile
@@ -108,10 +107,78 @@ paths:
                     format: date-time
                   username:
                     type: string
+                  user_type:
+                    $ref: "#/components/schemas/user_type"
+  /user/{id}/password:
+    put:
+      summary: Update User Password
+      security:
+        - cookieAuth: []
+      tags:
+        - user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  type: string
+                  format: password
+                  description: (Not required for admin) Password must be between 8 to 32 characters
+                new_password:
+                  type: string
+                  format: password
+                  description: Password must be between 8 to 32 characters
+                confirm_new_password:
+                  type: string
+                  format: password
+                  description: Password must be between 8 to 32 characters
+      responses:
+        "204":
+          description: OK
+  /user/{id}/user-type:
+    put:
+      summary: Update User Type
+      description: |
+        **Required User Type: Admin**
+      security:
+        - cookieAuth: []
+      tags:
+        - user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_type:
+                  $ref: "#/components/schemas/user_type"
+      responses:
+        "204":
+          description: OK
 
   /media/:
     post:
       summary: Create Media
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -168,7 +235,6 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/media"
-
   /media/{media_id}:
     get:
       summary: Get Media By ID
@@ -192,6 +258,8 @@ paths:
                 $ref: "#/components/schemas/media"
     put:
       summary: Update Media By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -217,6 +285,8 @@ paths:
           description: OK
     delete:
       summary: Delete Media By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -235,6 +305,8 @@ paths:
   /movie:
     post:
       summary: Create Movie
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -395,6 +467,8 @@ paths:
                 $ref: "#/components/schemas/movie"
     put:
       summary: Update Movie By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -432,6 +506,8 @@ paths:
           description: OK
     delete:
       summary: Delete Movie By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -450,6 +526,8 @@ paths:
   /series:
     post:
       summary: Create Series
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -604,6 +682,8 @@ paths:
 
     put:
       summary: Update Series By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -639,6 +719,8 @@ paths:
 
     delete:
       summary: Delete Series By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -657,6 +739,8 @@ paths:
   /season:
     post:
       summary: Create Season
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -733,6 +817,8 @@ paths:
                 $ref: "#/components/schemas/season"
     put:
       summary: Update Season By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -760,6 +846,8 @@ paths:
           description: OK
     delete:
       summary: Delete Season By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -778,6 +866,8 @@ paths:
   /episode:
     post:
       summary: Create Episode
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -833,7 +923,6 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/episode"
-
   /episode/{episode_id}:
     get:
       summary: Get Episode By ID
@@ -858,6 +947,8 @@ paths:
 
     put:
       summary: Update Episode By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -889,6 +980,8 @@ paths:
 
     delete:
       summary: Delete Episode By ID
+      description: |
+        **Required User Type: Admin**
       security:
         - cookieAuth: []
       tags:
@@ -912,6 +1005,18 @@ components:
       name: session_id
 
   schemas:
+    media_type:
+      type: string
+      enum:
+        - unknown
+        - image
+        - video
+        - audio
+    user_type:
+      type: string
+      enum:
+        - admin
+        - viewer
     media:
       type: object
       properties:
@@ -941,13 +1046,6 @@ components:
           type: string
         data:
           type: object
-    media_type:
-      type: string
-      enum:
-        - unknown
-        - image
-        - video
-        - audio
     movie:
       type: object
       properties:
