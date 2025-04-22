@@ -43,6 +43,7 @@ func initUserRoutes(
 	app.Post("/register", h(user.NewRegister(userClient)))
 	app.Use(authMW)
 	app.Get("/profile", h(user.NewProfile(userClient)))
+	app.Get("/", userTypeMW(usertype.Admin), h(user.NewListUsers(userClient)))
 	app.Put("/:id/password", h(user.NewUpdatePassword(userClient, pw)))
 	app.Put("/:id/user-type", userTypeMW(usertype.Admin), h(user.NewUpdateUserType(userClient)))
 	return app
