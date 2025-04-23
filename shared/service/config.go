@@ -13,12 +13,13 @@ type ServiceConfig struct {
 	CouchbaseBucket   string `env:"COUCHBASE_BUCKET"`
 
 	// Clients
+	AuthServiceAddr    string `env:"AUTH_SERVICE_ADDR"`
+	UserServiceAddr    string `env:"USER_SERVICE_ADDR"`
+	SettingServiceAddr string `env:"SETTING_SERVICE_ADDR"`
 	MediaServiceAddr   string `env:"MEDIA_SERVICE_ADDR"`
 	TMDBServiceAddr    string `env:"TMDB_SERVICE_ADDR"`
 	MovieServiceAddr   string `env:"MOVIE_SERVICE_ADDR"`
 	SeriesServiceAddr  string `env:"SERIES_SERVICE_ADDR"`
 	SeasonServiceAddr  string `env:"SEASON_SERVICE_ADDR"`
 	EpisodeServiceAddr string `env:"EPISODE_SERVICE_ADDR"`
-	UserServiceAddr    string `env:"USER_SERVICE_ADDR"`
-	AuthServiceAddr    string `env:"AUTH_SERVICE_ADDR"`
 }
