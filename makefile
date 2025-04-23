@@ -39,4 +39,9 @@ gen-proto:
 		--go-grpc_out=Mprotofiles/auth_service.proto=shared/pb/authpb:. \
 		--proto_path=protofiles \
 		protofiles/auth_service.proto
+	protoc \
+		--go_out=Mprotofiles/setting_service.proto=shared/pb/settingpb:. \
+		--go-grpc_out=Mprotofiles/setting_service.proto=shared/pb/settingpb:. \
+		--proto_path=protofiles \
+		protofiles/setting_service.proto
 	

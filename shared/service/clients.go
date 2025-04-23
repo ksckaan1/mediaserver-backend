@@ -9,6 +9,7 @@ import (
 	"shared/pb/moviepb"
 	"shared/pb/seasonpb"
 	"shared/pb/seriespb"
+	"shared/pb/settingpb"
 	"shared/pb/tmdbpb"
 	"shared/pb/userpb"
 	"shared/ports"
@@ -20,14 +21,15 @@ import (
 )
 
 type ServiceClients struct {
+	AuthServiceClient    authpb.AuthServiceClient
+	UserServiceClient    userpb.UserServiceClient
+	SettingServiceClient settingpb.SettingServiceClient
 	MediaServiceClient   mediapb.MediaServiceClient
 	TMDBServiceClient    tmdbpb.TMDBServiceClient
 	MovieServiceClient   moviepb.MovieServiceClient
 	SeriesServiceClient  seriespb.SeriesServiceClient
 	SeasonServiceClient  seasonpb.SeasonServiceClient
 	EpisodeServiceClient episodepb.EpisodeServiceClient
-	UserServiceClient    userpb.UserServiceClient
-	AuthServiceClient    authpb.AuthServiceClient
 	logger               ports.Logger
 }
 
@@ -38,7 +40,19 @@ func newServiceClient(logger ports.Logger) *ServiceClients {
 }
 
 func (s *ServiceClients) initServiceClients(cfg *ServiceConfig) error {
-	err := s.initMediaClient(cfg)
+	err := s.initAuthService(cfg)
+	if err != nil {
+		return fmt.Errorf("initAuthService: %w", err)
+	}
+	err = s.initUserClient(cfg)
+	if err != nil {
+		return fmt.Errorf("initUserClient: %w", err)
+	}
+	err = s.initSettingService(cfg)
+	if err != nil {
+		return fmt.Errorf("initSettingService: %w", err)
+	}
+	err = s.initMediaClient(cfg)
 	if err != nil {
 		return fmt.Errorf("initMediaClient: %w", err)
 	}
@@ -62,14 +76,57 @@ func (s *ServiceClients) initServiceClients(cfg *ServiceConfig) error {
 	if err != nil {
 		return fmt.Errorf("initEpisodeClient: %w", err)
 	}
-	err = s.initUserClient(cfg)
-	if err != nil {
-		return fmt.Errorf("initUserClient: %w", err)
+	return nil
+}
+
+func (s *ServiceClients) initAuthService(cfg *ServiceConfig) error {
+	if cfg.AuthServiceAddr == "" {
+		return nil
 	}
-	err = s.initAuthService(cfg)
+
+	conn, err := s.initClient(cfg.AuthServiceAddr)
 	if err != nil {
-		return fmt.Errorf("initAuthService: %w", err)
+		return fmt.Errorf("initClient: %w", err)
 	}
+
+	s.AuthServiceClient = authpb.NewAuthServiceClient(conn)
+
+	s.logger.Info(context.Background(), "auth service client initialized")
+
+	return nil
+}
+
+func (s *ServiceClients) initSettingService(cfg *ServiceConfig) error {
+	if cfg.SettingServiceAddr == "" {
+		return nil
+	}
+
+	conn, err := s.initClient(cfg.SettingServiceAddr)
+	if err != nil {
+		return fmt.Errorf("initClient: %w", err)
+	}
+
+	s.SettingServiceClient = settingpb.NewSettingServiceClient(conn)
+
+	s.logger.Info(context.Background(), "setting service client initialized")
+
+	return nil
+}
+
+func (s *ServiceClients) initUserClient(cfg *ServiceConfig) error {
+	if cfg.UserServiceAddr == "" {
+		return nil
+	}
+
+	conn, err := s.initClient(cfg.UserServiceAddr)
+	if err != nil {
+		return fmt.Errorf("initClient: %w", err)
+	}
+
+	s.UserServiceClient = userpb.NewUserServiceClient(conn)
+
+	s.logger.Info(context.Background(), "user service client initialized")
+
 	return nil
 }
 
@@ -171,40 +228,6 @@ func (s *ServiceClients) initEpisodeClient(cfg *ServiceConfig) error {
 	s.EpisodeServiceClient = episodepb.NewEpisodeServiceClient(conn)
 
 	s.logger.Info(context.Background(), "episode service client initialized")
-
-	return nil
-}
-
-func (s *ServiceClients) initUserClient(cfg *ServiceConfig) error {
-	if cfg.UserServiceAddr == "" {
-		return nil
-	}
-
-	conn, err := s.initClient(cfg.UserServiceAddr)
-	if err != nil {
-		return fmt.Errorf("initClient: %w", err)
-	}
-
-	s.UserServiceClient = userpb.NewUserServiceClient(conn)
-
-	s.logger.Info(context.Background(), "user service client initialized")
-
-	return nil
-}
-
-func (s *ServiceClients) initAuthService(cfg *ServiceConfig) error {
-	if cfg.AuthServiceAddr == "" {
-		return nil
-	}
-
-	conn, err := s.initClient(cfg.AuthServiceAddr)
-	if err != nil {
-		return fmt.Errorf("initClient: %w", err)
-	}
-
-	s.AuthServiceClient = authpb.NewAuthServiceClient(conn)
-
-	s.logger.Info(context.Background(), "auth service client initialized")
 
 	return nil
 }
