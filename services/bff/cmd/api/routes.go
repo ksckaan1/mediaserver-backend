@@ -7,6 +7,7 @@ import (
 	"bff-service/internal/core/app/movie"
 	"bff-service/internal/core/app/season"
 	"bff-service/internal/core/app/series"
+	"bff-service/internal/core/app/setting"
 	"bff-service/internal/core/app/user"
 	"shared/enums/usertype"
 	"shared/password"
@@ -16,6 +17,7 @@ import (
 	"shared/pb/moviepb"
 	"shared/pb/seasonpb"
 	"shared/pb/seriespb"
+	"shared/pb/settingpb"
 	"shared/pb/userpb"
 
 	"github.com/gofiber/fiber/v2"
@@ -46,6 +48,17 @@ func initUserRoutes(
 	app.Get("/", userTypeMW(usertype.Admin), h(user.NewListUsers(userClient)))
 	app.Put("/:id/password", h(user.NewUpdatePassword(userClient, pw)))
 	app.Put("/:id/user-type", userTypeMW(usertype.Admin), h(user.NewUpdateUserType(userClient)))
+	return app
+}
+
+func initSettingRoutes(
+	settingClient settingpb.SettingServiceClient,
+) *fiber.App {
+	app := fiber.New()
+	app.Get("/", h(setting.NewListSettings(settingClient)))
+	app.Post("/:key", h(setting.NewSetSetting(settingClient)))
+	app.Get("/:key", h(setting.NewGetSetting(settingClient)))
+	app.Delete("/:key", h(setting.NewDeleteSetting(settingClient)))
 	return app
 }
 
