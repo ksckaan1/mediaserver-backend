@@ -1,0 +1,43 @@
+syntax = "proto3";
+package settingpb;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "shared/pb/settingpb;settingpb";
+
+service SettingService {
+  rpc Set(SetRequest) returns (google.protobuf.Empty);
+  rpc Get(GetRequest) returns (Setting);
+  rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
+  rpc List(ListRequest) returns (ListResponse);
+}
+
+message SetRequest {
+  string key = 1;
+  bytes value = 2;
+}
+
+message GetRequest {
+  string key = 1;
+}
+
+message DeleteRequest {
+  string key = 1;
+}
+
+message ListRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+
+message ListResponse {
+  repeated Setting list = 1;
+  int64 count = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
+
+message Setting {
+  string key = 1;
+  bytes value = 2;
+}
