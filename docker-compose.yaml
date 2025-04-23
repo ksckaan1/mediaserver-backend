@@ -49,6 +49,65 @@ services:
       EPISODE_SERVICE_ADDR: ${EPISODE_SERVICE_ADDR}
       USER_SERVICE_ADDR: ${USER_SERVICE_ADDR}
       AUTH_SERVICE_ADDR: ${AUTH_SERVICE_ADDR}
+      SETTING_SERVICE_ADDR: ${SETTING_SERVICE_ADDR}
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
+    restart: unless-stopped
+    logging: *default-logging
+
+  auth_service:
+    container_name: auth_service
+    build:
+      context: .
+      dockerfile: .docker/auth_service.Dockerfile
+    networks:
+      - app
+    environment:
+      SERVICE_NAME: auth
+      ADDR: ":8080"
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+      ID_GENERATOR_NODE: 1
+      USER_SERVICE_ADDR: ${USER_SERVICE_ADDR}
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
+    restart: unless-stopped
+    logging: *default-logging
+
+  user_service:
+    container_name: user_service
+    build:
+      context: .
+      dockerfile: .docker/user_service.Dockerfile
+    networks:
+      - app
+    environment:
+      SERVICE_NAME: user
+      ADDR: ":8080"
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+      ID_GENERATOR_NODE: 1
+      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
+    restart: unless-stopped
+    logging: *default-logging
+  
+  setting_service:
+    container_name: setting_service
+    build:
+      context: .
+      dockerfile: .docker/setting_service.Dockerfile
+    networks:
+      - app
+    environment:
+      SERVICE_NAME: setting
+      ADDR: ":8080"
+      COUCHBASE_HOST: ${COUCHBASE_HOST}
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
+      ID_GENERATOR_NODE: 1
       TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
@@ -180,45 +239,6 @@ services:
       MEDIA_SERVICE_ADDR: ${MEDIA_SERVICE_ADDR}
       SEASON_SERVICE_ADDR: ${SEASON_SERVICE_ADDR}
       ID_GENERATOR_NODE: 1
-      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
-    restart: unless-stopped
-    logging: *default-logging
-
-  user_service:
-    container_name: user_service
-    build:
-      context: .
-      dockerfile: .docker/user_service.Dockerfile
-    networks:
-      - app
-    environment:
-      SERVICE_NAME: user
-      ADDR: ":8080"
-      COUCHBASE_HOST: ${COUCHBASE_HOST}
-      COUCHBASE_USER: ${COUCHBASE_USER}
-      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
-      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
-      ID_GENERATOR_NODE: 1
-      TRACER_ENDPOINT: ${TRACER_ENDPOINT}
-    restart: unless-stopped
-    logging: *default-logging
-
-  auth_service:
-    container_name: auth_service
-    build:
-      context: .
-      dockerfile: .docker/auth_service.Dockerfile
-    networks:
-      - app
-    environment:
-      SERVICE_NAME: auth
-      ADDR: ":8080"
-      COUCHBASE_HOST: ${COUCHBASE_HOST}
-      COUCHBASE_USER: ${COUCHBASE_USER}
-      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
-      COUCHBASE_BUCKET: ${COUCHBASE_BUCKET}
-      ID_GENERATOR_NODE: 1
-      USER_SERVICE_ADDR: ${USER_SERVICE_ADDR}
       TRACER_ENDPOINT: ${TRACER_ENDPOINT}
     restart: unless-stopped
     logging: *default-logging
