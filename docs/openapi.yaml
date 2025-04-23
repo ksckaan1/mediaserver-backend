@@ -214,6 +214,109 @@ paths:
         "204":
           description: OK
 
+  /settings:
+    get:
+      summary: List Settings
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Number of listed items
+          schema:
+            type: integer
+            example: 10
+        - name: offset
+          in: query
+          required: false
+          description: Number of items to skip
+          schema:
+            type: integer
+            example: 0
+      tags:
+        - setting
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/setting"
+                  count:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+  /settings/{key}:
+    post:
+      summary: Set Setting
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: Setting key
+          schema:
+            type: string
+      tags:
+        - setting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: any
+      responses:
+        "201":
+          description: OK
+    get:
+      summary: Get Setting
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: Setting key
+          schema:
+            type: string
+      tags:
+        - setting
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/setting"
+    delete:
+      summary: Delete Setting
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: Setting key
+          schema:
+            type: string
+      tags:
+        - setting
+      responses:
+        "204":
+          description: OK
+
   /medias/:
     post:
       summary: Create Media
@@ -1057,6 +1160,13 @@ components:
       enum:
         - admin
         - viewer
+    setting:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: any
     user:
       type: object
       properties:
@@ -1197,6 +1307,8 @@ tags:
     x-displayName: Auth
   - name: user
     x-displayName: User
+  - name: setting
+    x-displayName: Setting
   - name: media
     x-displayName: Media
   - name: movie
@@ -1213,6 +1325,7 @@ x-tagGroups:
     tags:
       - auth
       - user
+      - setting
       - media
       - movie
       - series
