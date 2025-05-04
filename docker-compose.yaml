@@ -287,16 +287,13 @@ services:
       - app
     ports:
       - "8091:8091" # Management Panel
-      - "8092:8092" # Views
-      - "8093:8093" # Query (N1QL)
-      - "8094:8094" # Search
-      - "11207:11207" # Data protocol (SSL)
-      - "11210:11210" # Data protocol
+      # - "8092:8092" # Views
+      # - "8093:8093" # Query (N1QL)
+      # - "8094:8094" # Search
+      # - "11207:11207" # Data protocol (SSL)
+      # - "11210:11210" # Data protocol
     volumes:
       - couchbase_data:/opt/couchbase/var
-    environment:
-      - COUCHBASE_ADMINISTRATOR_USERNAME=${COUCHBASE_USER}
-      - COUCHBASE_ADMINISTRATOR_PASSWORD=${COUCHBASE_PASSWORD}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8091" ]
       interval: 5s

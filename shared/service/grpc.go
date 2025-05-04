@@ -136,3 +136,15 @@ func (s *GRPCService[CFG]) handleGracefulShutdown() {
 	s.listener.Close()
 	s.Logger.Info(context.Background(), "listener closed")
 }
+
+func (s *GRPCService[CFG]) RunCouchbaseQueries(ctx context.Context, queries ...string) error {
+	for _, query := range queries {
+		_, err := s.CBBucket.DefaultScope().Query(query, &gocb.QueryOptions{
+			Context: ctx,
+		})
+		if err != nil {
+			return fmt.Errorf("bucket.DefaultScope().Query: %w", err)
+		}
+	}
+	return nil
+}

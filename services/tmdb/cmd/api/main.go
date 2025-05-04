@@ -22,6 +22,16 @@ func main() {
 }
 
 func initializer(ctx context.Context, s *service.GRPCService[config.Config]) error {
+	err := s.RunCouchbaseQueries(
+		ctx,
+		"CREATE SCOPE IF NOT EXISTS `media_server`.tmdb_service;",
+		"CREATE COLLECTION IF NOT EXISTS `media_server`.tmdb_service.infos;",
+		"CREATE PRIMARY INDEX IF NOT EXISTS ON `media_server`.tmdb_service.infos;",
+		"CREATE INDEX IF NOT EXISTS idx_id ON `media_server`.tmdb_service.infos(id);",
+	)
+	if err != nil {
+		return fmt.Errorf("s.RunCouchbaseQueries: %w", err)
+	}
 	tmdbClient, err := tmdbclient.New(s.Cfg.TMDBApiKey)
 	if err != nil {
 		return fmt.Errorf("tmdbclient.New: %w", err)
