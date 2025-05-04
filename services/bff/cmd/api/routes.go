@@ -53,12 +53,14 @@ func initUserRoutes(
 
 func initSettingRoutes(
 	settingClient settingpb.SettingServiceClient,
+	authMW fiber.Handler,
+	userTypeMW UserTypeMWFunc,
 ) *fiber.App {
 	app := fiber.New()
-	app.Get("/", h(setting.NewListSettings(settingClient)))
-	app.Post("/:key", h(setting.NewSetSetting(settingClient)))
+	app.Get("/", authMW, userTypeMW(usertype.Admin), h(setting.NewListSettings(settingClient)))
+	app.Post("/:key", authMW, userTypeMW(usertype.Admin), h(setting.NewSetSetting(settingClient)))
 	app.Get("/:key", h(setting.NewGetSetting(settingClient)))
-	app.Delete("/:key", h(setting.NewDeleteSetting(settingClient)))
+	app.Delete("/:key", authMW, userTypeMW(usertype.Admin), h(setting.NewDeleteSetting(settingClient)))
 	return app
 }
 

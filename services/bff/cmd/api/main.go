@@ -23,7 +23,7 @@ func initializer(ctx context.Context, s *service.RESTService[config.Config]) err
 	authRoutes, authMW, userTypeMW := initAuthRoutes(s.ServiceClients.AuthServiceClient, s.ServiceClients.UserServiceClient)
 	v1.Mount("/auth", authRoutes)
 	v1.Mount("/users", initUserRoutes(s.ServiceClients.UserServiceClient, authMW, userTypeMW))
-	v1.Mount("/settings", initSettingRoutes(s.ServiceClients.SettingServiceClient))
+	v1.Mount("/settings", initSettingRoutes(s.ServiceClients.SettingServiceClient, authMW, userTypeMW))
 	v1.Use(authMW)
 	v1.Mount("/medias", initMediaRoutes(s.ServiceClients.MediaServiceClient, userTypeMW))
 	v1.Mount("/movies", initMovieRoutes(s.ServiceClients.MovieServiceClient, userTypeMW))
