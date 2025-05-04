@@ -150,7 +150,6 @@ func (r *Repository) ListUsers(ctx context.Context, limit int64, offset int64) (
 		}
 		users = append(users, &user.Users)
 	}
-	fmt.Println("users", users)
 	return &models.UserList{
 		List:   users,
 		Count:  countResult.Count,
