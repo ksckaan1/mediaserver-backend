@@ -85,6 +85,8 @@ paths:
   /users/profile:
     get:
       summary: Get User Profile
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -112,6 +114,9 @@ paths:
   /users/:
     get:
       summary: List Users
+      description: |
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -152,6 +157,8 @@ paths:
   /users/{id}/password:
     put:
       summary: Update User Password
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -189,7 +196,8 @@ paths:
     put:
       summary: Update User Type
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -217,6 +225,9 @@ paths:
   /settings:
     get:
       summary: List Settings
+      description: |
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       parameters:
@@ -257,6 +268,9 @@ paths:
   /settings/{key}:
     post:
       summary: Set Setting
+      description: |
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       parameters:
@@ -302,6 +316,9 @@ paths:
                 $ref: "#/components/schemas/setting"
     delete:
       summary: Delete Setting
+      description: |
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       parameters:
@@ -321,7 +338,8 @@ paths:
     post:
       summary: Create Media
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -341,6 +359,8 @@ paths:
                     format: uri
     get:
       summary: List Medias
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -381,6 +401,8 @@ paths:
   /medias/{media_id}:
     get:
       summary: Get Media By ID
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -402,7 +424,8 @@ paths:
     put:
       summary: Update Media By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -429,7 +452,8 @@ paths:
     delete:
       summary: Delete Media By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -449,7 +473,8 @@ paths:
     post:
       summary: Create Movie
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -487,6 +512,8 @@ paths:
                     type: string
     get:
       summary: List Movies
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -531,6 +558,8 @@ paths:
   /movies/search:
     get:
       summary: Search Movies
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -590,6 +619,8 @@ paths:
   /movies/{movie_id}:
     get:
       summary: Get Movie By ID
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -611,7 +642,8 @@ paths:
     put:
       summary: Update Movie By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -650,7 +682,8 @@ paths:
     delete:
       summary: Delete Movie By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -670,7 +703,8 @@ paths:
     post:
       summary: Create Series
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -705,6 +739,8 @@ paths:
                     type: string
     get:
       summary: List Series
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       parameters:
@@ -745,6 +781,8 @@ paths:
   /series/search:
     get:
       summary: Search Series
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       parameters:
@@ -804,6 +842,8 @@ paths:
   /series/{series_id}:
     get:
       summary: Get Series By ID
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -826,7 +866,8 @@ paths:
     put:
       summary: Update Series By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -863,7 +904,8 @@ paths:
     delete:
       summary: Delete Series By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -883,7 +925,8 @@ paths:
     post:
       summary: Create Season
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -914,6 +957,8 @@ paths:
 
     get:
       summary: List All Seasons By Series ID
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -940,6 +985,8 @@ paths:
   /seasons/{season_id}:
     get:
       summary: Get Season By ID
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -961,7 +1008,8 @@ paths:
     put:
       summary: Update Season By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -990,7 +1038,8 @@ paths:
     delete:
       summary: Delete Season By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -1010,7 +1059,8 @@ paths:
     post:
       summary: Create Episode
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -1043,6 +1093,8 @@ paths:
                     type: string
     get:
       summary: Get All Episodes By Season ID
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -1069,6 +1121,8 @@ paths:
   /episodes/{episode_id}:
     get:
       summary: Get Episode By ID
+      description: |
+        - **Auth Required**
       security:
         - cookieAuth: []
       tags:
@@ -1091,7 +1145,8 @@ paths:
     put:
       summary: Update Episode By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
@@ -1124,7 +1179,8 @@ paths:
     delete:
       summary: Delete Episode By ID
       description: |
-        **Required User Type: Admin**
+        - **Auth Required**
+        - **Required User Type:** `admin`
       security:
         - cookieAuth: []
       tags:
